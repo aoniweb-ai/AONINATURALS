@@ -19,6 +19,7 @@ export const protectedRoute = async(req,res,next)=>{
 export const adminProtectedRoute = async(req,res,next)=>{
     try {
         const token = req.cookies.jwtAdmin;
+        if(!token) return res.status(401).json({message:"Unauthorized"});
         const {value} = jwt.verify(token,process.env.ADMIN_SECRET_KEY);
         
         if(!value) return res.status(500).json({message:"Internal error"});

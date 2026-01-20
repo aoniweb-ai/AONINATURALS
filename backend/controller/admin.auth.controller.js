@@ -49,3 +49,10 @@ export const adminLogoutController = async(req,res)=>{
         console.log("error",error)
     }
 }
+export const adminGetController = async(req,res)=>{
+    try {
+        return res.status(200).json({message:"admin successfully getted",admin:req.admin});
+    } catch (error) {
+        console.log("admin getting error");
+    }
+}
