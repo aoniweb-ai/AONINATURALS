@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import useAdminBear from '../../../store/admin.store';
 import { useNavigate } from 'react-router-dom';
-const Login = () => {
+const AdminLogin = () => {
   const navigate = useNavigate();
   const [showUniqueId, setShowUniqueId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -141,4 +141,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

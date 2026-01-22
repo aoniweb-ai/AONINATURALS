@@ -3,12 +3,17 @@ import { adminAxios } from '../AxiosApi/axiosInstance'
 const useAdminBear = create((set) => ({
     checkAdmin:false,
     admin:null,
-    editProduct:false,
+    editProduct:null,
     selectedProduct:null,
+    products:null,
     setCheckAdmin:(value)=>set({checkAdmin:value}),
+    setEditProduct:(value)=>{
+        console.log("edit hone ja rh hu");
+        set({editProduct:value})
+    },
     adminSignup:async(data)=>{
         try {
-            const response = await adminAxios.post("/auth/signup",data);
+            await adminAxios.post("/auth/signup",data);
         } catch (error) {
             throw error?.response
         }
@@ -17,6 +22,14 @@ const useAdminBear = create((set) => ({
         try {
             const response = await adminAxios.post("/auth/login",data);
             set({admin:response.data?.admin});
+        } catch (error) {
+            console.log("error while getting admin ",error)
+        }
+    },
+    adminLogout:async()=>{
+        try {
+            const response = await adminAxios.post("/auth/logout");
+            // set({admin:response.data?.admin});
         } catch (error) {
             throw error?.response
         }
@@ -28,6 +41,22 @@ const useAdminBear = create((set) => ({
             set({checkAdmin:true})
         } catch (error){
             throw error?.response || error?.message
+        }
+    },
+    adminProduct_addUpdate:async(data)=>{
+        try {
+            const response = await adminAxios.post("/product/addupdateproduct",data);
+            console.log("product created ",response.data?.product);
+        } catch (error) {
+            console.log("there is an error while add/update product ",error);
+        }
+    },
+    adminGetproducts:async()=>{
+        try {
+            const response = await adminAxios.get("product/getproducts");
+            set({products:response.data?.products});
+        } catch (error) {
+            console.log("error while getting products ",error);
         }
     }
 }))

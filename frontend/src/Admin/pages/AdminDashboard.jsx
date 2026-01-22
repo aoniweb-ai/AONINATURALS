@@ -2,7 +2,7 @@ import React from 'react'
 import {
   Menu,
 } from "lucide-react";
-const Dashboard = () => {
+const AdminDashboard = () => {
   return (
     <div className="drawer-content flex flex-col min-h-screen">
 
@@ -118,4 +118,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default AdminDashboard;

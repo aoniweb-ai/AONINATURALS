@@ -9,8 +9,10 @@ import {
   LogOut,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useAdminBear from "../../../store/admin.store";
 
-const Header = () => {
+const AdminHeader = () => {
+  const {adminLogout} =useAdminBear(state=>state);
     const navigate = useNavigate();
     const routes = [
         {
@@ -59,16 +61,17 @@ const Header = () => {
           <nav className="flex flex-col gap-2">
             {
                 routes.map((val)=>(
-                    <>
-                    <button onClick={()=>navigate(val.path)} className="btn btn-ghost justify-start gap-3">
+                    <button key={val.value} onClick={()=>navigate(val.path)} className="btn btn-ghost justify-start gap-3">
                          {val.icon} {val.value}
                     </button> 
-                    </>
                 ))
             }
           </nav>
 
-          <button className="btn btn-error mt-auto gap-2">
+          <button className="btn btn-error mt-auto gap-2" onClick={()=>{
+            adminLogout();
+            navigate("/")
+          }}>
             <LogOut size={18} /> Logout
           </button>
         </div>
@@ -77,4 +80,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default AdminHeader;

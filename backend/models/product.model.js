@@ -5,20 +5,17 @@ const productSchema = new mongoose.Schema({
         type:mongoose.Types.ObjectId ,
         ref:"Admin"
     },
-    delivered_to:[{
-        user:{
-            type:mongoose.Types.ObjectId,
-            ref:"User"
-        },
-        total_ordered:Number
-    }],
-    name:{
+    product_name:{
         type:String,
         minLength:3,
         maxLength:100,
         required:true
     },
-    quantity:{
+    product_images:[{
+        secure_url:String,
+        public_id:String
+    }],
+    stock:{
         type:Number,
         min:0,
         required:true
@@ -41,17 +38,20 @@ const productSchema = new mongoose.Schema({
         type:Number,
         min:0
     },
-    payment_type:{
-        type:String,
-        enum:["cod","online"]
-    },
-    description:{
-        type:String
-    },
+    description:String,
+    ingredients:String,
+    how_to_use:String,
+    benefits:String,
+    recommended:String,
+    coupon_code:String,
     sold:{
         type:Boolean,
         required:true
     },
+    buyer:[{
+        type:mongoose.Types.ObjectId,
+        ref:"User"
+    }]
 },{timestamps:true})
 
 export default mongoose.model("Product",productSchema);

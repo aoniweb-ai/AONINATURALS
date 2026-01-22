@@ -3,7 +3,7 @@ const userSchema = new mongoose.Schema({
     email:{
         type:String,
         required:[true,"email is required"],
-        unique:[true]
+        unique:true
     },
     password:{
         type:String,
@@ -19,31 +19,17 @@ const userSchema = new mongoose.Schema({
     address:{
         type:String,
     },
-    orders:{
-        in_progress:[{
-            _uid: mongoose.Types.UUID, // unique id
-            order_name:{
-                type:mongoose.Types.ObjectId,
-                ref:"Product"
-            },
-            order_quantity:Number
-        },{timestamps:true}],
-        delivered:[{
-            _uid: mongoose.Types.UUID,
-            order_name:{
-                type:mongoose.Types.ObjectId,
-                ref:"Product"
-            },
-            order_quantity:Number
-        },{timestamps:true}]
-    },
     cart:[{
         product:{
             type:mongoose.Types.ObjectId,
             ref:"Product"
         },
         value:Number
-    }]
+    }],
+    click_order_buy:{
+        type:mongoose.Types.ObjectId,
+        ref:"Product"
+    }
 },{timestamps:true})
 
 export default mongoose.model("User",userSchema);

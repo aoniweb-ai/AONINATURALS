@@ -6,7 +6,7 @@ import {useForm} from "react-hook-form"
 import useAdminBear from '../../../store/admin.store';
 
 
-const Signup = () => {
+const AdminSignup = () => {
   
   const navigate = useNavigate();
   
@@ -170,4 +170,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default AdminSignup;

@@ -4,30 +4,34 @@ import './index.css'
 import App from './App.jsx'
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 import Admin from './Admin.jsx';
-import Login from './Admin/pages/Login.jsx';
-import Signup from './Admin/pages/Signup.jsx';
+
 import AdminProtected from './Admin/components/AdminProtected.jsx';
-import Dashboard from './Admin/pages/Dashboard.jsx';
+
 import AdminAuthenticate from './Admin/components/AdminAuthenticate.jsx';
-import Header from './Admin/components/Header.jsx';
-import Products from './Admin/pages/Product.jsx';
+
+import AdminLogin from './Admin/pages/AdminLogin.jsx';
+import AdminSignup from './Admin/pages/AdminSignup.jsx';
+import AdminDashboard from './Admin/pages/AdminDashboard.jsx';
+import AdminProduct from './Admin/pages/AdminProduct.jsx';
+import UserSignup from './User/pages/UserSignup.jsx';
+import UserLogin from './User/pages/UserLogin.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<App />} >
-        <Route />
-        <Route/>
+        <Route path='signup' element={<UserSignup/>}/>
+        <Route path='login' element={<UserLogin/>} />
         <Route/>
         <Route/>
         <Route/>
       </Route>
 
       <Route path="/admin" element={<AdminProtected><Admin/></AdminProtected>} >
-        <Route path='login' element={<Login/>}/>
-        <Route path='signup' element={<Signup/>}/>
-        <Route path='dashboard' element={<AdminAuthenticate><Dashboard/></AdminAuthenticate>}/>
-        <Route path='products' element={<AdminAuthenticate><Products/></AdminAuthenticate>}/>
+        <Route path='login' element={<AdminLogin/>}/>
+        <Route path='signup' element={<AdminSignup/>}/>
+        <Route path='dashboard' element={<AdminAuthenticate><AdminDashboard/></AdminAuthenticate>}/>
+        <Route path='products' element={<AdminAuthenticate><AdminProduct/></AdminAuthenticate>}/>
         <Route />
         <Route />
       </Route>

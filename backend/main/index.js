@@ -7,6 +7,7 @@ import authRouter from "../routes/auth.route.js";
 import productRouter from "../routes/product.route.js";
 import adminAuthRouter from "../routes/adminAuth.route.js";
 import adminProductRouter from "../routes/admin.product.route.js";
+import rateLimit from "express-rate-limit"
 
 dotenv.config();
 
@@ -21,6 +22,16 @@ app.use(cookieParser());
 app.use(express.json({
     limit:"20mb"
 }));
+app.use(express.urlencoded({limit:"10kb"}));
+const limiter = rateLimit({
+    windowMs:15 * 60 * 1000,
+    limit:100,
+    message: {
+        success: false,
+        message: "Too many requests, try again later"
+    }
+})
+app.use('/api',limiter);
 
 
 app.use("/api/auth",authRouter);

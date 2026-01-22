@@ -1,7 +1,7 @@
 import React, {useEffect, useState } from 'react'
 import useAdminBear from '../../../store/admin.store';
 import CenterLoader from '../../../components/CenterLoader';
-
+import toast from "react-hot-toast"
 const AdminProtected = ({children}) => {
     const {checkAdmin, setCheckAdmin, getAdmin} = useAdminBear(state=>state);
     const [inputValue, setInputValue] = useState("");
@@ -11,6 +11,8 @@ const AdminProtected = ({children}) => {
         try {
           setLoader(true);
           await getAdmin()
+        }catch(error){
+          toast.error(error.data?.message)
         }
         finally{
           setLoader(false);

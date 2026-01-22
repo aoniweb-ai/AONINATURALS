@@ -1,9 +1,11 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom'
 function App() {
 
   return (
     <>
-      <p>Hello</p>
+      {/* Header */}
+      <Outlet/>
     </>
   )
 }
