@@ -9,27 +9,38 @@ const orderSchema = mongoose.Schema({
         type:mongoose.Types.ObjectId,
         ref:"User"
     },
-    product:{
+    product:[{
+        product:{
         type:mongoose.Types.ObjectId,
         ref:"Product"
     },
     quantity:{
         type:Number,
         required:true
-    },
+    }   
+    }],
     total_price:{
         type:Number,
         required:true
     },
     status:{
         type:String,
-        enum:["inprogress","delivered"],
-        required:true
+        enum:["pending","delivered","shipped","cancelled"],
+        required:true,
+        default:"pending"
+    },
+    payment_status:{
+        type:String,
+        enum:["not","done"],
+        required:true,
+        default:"not"
     },
     payment_method:{
         type:String,
-        enum:["cod","online"]
-    }
+        enum:["cod","online"],
+        default:"online"
+    },
+    receipt:String
 
 },{Timestamps:true})
 

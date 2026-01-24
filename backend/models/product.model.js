@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    final_price:{
+        type:Number,
+        required:true
+    },
     discount:{
         type:Number,
         min:0,

@@ -6,11 +6,8 @@ const useAdminBear = create((set) => ({
     editProduct:null,
     selectedProduct:null,
     products:null,
-    setCheckAdmin:(value)=>set({checkAdmin:value}),
-    setEditProduct:(value)=>{
-        console.log("edit hone ja rh hu");
-        set({editProduct:value})
-    },
+    setCheckAdmin:(value) => set({checkAdmin:value}),
+    setEditProduct:(value)=> set({editProduct:value}),
     adminSignup:async(data)=>{
         try {
             await adminAxios.post("/auth/signup",data);
@@ -28,7 +25,7 @@ const useAdminBear = create((set) => ({
     },
     adminLogout:async()=>{
         try {
-            const response = await adminAxios.post("/auth/logout");
+            await adminAxios.post("/auth/logout");
             // set({admin:response.data?.admin});
         } catch (error) {
             throw error?.response

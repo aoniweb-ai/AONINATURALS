@@ -15,16 +15,24 @@ import AdminDashboard from './Admin/pages/AdminDashboard.jsx';
 import AdminProduct from './Admin/pages/AdminProduct.jsx';
 import UserSignup from './User/pages/UserSignup.jsx';
 import UserLogin from './User/pages/UserLogin.jsx';
+import UserHome from './User/pages/UserHome.jsx';
+import UserAuthenticate from './User/components/UserAuthenticate.jsx';
+import UserProduct from './User/pages/UserProduct.jsx';
+import ProductDetails from './User/components/ProductDetails.jsx';
+import UserCart from './User/pages/UserCart.jsx';
+import UserOrders from './User/pages/UserOrders.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<App />} >
+        <Route path='' element={<UserHome/>} />
         <Route path='signup' element={<UserSignup/>}/>
         <Route path='login' element={<UserLogin/>} />
-        <Route/>
-        <Route/>
-        <Route/>
+        <Route path='products' element={<UserAuthenticate><UserProduct/></UserAuthenticate>}/>
+        <Route path='products/details/:id' element={<UserAuthenticate><ProductDetails/></UserAuthenticate>}/>
+        <Route path='cart' element={<UserAuthenticate><UserCart/></UserAuthenticate>}/>
+        <Route path='orders' element={<UserAuthenticate><UserOrders/></UserAuthenticate>}/>
       </Route>
 
       <Route path="/admin" element={<AdminProtected><Admin/></AdminProtected>} >
@@ -40,7 +48,7 @@ const router = createBrowserRouter(
 )
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>,
+  // </StrictMode>,
 )

@@ -19,7 +19,7 @@ export const adminAddProductController = async(req,res)=>{
         sold
     } = req.body;
     try {
-        console.log("before");
+        console.log("before ",req.files );
         const product_images = [];
         if(req.files && req.files.length>0 ){
             for (const file of req.files) {
@@ -32,12 +32,13 @@ export const adminAddProductController = async(req,res)=>{
             
         }
         }
-        console.log("after")
+        const final_price = Math.round(((price*(100-discount)/100)*(100-extra_discount)/100)+cod_charges);
         const product = new Product({
             owner:admin._id,
             product_name, 
             stock, 
             price, 
+            final_price, 
             discount, 
             extra_discount, 
             cod_charges, 

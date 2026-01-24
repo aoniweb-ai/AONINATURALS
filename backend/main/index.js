@@ -8,6 +8,7 @@ import productRouter from "../routes/product.route.js";
 import adminAuthRouter from "../routes/adminAuth.route.js";
 import adminProductRouter from "../routes/admin.product.route.js";
 import rateLimit from "express-rate-limit"
+import orderRouter from "../routes/order.routes.js";
 
 dotenv.config();
 
@@ -15,9 +16,10 @@ const app = express();
 app.use(cors({
     origin:"http://localhost:5173", // will use in .env
     credentials:true,
-    methods:["post","delete","get","put"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     // allowedHeaders: ["Content-Type", "Authorization"],
 }))
+
 app.use(cookieParser());
 app.use(express.json({
     limit:"20mb"
@@ -31,11 +33,12 @@ const limiter = rateLimit({
         message: "Too many requests, try again later"
     }
 })
-app.use('/api',limiter);
+// app.use('/api',limiter);
 
 
 app.use("/api/auth",authRouter);
 app.use("/api/product",productRouter);
+app.use("/api/orders",orderRouter);
 
 app.use("/api/admin/auth",adminAuthRouter);
 app.use("/api/admin/product",adminProductRouter);

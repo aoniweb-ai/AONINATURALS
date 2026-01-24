@@ -1,13 +1,29 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import { useForm } from "react-hook-form";
+import useUserBear from "../../../store/user.store";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const {register, handleSubmit} = useForm()
+  const {userLogin} = useUserBear(state=>state);
+  const navigate = useNavigate();
+
+  const loginHandler = async(data)=>{
+    try {
+      await userLogin(data);
+      navigate('/');
+    } catch (error) {
+      toast.error(error)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
       <div className="card w-full max-w-md bg-base-100 shadow-xl">
-        <div className="card-body space-y-5">
+        <form onSubmit={handleSubmit(loginHandler)} className="card-body space-y-5">
 
           {/* Header */}
           <div className="text-center space-y-2">
@@ -23,12 +39,13 @@ const UserLogin = () => {
           {/* Email / Phone */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text font-medium">Email or Phone</span>
+              <span className="label-text font-medium">Email</span>
             </label>
             <input
-              type="text"
+              type="email"
               placeholder="Enter email or phone number"
               className="input input-bordered w-full"
+              {...register("email",{required:true})}
             />
           </div>
 
@@ -38,11 +55,12 @@ const UserLogin = () => {
               <span className="label-text font-medium">Password</span>
             </label>
 
-            <div className="relative">
+            <div  >
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
                 className="input input-bordered w-full pr-12"
+                {...register("password",{required:true})}
               />
               <button
                 type="button"
@@ -78,7 +96,7 @@ const UserLogin = () => {
             </span>
           </p>
 
-        </div>
+        </form>
       </div>
     </div>
   );
