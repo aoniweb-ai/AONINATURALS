@@ -16,6 +16,7 @@ const useUserBear = create((set,get)=>({
     },
     userLogin : async(data)=>{
         try {
+            console.log("aya ",userAxios.defaults.baseURL)
             const response = await userAxios.post("/auth/login",data);
             set({user:response.data?.user}); 
         } catch (error) {

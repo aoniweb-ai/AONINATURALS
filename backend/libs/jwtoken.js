@@ -6,6 +6,6 @@ export const createJSONToken = (res,value,role=null)=>{
         maxAge:86400000*7, // 7 days
         httpOnly:true,
         secure:process.env.PRODUCTION!='DEVELOPMENT',
-        sameSite:'Lax'
+        sameSite:'none'
     })
 }
