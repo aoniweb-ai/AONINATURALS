@@ -62,6 +62,10 @@ const AddUpdateProduct = () => {
         formData.append("product_images", img);
       });
 
+      if(editProduct){
+        formData.append("product_id", editProduct._id);
+      }
+
       await adminProduct_addUpdate(formData);
     } catch (error) {
       console.log("error ", error);

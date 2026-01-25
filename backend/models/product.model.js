@@ -52,7 +52,7 @@ const productSchema = new mongoose.Schema({
         type:Boolean,
         required:true
     },
-    buyer:[{
+    buyers:[{
         type:mongoose.Types.ObjectId,
         ref:"User"
     }]

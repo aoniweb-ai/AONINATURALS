@@ -13,11 +13,15 @@ const orderSchema = mongoose.Schema({
         product:{
         type:mongoose.Types.ObjectId,
         ref:"Product"
-    },
-    quantity:{
-        type:Number,
-        required:true
-    }   
+        },
+        quantity:{
+            type:Number,
+            required:true
+        }, 
+        price:{
+            type:Number,
+            required:true
+        }   
     }],
     total_price:{
         type:Number,
@@ -31,9 +35,9 @@ const orderSchema = mongoose.Schema({
     },
     payment_status:{
         type:String,
-        enum:["not","done"],
+        enum:["pending","paid","cancelled"],
         required:true,
-        default:"not"
+        default:"cancelled"
     },
     payment_method:{
         type:String,

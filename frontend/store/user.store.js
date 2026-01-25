@@ -1,9 +1,12 @@
 import { create } from "zustand";
 import { userAxios } from "../AxiosApi/axiosInstance";
 
-const useUserBear = create((set)=>({
+const useUserBear = create((set,get)=>({
     user:null,
+    orders:null,
+    product:null,
     products:null,
+    setProduct: val=>set({product:val}),
     userSignup : async(data)=>{
         try {
             await userAxios.post("/auth/signup",data);     
@@ -46,9 +49,8 @@ const useUserBear = create((set)=>({
     userGetaProduct : async(id)=>{
         try {
             const response = await userAxios.get(`/product/product/${id}`);
-            set({selectedProduct:response.data?.product})
+            set({product:response.data?.product})
             return response.data?.product
-
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
@@ -57,6 +59,7 @@ const useUserBear = create((set)=>({
         try {
             const response = await userAxios.put(`/product/updatecart/${data.id}/${data.quantity}`)
             set({user:response.data?.user});
+            console.log("cart add user ",response.data?.user)
             return response.data?.user
         } catch (error) {
             throw error.response?.data?.message || error.message;
@@ -77,6 +80,25 @@ const useUserBear = create((set)=>({
           razorpay_payment_id: res.razorpay_payment_id,
           razorpay_signature: res.razorpay_signature,
         });
+            set({user:response.data?.user});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    userGetOrders : async()=>{
+        try {
+            const response = await userAxios.get(`/orders/getorders`);
+            console.log("orders getted ",response.data?.orders);
+            set({orders:response.data?.orders})
+            return response.data?.orders
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    userRemoveCartItem : async(id)=>{
+        try {
+            const response = await userAxios.put(`/product/remove-product/${id}`);
+            console.log("remove hone ke naad user ",response.data?.user)
             set({user:response.data?.user});
         } catch (error) {
             throw error.response?.data?.message || error.message;

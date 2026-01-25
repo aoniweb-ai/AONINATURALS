@@ -2,24 +2,22 @@ import { Plus, Pencil, Trash2, Package, Menu } from "lucide-react";
 import AddUpdateProduct from "../components/AddUpdateProduct";
 import useAdminBear from "../../../store/admin.store";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 
 const AdminProduct = () => {
   const { adminGetproducts, products, setEditProduct } = useAdminBear(
     (state) => state,
   );
+  const navigate = useNavigate();
   useEffect(() => {
     adminGetproducts();
-  }, []);
+  }, [adminGetproducts]);
 
   return (
-    <div className="drawer-content flex flex-col gap-6 min-h-screen p-2">
+    <div className="p-3 flex flex-col gap-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="flex-none lg:hidden">
-          <label htmlFor="admin-drawer" className="btn btn-ghost btn-square">
-            <Menu />
-          </label>
-        </div>
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Package /> Products
         </h2>
@@ -39,67 +37,51 @@ const AdminProduct = () => {
                   <th>Image</th>
                   <th>Name</th>
                   <th>Price</th>
+                  <th>Discount</th>
+                  <th>Extra Discount</th>
+                  <th>Price</th>
                   <th>Stock</th>
                   <th>Status</th>
-                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {products?.map((item) => (
-                  <tr key={item?.product_name}>
+                  <tr
+                    onClick={() =>
+                      navigate(`/admin/products/details/${item._id}`)
+                    }
+                    className="cursor-pointer hover:bg-base-200"
+                    key={item?.product_name}
+                  >
                     <td>
                       <div className="avatar">
-                        <div className="w-12 rounded bg-base-200"></div>
+                        <div className="w-12 rounded bg-base-200">
+                          <img
+                            src={getCloudinaryImage(item?.product_images[0].secure_url, {
+                              width: 200,
+                              quality: 20,
+                            })}
+                            alt={item.product_name}
+                            className="rounded-xl bg-gray-100"
+                          />
+                        </div>
                       </div>
                     </td>
                     <td>{item?.product_name}</td>
                     <td>{item?.price}</td>
+                    <td>{item?.discount || 0}%</td>
+                    <td>{item?.extra_discount || 0}%</td>
+                    <td>{item?.final_price}</td>
                     <td>{item?.stock}</td>
                     <td>
-                      {item?.stock > 0 && !item.sold ? (
+                      {item?.stock > 0 && !item?.sold ? (
                         <span className="badge badge-success">Active</span>
                       ) : (
                         <span className="badge badge-error">Not Active</span>
                       )}
                     </td>
-                    <td className="text-right space-x-2">
-                      <label
-                        onClick={() => {
-                          setEditProduct(item);
-                        }}
-                        htmlFor="add_update_modal"
-                        className="btn btn-sm btn-outline"
-                      >
-                        <Pencil size={16} />
-                      </label>
-                      <button className="btn btn-sm btn-error btn-outline">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
                   </tr>
                 ))}
-
-                {/* <tr>
-                  <td>
-                    <div className="avatar">
-                      <div className="w-12 rounded bg-base-200"></div>
-                    </div>
-                  </td>
-                  <td>Onion Hair Oil</td>
-                  <td>₹1,299</td>
-                  <td>40</td>
-                  <td>
-                    <span className="badge badge-warning">Low Stock</span>
-                  </td>
-                  <td className="text-right space-x-2">
-                    <button className="btn btn-sm btn-outline">
-                      <Pencil size={16} />
-                    </button>
-                    <button className="btn btn-sm btn-error btn-outline">
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr> */}
               </tbody>
             </table>
           </div>

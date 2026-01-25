@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import useUserBear from "../../../store/user.store";
-
+import { useNavigate } from "react-router-dom";
 const UserSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const {userSignup, UserLogin} = useUserBear(state=>state);
+  const {userSignup, userLogin} = useUserBear(state=>state);
+  const [loader, setLoader] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -31,10 +33,14 @@ const UserSignup = () => {
 
   const signupHandler = async (data) => {
     try {
+      setLoader(true)
       await userSignup(data);
-      await UserLogin(data)
+      await userLogin(data)
+      navigate("/");
     } catch (error) {
       console.log("error ",error);
+    } finally{
+      setLoader(false)
     }
   };
 
@@ -163,8 +169,8 @@ const UserSignup = () => {
           </div>
 
           {/* Submit */}
-          <button type="submit" className="btn btn-primary w-full">
-            Sign Up
+          <button className={`btn ${loader ? "cursor-progress" : 'cursor-pointer'} btn-primary w-full`}>
+            {loader ? 'Signing...' : 'Sign up'} {loader && (<span className="loading loading-spinner loading-xs"></span>)}
           </button>
 
           {/* Footer */}

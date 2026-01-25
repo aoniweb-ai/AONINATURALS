@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import CenterLoader from "../../../components/CenterLoader";
 
 const UserCart = () => {
-  const { user, userAddToCart, userCreateOrder, userVerifyPayment } =
+  const { user, userAddToCart, userCreateOrder, userVerifyPayment, userRemoveCartItem } =
     useUserBear((state) => state);
   const [subtotal, setSubtotal] = useState(0);
   const [loader, setLoader] = useState(false);
@@ -23,14 +23,9 @@ const UserCart = () => {
     setTotalDiscount(0);
     setCodCharges(0);
     setValue([]);
-    user.cart?.map((item) => {
-      console.log(
-        "item item ",
-        item.product.final_price,
-        item.value,
-        item.product.final_price * item.value,
-      );
-      if (user) {
+    user?.cart?.map((item) => {
+      console.log("inside cal ",user)
+      if((item.product.stock>0 && !item.product.sold)){
         setSubtotal((prev) => prev + item.product.price * item.value);
         setTotal((prev) => prev + item.product.final_price * item.value);
         setTotalDiscount(
@@ -40,7 +35,7 @@ const UserCart = () => {
         setValue((prev) => [...prev, item.value]);
       }
     });
-    console.log("user in cart ", user);
+    console.log("after cal ",user)
   }, [user]);
 
   const updateTheCart = async (num, product_id) => {
@@ -89,9 +84,14 @@ const UserCart = () => {
       },
     };
 
+
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
+  const removeCartItem = (id)=>{
+    userRemoveCartItem(id);
+  }
 
   return !loader ? (
     <section className="bg-gray-50 min-h-screen">
@@ -100,12 +100,13 @@ const UserCart = () => {
 
         <div className="grid lg:grid-cols-3 gap-10">
           {/* CART ITEMS */}
-          <div className="lg:col-span-2 space-y-6">
-            {user.cart.map((item, index) => {
+          <div className="lg:col-span-2 space-y-6 ">
+            {user?.cart?.map((item, index) => {
               return (
+                item && 
                 <div
                   key={item._id}
-                  className="bg-white rounded-2xl p-4 sm:p-6 flex gap-4 items-center"
+                  className={`rounded-2xl ${(item.product.stock>0 && !item.product.sold) ? 'bg-success-content' : 'bg-error-content'} p-4 sm:p-6 flex gap-4  items-center`}
                 >
                   <img
                     src={
@@ -153,13 +154,14 @@ const UserCart = () => {
                     )}
 
                     {/* QTY */}
+                    {(item.product.stock==0 && item.product.sold) && 
                     <div className="flex items-center gap-3 mt-3">
                       <button
                         onClick={() => {
-                          const incr = value[index] - 1;
-                          if (incr >= 0) {
+                          const decr = value[index] - 1;
+                          if (decr >= 0) {
                             const arr = value;
-                            arr.splice(index, 1, incr);
+                            arr.splice(index, 1, decr);
                             setValue((prev) => [...prev]);
                           }
                         }}
@@ -168,7 +170,7 @@ const UserCart = () => {
                         <Minus size={16} />
                       </button>
 
-                      <span className="w-8 text-center">{value[index]}</span>
+                      <span className="w-8 text-center">{value[index] || 0}</span>
 
                       <button
                         onClick={() => {
@@ -182,13 +184,16 @@ const UserCart = () => {
                         <Plus size={16} />
                       </button>
                     </div>
+                    }
                   </div>
 
-                  <button className="text-red-500 hover:text-red-600">
+                  <button
+                    onClick={()=>removeCartItem(item._id)}
+                  className="text-red-500 hover:text-red-600 cursor-pointer">
                     <Trash2 size={20} />
                   </button>
 
-                  {cartUpdate_loader ? (
+                  {(item.product.stock>0 && !item.product.sold) && (cartUpdate_loader ? (
                     <button className="btn btn-ghost">
                       <span className="loading loading-dots loading-xl"></span>
                     </button>
@@ -204,7 +209,7 @@ const UserCart = () => {
                     >
                       update cart
                     </button>
-                  )}
+                  ))}
                 </div>
               );
             })}

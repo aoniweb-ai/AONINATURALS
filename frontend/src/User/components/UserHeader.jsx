@@ -66,7 +66,7 @@ const UserHeader = () => {
     },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname.includes(path);
 
   // mobile drawer close
   const closeDrawer = () => {
@@ -112,7 +112,7 @@ const UserHeader = () => {
                 btn btn-ghost justify-start gap-3 relative
                 ${collapsed ? "px-3" : ""}
                 ${
-                  isActive(routes[0].path)
+                  location.pathname === routes[0].path
                     ? "bg-primary text-primary-content"
                     : "hover:bg-base-200"
                 }
@@ -135,7 +135,7 @@ const UserHeader = () => {
                 btn btn-ghost justify-start gap-3 relative
                 ${collapsed ? "px-3" : ""}
                 ${
-                  location.pathname.includes(val.path)
+                  isActive(val.path)
                     ? "bg-primary text-primary-content"
                     : "hover:bg-base-200"
                 }

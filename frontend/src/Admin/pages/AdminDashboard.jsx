@@ -4,19 +4,10 @@ import {
 } from "lucide-react";
 const AdminDashboard = () => {
   return (
-    <div className="drawer-content flex flex-col min-h-screen">
+    <>
 
         {/* Navbar */}
         <div className="navbar bg-base-100 shadow px-4 lg:px-6">
-          <div className="flex-none lg:hidden">
-            <label
-              htmlFor="admin-drawer"
-              className="btn btn-ghost btn-square"
-            >
-              <Menu />
-            </label>
-          </div>
-
           <div className="flex-1">
             <h2 className="text-xl font-bold">Admin Dashboard</h2>
           </div>
@@ -114,7 +105,7 @@ const AdminDashboard = () => {
           </div>
 
         </main>
-      </div>
+      </>
   )
 }
 

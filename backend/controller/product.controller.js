@@ -48,7 +48,7 @@ export const updateCartController = async(req,res)=>{
             const newUser = await user.save();
             const popUser = await User.findById(newUser._id).populate({
             path: "cart.product",
-            select: "product_name cod_charges price final_price discount extra_discount product_images",
+            select: "product_name cod_charges stock sold price final_price discount extra_discount product_images",
         });
             return res.status(200).json({success:true,message:"item added Successfully",user:popUser})
         }
@@ -61,7 +61,7 @@ export const updateCartController = async(req,res)=>{
         const newUser = await user.save();
         const popUser = await User.findById(newUser._id).populate({
             path: "cart.product",
-            select: "product_name cod_charges price final_price discount extra_discount product_images",
+            select: "product_name cod_charges stock sold price final_price discount extra_discount product_images",
         });
         return res.status(200).json({success:true,message:"item added Successfully",user:popUser})
 
@@ -70,5 +70,29 @@ export const updateCartController = async(req,res)=>{
     } catch (error) {
         console.log("error while update cart ",error)
         return res.status(500).json({success:false,message:"Updation error"})
+    }
+}
+
+export const removeCartItemController = async(req,res)=>{
+    const user = req.user;
+    try {
+        const {id} = req.params;
+        const newUser = await User.findOneAndUpdate(
+        { _id: user._id },
+        {
+            $pull: {
+            cart: { _id: id },
+            },
+        },
+        { new: true } 
+        );
+
+        if(!newUser) return res.status(400).json({success:false,message:"Invalid credentials"});
+
+        return res.status(200).json({success:true,message:"Successfully removed item",user:newUser});
+        
+    } catch (error) {
+        console.log("error while remove from cart ",error)
+        return res.status(500).json({success:false,message:"Cart updation error"})
     }
 }

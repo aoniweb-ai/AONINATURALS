@@ -21,6 +21,8 @@ import UserProduct from './User/pages/UserProduct.jsx';
 import ProductDetails from './User/components/ProductDetails.jsx';
 import UserCart from './User/pages/UserCart.jsx';
 import UserOrders from './User/pages/UserOrders.jsx';
+import AdminOrders from './Admin/pages/AdminOrders.jsx';
+import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,8 +42,8 @@ const router = createBrowserRouter(
         <Route path='signup' element={<AdminSignup/>}/>
         <Route path='dashboard' element={<AdminAuthenticate><AdminDashboard/></AdminAuthenticate>}/>
         <Route path='products' element={<AdminAuthenticate><AdminProduct/></AdminAuthenticate>}/>
-        <Route />
-        <Route />
+        <Route path='products/details/:id' element={<AdminAuthenticate><AdminProductDetails/></AdminAuthenticate>}/>
+        <Route path='orders' element={<AdminAuthenticate><AdminOrders/></AdminAuthenticate>}/>
       </Route>
     </>
   )

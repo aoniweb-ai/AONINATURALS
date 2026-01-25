@@ -14,9 +14,8 @@ export const logoutController = async(req,res)=>{
 }
 
 export const loginController = async(req,res)=>{
-    try {
-        const email = req.body?.email;
-        const password = req.body?.password; 
+    const {email, password} = req.body;
+    try { 
         if(!email || !password) return res.status(400).json({message:"Bad Request"});
         
         const user = await User.findOne({email}).select("+password");
@@ -36,10 +35,8 @@ export const loginController = async(req,res)=>{
     }
 }
 export const signupController = async(req,res)=>{
+    const {email, password, phone} = req.body
     try {
-        const email = req.body?.email
-        const password = req.body?.email
-        const phone = data?.email
         if(!email || !password || String(phone).length!=10) return res.status(400).json({message:"Bad Request"});
 
         const preUser = await User.findOne({phone});
@@ -64,7 +61,7 @@ export const getUserController = async(req,res)=>{
     try {
         const popUser = await User.findById(user._id).populate({
             path: "cart.product",
-            select: "product_name price final_price discount cod_charges extra_discount product_images",
+            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
         });
         res.status(200).json({success:true,message:"successfully getted user",user:popUser})
     } catch (error) {

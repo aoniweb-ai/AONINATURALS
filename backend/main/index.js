@@ -9,6 +9,7 @@ import adminAuthRouter from "../routes/adminAuth.route.js";
 import adminProductRouter from "../routes/admin.product.route.js";
 import rateLimit from "express-rate-limit"
 import orderRouter from "../routes/order.routes.js";
+import adminOrderRouter from "../routes/admin.order.route.js";
 
 dotenv.config();
 
@@ -27,13 +28,13 @@ app.use(express.json({
 app.use(express.urlencoded({limit:"10kb"}));
 const limiter = rateLimit({
     windowMs:15 * 60 * 1000,
-    limit:100,
+    limit:200,
     message: {
         success: false,
         message: "Too many requests, try again later"
     }
 })
-// app.use('/api',limiter);
+app.use('/api',limiter);
 
 
 app.use("/api/auth",authRouter);
@@ -42,6 +43,7 @@ app.use("/api/orders",orderRouter);
 
 app.use("/api/admin/auth",adminAuthRouter);
 app.use("/api/admin/product",adminProductRouter);
+app.use("/api/admin/orders",adminOrderRouter);
 
 
 const PORT = process.env.PORT;

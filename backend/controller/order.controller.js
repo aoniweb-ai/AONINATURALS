@@ -1,30 +1,37 @@
 import razorpay from "../libs/razorpay.js";
 import crypto from "crypto";
 import Order from "../models/order.model.js";
+import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 export const createOrderController = async (req, res) => {
     const {_id} = req.user;
   try {
     const user = await User.findById(_id).populate({
         path: "cart.product",
-        select: "product_name price final_price discount cod_charges extra_discount product_images",
+        select: "product_name price stock sold final_price discount cod_charges extra_discount product_images",
     });
     const cart = user.cart;
+    console.log(cart)
     if(cart.length==0) return res.status(401).json({message:"Invalid cart items"});
 
     let amount = 0;
     let product_ids = [];
 
     cart?.map((item)=>{
+      if(item.product.stock>0 && !item.product.sold){
         amount += Math.round(Math.round(item.product.final_price)*item.value);
+      }
     })
 
     cart?.map((item)=>{
+      if(item.product.stock>0 && !item.product.sold){
         const obj ={
             product:item.product._id,
-            quantity:item.value
+            quantity:item.value,
+            price:item.product.final_price*item.value
         }
-        product_ids.push(obj)  
+        product_ids.push(obj)
+      }
     })
 
     const order = await razorpay.orders.create({
@@ -81,8 +88,14 @@ export const verifyPaymentController = async (req, res) => {
       });
     }
 
-    const order = await Order.findOneAndUpdate({order_id:razorpay_order_id},{payment_status:"done"});
+    const order = await Order.findOneAndUpdate({order_id:razorpay_order_id},{payment_status:"paid"});
     await order.save();
+    const productIds = user.cart.map(item=>item.product)
+    console.log("product ids ",productIds)
+    await Product.updateMany(
+      { _id: { $in: productIds } },     // 👈 find all cart products
+      { $addToSet: { buyers: user._id } } // 👈 add user only once
+    );
 
     user.cart = []
     await user.save();
@@ -90,7 +103,7 @@ export const verifyPaymentController = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Payment verified",
-      user
+      user,
     });
   } catch (error) {
     console.log("error while verifying payment ",error);
@@ -101,3 +114,24 @@ export const verifyPaymentController = async (req, res) => {
   }
 };
 
+
+export const getUserOrders = async(req,res)=>{
+  const user = req.user;
+  try {
+    const orders = await Order.find({ user: user._id })
+    .populate({
+      path: "product.product",
+      select: "product_name product_images final_price",
+    })
+    .sort({ createdAt: -1 });
+    if(!orders) res.status(400).json({success:false,message:"Orders error"});
+
+    return res.status(200).json({success:true,message:"successfully fetch orders",orders});
+
+  } catch (error) { 
+    res.status(500).json({
+      success: false,
+      message: "Orders error",
+    });
+  }
+}

@@ -9,7 +9,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const uploadToCloudinary = (fileBuffer) => {
+export const uploadToCloudinary = (fileBuffer) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       { folder: "products" },
@@ -23,4 +23,8 @@ const uploadToCloudinary = (fileBuffer) => {
   });
 };
 
-export default uploadToCloudinary
+export const deleteCloudinaryImages = (public_ids=[])=>{
+  public_ids?.map(id=>{
+    cloudinary.uploader.destroy(id);
+  })
+}
