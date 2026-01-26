@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const adminAxios  = axios.create({
-  baseURL: `http://localhost:5005/api/admin`, // will use in .env
+  baseURL: `${import.meta.env.VITE_API_URL}/admin`,
   timeout: 30000,
   // headers: {
   //   "Content-Type":["application/json","multipart/form-data"]
@@ -10,7 +10,7 @@ export const adminAxios  = axios.create({
   responseType: "json"
 });
 export const userAxios  = axios.create({
-  baseURL: "http://localhost:5005/api", // will use in .env
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 30000,
   headers: {
     "Content-Type":"application/json"
