@@ -1,3 +1,4 @@
+import { generateOrderId } from "../libs/generateId.js";
 import { createJSONToken } from "../libs/jwtoken.js";
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
@@ -37,6 +38,7 @@ export const loginController = async(req,res)=>{
 export const signupController = async(req,res)=>{
     try {
         const {email, password, phone} = req.body;
+        const fullname = req.body?.fullname;
         if(!email || !password || String(phone).length<10 ||String(phone).length>12) return res.status(400).json({message:"Bad Request"});
 
         const preUser = await User.findOne({phone});
@@ -46,7 +48,7 @@ export const signupController = async(req,res)=>{
         const salt = await bcrypt.genSalt(10);
         const hashed_password = await bcrypt.hash(password,salt);
 
-        const user = User({email,password:hashed_password,phone});
+        const user = User({fullname:fullname || `user_${generateOrderId()}`,email,password:hashed_password,phone});
         await user.save(); 
         return res.status(201).json({success:true,message:"user created",user});
 
