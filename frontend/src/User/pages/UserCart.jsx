@@ -55,7 +55,7 @@ const UserCart = () => {
       return;
     }
 
-    const response = await userCreateOrder({payment_method:"cod"});
+    const response = await userCreateOrder({payment_method:"online"});
     const order = response?.order;
     if(response.payment_method=="online"){
       const options = {
