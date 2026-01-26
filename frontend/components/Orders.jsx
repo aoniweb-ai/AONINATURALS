@@ -2,6 +2,8 @@ import { Package, ChevronRight } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
 import useAdminBear from "../store/admin.store";
 import toast from "react-hot-toast";
+import { timeAgo } from "../utils/timeAgo";
+import { useNavigate } from "react-router-dom";
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -32,6 +34,7 @@ const getBadgeColor = (status) => {
 
 const Orders = ({ orders = [] }) => {
   const { admin, adminUpdateOrderStatus } = useAdminBear((state) => state);
+  const navigate = useNavigate();
 
   const updateStatus = async (id, value) => {
     try {
@@ -40,6 +43,7 @@ const Orders = ({ orders = [] }) => {
       toast.error(error);
     }
   };
+  
 
   return (
     <section className=" min-h-screen bg-base-200">
@@ -56,11 +60,12 @@ const Orders = ({ orders = [] }) => {
             {orders?.map((order) => (
               <div
                 key={order.order_id}
-                className={` ${order.payment_status == "cancelled" ? "bg-error-content" : "bg-success-content"} rounded-2xl p-5 sm:p-6`}
+                className={` ${(order.payment_status == "cancelled" || order.status == "cancelled") ? "bg-error-content" : "bg-success-content"} rounded-2xl p-5 sm:p-6`}
               >
                 {/* TOP BAR */}
                 <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
                   <div>
+                    <p>{timeAgo(order?.createdAt)}</p>
                     <p className="text-sm text-gray-500">Order ID</p>
                     <p className="font-medium">
                       #{order.order_id.slice(order.order_id.indexOf("_") + 1)}
@@ -94,7 +99,7 @@ const Orders = ({ orders = [] }) => {
                       </option>
                       <option
                         value={"cancelled"}
-                        className="text-green-600 bg-green-100 mt-2 hover:shadow-md"
+                        className="text-red-600 bg-red-100 mt-2 hover:shadow-md"
                       >
                         Cancelled
                       </option>
@@ -160,7 +165,9 @@ const Orders = ({ orders = [] }) => {
                       {order.payment_method}
                     </span>
 
-                    <button className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline">
+                    <button
+                      onClick={()=>navigate(`/admin/orders/details/${order.order_id}`)}
+                    className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline">
                       View Details
                       <ChevronRight size={16} />
                     </button>

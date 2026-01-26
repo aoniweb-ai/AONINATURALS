@@ -23,6 +23,8 @@ import UserCart from './User/pages/UserCart.jsx';
 import UserOrders from './User/pages/UserOrders.jsx';
 import AdminOrders from './Admin/pages/AdminOrders.jsx';
 import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
+import UserAccount from './User/pages/UserAccount.jsx';
+import OrderDetails from './Admin/components/OrderDetails.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +37,7 @@ const router = createBrowserRouter(
         <Route path='products/details/:id' element={<UserAuthenticate><ProductDetails/></UserAuthenticate>}/>
         <Route path='cart' element={<UserAuthenticate><UserCart/></UserAuthenticate>}/>
         <Route path='orders' element={<UserAuthenticate><UserOrders/></UserAuthenticate>}/>
+        <Route path='account' element={<UserAuthenticate><UserAccount/></UserAuthenticate>}/>
       </Route>
 
       <Route path="/admin" element={<AdminProtected><Admin/></AdminProtected>} >
@@ -44,6 +47,7 @@ const router = createBrowserRouter(
         <Route path='products' element={<AdminAuthenticate><AdminProduct/></AdminAuthenticate>}/>
         <Route path='products/details/:id' element={<AdminAuthenticate><AdminProductDetails/></AdminAuthenticate>}/>
         <Route path='orders' element={<AdminAuthenticate><AdminOrders/></AdminAuthenticate>}/>
+        <Route path='orders/details/:order_id' element={<AdminAuthenticate><OrderDetails/></AdminAuthenticate>}/>
       </Route>
     </>
   )

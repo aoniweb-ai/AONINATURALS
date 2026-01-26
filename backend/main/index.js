@@ -34,6 +34,11 @@ const limiter = rateLimit({
         message: "Too many requests, try again later"
     }
 })
+
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
+
 app.use('/api',limiter);
 
 
@@ -50,6 +55,6 @@ const PORT = process.env.PORT;
 
 mongoose.connect(process.env.DB_URI)
 .then(()=>
-app.listen(PORT,()=>{
+app.listen(PORT, "0.0.0.0",()=>{
     console.log(`running on port ${PORT}`);
 }))

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { userAxios } from "../AxiosApi/axiosInstance";
 
-const useUserBear = create((set,get)=>({
+const useUserBear = create((set)=>({
     user:null,
     orders:null,
     product:null,
@@ -16,7 +16,6 @@ const useUserBear = create((set,get)=>({
     },
     userLogin : async(data)=>{
         try {
-            console.log("aya ",userAxios.defaults.baseURL)
             const response = await userAxios.post("/auth/login",data);
             set({user:response.data?.user}); 
         } catch (error) {
@@ -26,6 +25,22 @@ const useUserBear = create((set,get)=>({
     userGet : async()=>{
         try {
             const response = await userAxios.get("/auth/getuser",);
+            set({user:response.data?.user}); 
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    userProfileUpdate : async(data)=>{
+        try {
+            const response = await userAxios.put("/auth/edit-profile",data);
+            set({user:response.data?.user}); 
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    userAddressUpdate : async(data)=>{
+        try {
+            const response = await userAxios.put("/auth/edit-address",data);
             set({user:response.data?.user}); 
         } catch (error) {
             throw error.response?.data?.message || error.message;
@@ -60,16 +75,18 @@ const useUserBear = create((set,get)=>({
         try {
             const response = await userAxios.put(`/product/updatecart/${data.id}/${data.quantity}`)
             set({user:response.data?.user});
-            console.log("cart add user ",response.data?.user)
             return response.data?.user
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
     },
-    userCreateOrder: async(cart)=>{
+    userCreateOrder: async(data)=>{
         try {
-            const response = await userAxios.post(`/orders/createorder`,{cart});
-            return response.data?.order
+            const response = await userAxios.post(`/orders/createorder`,data);
+            if(response.data?.user){
+                set({user:response.data?.user});
+            }
+            return response.data;
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
@@ -89,7 +106,6 @@ const useUserBear = create((set,get)=>({
     userGetOrders : async()=>{
         try {
             const response = await userAxios.get(`/orders/getorders`);
-            console.log("orders getted ",response.data?.orders);
             set({orders:response.data?.orders})
             return response.data?.orders
         } catch (error) {
@@ -99,7 +115,6 @@ const useUserBear = create((set,get)=>({
     userRemoveCartItem : async(id)=>{
         try {
             const response = await userAxios.put(`/product/remove-product/${id}`);
-            console.log("remove hone ke naad user ",response.data?.user)
             set({user:response.data?.user});
         } catch (error) {
             throw error.response?.data?.message || error.message;

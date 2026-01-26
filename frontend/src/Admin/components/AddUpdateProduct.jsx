@@ -68,7 +68,8 @@ const AddUpdateProduct = () => {
 
       await adminProduct_addUpdate(formData);
     } catch (error) {
-      console.log("error ", error);
+      
+      // console.log("error ", error);
     } finally {
       setLoader(false);
       reset();

@@ -76,14 +76,22 @@ const useAdminBear = create((set,get) => ({
             throw error.response?.data?.message || error.message;
         }
     },
-    adminGetOrders: async()=>{
+    adminGetOrders: async(status)=>{
         try {
-            const response = await adminAxios.get('/orders/getorders');
+            const response = await adminAxios.get(`/orders/getorders/${status}`);
             set({orders:response.data?.orders});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
-    }
+    },
+    adminGetAnOrder: async(order_id)=>{
+        try {
+            const response = await adminAxios.get(`/orders/getan-order/${order_id}`);
+            return response.data?.order
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
 }))
 
 export default useAdminBear;

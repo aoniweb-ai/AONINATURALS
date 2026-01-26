@@ -1,32 +1,45 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const orderSchema = mongoose.Schema({
     order_id:{
         type:String,
-        unique:true
+        unique:true,
+        required:true
+    },
+    address:{
+        type:String,
+        required:true
+    },
+    phone_no:{
+        type:Number,
+        required:true
     },
     user:{
-        type:mongoose.Types.ObjectId,
-        ref:"User"
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
     },
     product:[{
         product:{
-        type:mongoose.Types.ObjectId,
-        ref:"Product"
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Product",
+            required:true
         },
-        quantity:{
+        quantity:{  
             type:Number,
             required:true
         }, 
         price:{
             type:Number,
             required:true
-        }   
+        },
+        cod_charges:Number
     }],
     total_price:{
         type:Number,
-        required:true
+        required:true,
     },
+    cod_charges:Number,
     status:{
         type:String,
         enum:["pending","delivered","shipped","cancelled"],
@@ -42,11 +55,12 @@ const orderSchema = mongoose.Schema({
     payment_method:{
         type:String,
         enum:["cod","online"],
+        required:true,
         default:"online"
     },
     receipt:String
 
-},{Timestamps:true})
+},{timestamps:true})
 
 
 export default mongoose.model("Order",orderSchema);

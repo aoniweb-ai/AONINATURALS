@@ -201,7 +201,7 @@ const ProductDetails = () => {
                 )
               ) : (
                 <div className="mt-10 hidden sm:block text-center">
-                  <span className="text-red-600 font-medium">Out of Stock</span>
+                  <span className="text-red-600 font-medium text-6xl">Out of Stock</span>
                 </div>
               )}
             </div>
@@ -254,7 +254,7 @@ const ProductDetails = () => {
           )
         ) : (
           <div className="mt-10 sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-4 text-center">
-            <span className="text-red-600 font-medium">Out of Stock</span>
+            <span className="text-red-600 text-3xl font-medium">Out of Stock</span>
           </div>
         )}
       </section>

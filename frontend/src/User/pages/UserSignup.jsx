@@ -3,6 +3,7 @@ import { Eye, EyeOff, UserPlus } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import useUserBear from "../../../store/user.store";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 const UserSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const {userSignup, userLogin} = useUserBear(state=>state);
@@ -38,7 +39,7 @@ const UserSignup = () => {
       await userLogin(data)
       navigate("/");
     } catch (error) {
-      console.log("error ",error);
+      toast.error(error);
     } finally{
       setLoader(false)
     }

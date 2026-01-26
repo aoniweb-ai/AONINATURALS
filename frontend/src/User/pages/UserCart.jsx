@@ -24,7 +24,6 @@ const UserCart = () => {
     setCodCharges(0);
     setValue([]);
     user?.cart?.map((item) => {
-      console.log("inside cal ",user)
       if((item.product.stock>0 && !item.product.sold)){
         setSubtotal((prev) => prev + item.product.price * item.value);
         setTotal((prev) => prev + item.product.final_price * item.value);
@@ -35,7 +34,6 @@ const UserCart = () => {
         setValue((prev) => [...prev, item.value]);
       }
     });
-    console.log("after cal ",user)
   }, [user]);
 
   const updateTheCart = async (num, product_id) => {
@@ -57,36 +55,40 @@ const UserCart = () => {
       return;
     }
 
-    const order = await userCreateOrder(user.cart);
+    const response = await userCreateOrder({payment_method:"cod"});
+    const order = response?.order;
+    if(response.payment_method=="online"){
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: "INR",
+        name: "Aoni Naturals",
+        description: "Order Payment",
+        order_id: order.id,
+  
+        handler: async function (res) {
+          try {
+            setLoader(true);
+            await userVerifyPayment(res);
+            toast.success("Payment Successful 🎉");
+          } catch (error) {
+            toast.error(error);
+          } finally {
+            setLoader(false);
+          }
+        },
+  
+        theme: {
+          color: "#000000",
+        },
+      };
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } else if(response.payment_method=="cod"){
+      toast.success("Order placed")
+    }
 
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: "INR",
-      name: "Aoni Naturals",
-      description: "Order Payment",
-      order_id: order.id,
 
-      handler: async function (res) {
-        try {
-          setLoader(true);
-          await userVerifyPayment(res);
-          toast.success("Payment Successful 🎉");
-        } catch (error) {
-          toast.error(error);
-        } finally {
-          setLoader(false);
-        }
-      },
-
-      theme: {
-        color: "#000000",
-      },
-    };
-
-
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
   };
 
   const removeCartItem = (id)=>{
@@ -154,7 +156,7 @@ const UserCart = () => {
                     )}
 
                     {/* QTY */}
-                    {(item.product.stock==0 && item.product.sold) && 
+                    {(item.product.stock!=0 && !item.product.sold) && 
                     <div className="flex items-center gap-3 mt-3">
                       <button
                         onClick={() => {

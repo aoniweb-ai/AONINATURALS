@@ -14,8 +14,8 @@ export const logoutController = async(req,res)=>{
 }
 
 export const loginController = async(req,res)=>{
-    const {email, password} = req.body;
     try { 
+        const {email, password} = req.body;
         if(!email || !password) return res.status(400).json({message:"Bad Request"});
         
         const user = await User.findOne({email}).select("+password");
@@ -35,9 +35,9 @@ export const loginController = async(req,res)=>{
     }
 }
 export const signupController = async(req,res)=>{
-    const {email, password, phone} = req.body
     try {
-        if(!email || !password || String(phone).length!=10) return res.status(400).json({message:"Bad Request"});
+        const {email, password, phone} = req.body;
+        if(!email || !password || String(phone).length<10 ||String(phone).length>12) return res.status(400).json({message:"Bad Request"});
 
         const preUser = await User.findOne({phone});
         if(preUser) return res.status(302).json({message:"User already exist"});
@@ -57,8 +57,8 @@ export const signupController = async(req,res)=>{
     }
 }
 export const getUserController = async(req,res)=>{
-    const user = req.user;
     try {
+        const user = req.user;
         const popUser = await User.findById(user._id).populate({
             path: "cart.product",
             select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
@@ -67,5 +67,40 @@ export const getUserController = async(req,res)=>{
     } catch (error) {
         console.log("error while getting user ",error);
         return res.status(500).json({success:false,message:"Internal server error"})
+    }
+}
+
+export const editProfileController = async(req,res)=>{
+    try {
+        const user = req.user;
+        const {fullname, phone} = req.body;
+        if(!fullname || !phone || String(phone).length<10 ||String(phone).length>12) return res.status(400).json({success:false,message:"Invalid credentials"});
+
+        const updatedUser = await User.findOneAndUpdate({_id:user._id},{fullname,phone},{new:true});
+
+        if(!updatedUser) return res.status(401).json({success:false,message:"Unauthorized"});
+
+        return res.status(200).json({success:true,message:"Profile updated successfully",user:updatedUser});
+
+    } catch (error) {
+        console.log("error while getting user ",error);
+        return res.status(500).json({success:false,message:"Profile updation error"})
+    }
+}
+export const editAddressController = async(req,res)=>{
+    try {
+        const user = req.user;
+        const {address} = req.body;
+        if(!address) return res.status(400).json({success:false,message:"Invalid credentials"});
+
+        const updatedUser = await User.findOneAndUpdate({_id:user._id},{address},{new:true});
+
+        if(!updatedUser) return res.status(401).json({success:false,message:"Unauthorized"});
+
+        return res.status(200).json({success:true,message:"Address updated successfully",user:updatedUser});
+
+    } catch (error) {
+        console.log("error while getting user ",error);
+        return res.status(500).json({success:false,message:"Address updation error"})
     }
 }
