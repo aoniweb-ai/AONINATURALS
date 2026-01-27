@@ -4,8 +4,12 @@ import useAdminBear from "../store/admin.store";
 import AdminHeader from "./Admin/components/AdminHeader";
 import { Menu } from "lucide-react";
 import ScrollToTop from "../components/ScrollToTop";
+import { useEffect } from "react";
 const Admin = () => {
-  const { admin } = useAdminBear((state) => state);
+  const { admin, adminGetproducts } = useAdminBear((state) => state);
+  useEffect(() => {
+    adminGetproducts();
+  }, [adminGetproducts]);
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200">
       <ScrollToTop/>

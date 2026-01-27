@@ -112,6 +112,15 @@ const useUserBear = create((set)=>({
             throw error.response?.data?.message || error.message;
         }
     },
+    userGetOrder : async(order_id)=>{
+        try {
+            const response = await userAxios.get(`/orders/getan-order/${order_id}`);
+            set({orders:response.data?.orders})
+            return response.data?.order
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
     userRemoveCartItem : async(id)=>{
         try {
             const response = await userAxios.put(`/product/remove-product/${id}`);

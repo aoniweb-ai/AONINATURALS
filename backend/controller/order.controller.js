@@ -191,3 +191,26 @@ export const getUserOrders = async (req, res) => {
     });
   }
 }
+
+
+export const getAnOrderContoller = async (req, res) => {
+    try {
+        const { order_id } = req.params;
+        const order = await Order.findOne({ order_id })
+            .populate({
+                path: "user",
+                select: "fullname phone address email"
+            })
+            .populate({
+                path: "product.product",
+                select: "product_name product_images final_price",
+            })
+        if (!order) return res.status(500).json({ success: false, message: "Order fetching failed" });
+
+        return res.status(200).json({ success: true, message: "Successfully orders getted", order });
+
+    } catch (error) {
+        console.log("error while getting orders ", error)
+        return res.status(500).json({ success: false, message: "Orders fetching failed" });
+    }
+}

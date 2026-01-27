@@ -10,7 +10,7 @@ const AdminProtected = ({children}) => {
       async function run() {
         try {
           setLoader(true);
-          await getAdmin()
+          await getAdmin();
         }catch(error){
           toast.error(error)
         }

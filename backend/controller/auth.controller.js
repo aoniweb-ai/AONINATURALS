@@ -19,7 +19,11 @@ export const loginController = async(req,res)=>{
         const {email, password} = req.body;
         if(!email || !password) return res.status(400).json({message:"Bad Request"});
         
-        const user = await User.findOne({email}).select("+password");
+        const user = await User.findOne({email}).select("+password")
+        .populate({
+            path: "cart.product",
+            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+        });
         if(!user) return res.status(401).json({message:"Invalid email or password"});
 
         const validdate = await bcrypt.compare(password,user.password);

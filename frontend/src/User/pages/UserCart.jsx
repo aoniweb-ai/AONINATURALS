@@ -20,19 +20,17 @@ import { useNavigate } from "react-router-dom";
 const UserCart = () => {
   const { user, userAddToCart, userCreateOrder, userVerifyPayment, userRemoveCartItem } = useUserBear((state) => state);
   
-  // State
-  const [mrp, setMrp] = useState(0); // Original Price (Subtotal)
-  const [sellingPrice, setSellingPrice] = useState(0); // Discounted Price
+  const [mrp, setMrp] = useState(0); 
+  const [sellingPrice, setSellingPrice] = useState(0); 
   const [totalDiscountPercent, setTotalDiscountPercent] = useState(0);
   const [codCharges, setCodCharges] = useState(0);
   const [value, setValue] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("online"); // 'online' | 'cod'
+  const [paymentMethod, setPaymentMethod] = useState("online"); 
   
   const [loader, setLoader] = useState(false);
   const [cartUpdate_loader, setCartUpdate_loader] = useState(false);
   const navigate = useNavigate();
 
-  // --- 1. Calculate Cart Totals ---
   useEffect(() => {
     setMrp(0);
     setSellingPrice(0);
@@ -54,13 +52,10 @@ const UserCart = () => {
     });
   }, [user]);
 
-  // --- 2. Dynamic Total Calculation ---
-  // Agar COD hai toh COD charges jodo, warna nahi.
   const finalPayableAmount = paymentMethod === "cod" 
     ? sellingPrice + codCharges 
     : sellingPrice;
 
-  // --- 3. Update Cart Logic ---
   const updateTheCart = async (num, product_id) => {
     try {
       if (num === 0) return toast.error("Quantity cannot be zero");
@@ -74,15 +69,12 @@ const UserCart = () => {
     }
   };
 
-  // --- 4. Checkout Logic ---
   const handleCheckout = async () => {
     try {
       setLoader(true);
 
-      // Create Order with Dynamic Payment Method
       const response = await userCreateOrder({ payment_method: paymentMethod });
       
-      // A. Online Payment (Razorpay)
       if (paymentMethod === "online") {
         const res = await loadRazorpay();
         if (!res) {
@@ -104,7 +96,7 @@ const UserCart = () => {
               toast.success("Payment Successful 🎉");
               navigate('/orders');
             } catch (error) {
-              toast.error(error?.message || "Payment verification failed");
+              toast.error(error || "Payment verification failed");
             }
           },
           theme: { color: "#000000" },
@@ -112,17 +104,20 @@ const UserCart = () => {
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
       
-      // B. COD Payment
       } else if (paymentMethod === "cod") {
          toast.success("Order placed successfully! 🚚");
          navigate('/orders');
       }
 
     } catch (error) {
-      toast.error(error?.message || "Checkout failed");
+      if(error)
+        if(error=="Profile Incompleted"){
+          navigate('/account');
+        }
+      toast.error(error || "Checkout failed");
     } finally {
       if (paymentMethod === "cod") setLoader(false);
-      else setLoader(false); // Razorpay handles its own UI
+      else setLoader(false); 
     }
   };
 

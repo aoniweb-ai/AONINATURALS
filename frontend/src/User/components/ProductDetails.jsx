@@ -72,7 +72,7 @@ const ProductDetails = () => {
   ];
 
   return (
-    <section className="bg-[#fcfcfc] min-h-screen pb-20 font-sans">
+    <section className="bg-[#fcfcfc] min-h-screen pb-20 font-sans w-full">
       {/* --- TOP NAVIGATION --- */}
       <div className="bg-white/70 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
@@ -270,7 +270,6 @@ const ProductDetails = () => {
             ))}
           </div>
 
-          {/* Content Area */}
           <div className="min-h-75 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-3xl font-black text-gray-900 mb-8 capitalize">
               {activeTab.replace('_', ' ')}

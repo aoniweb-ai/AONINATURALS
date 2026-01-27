@@ -8,6 +8,7 @@ const useAdminBear = create((set,get) => ({
     products:null,
     orders:null,
     setCheckAdmin:(value) => set({checkAdmin:value}),
+    setProductNull:() => set({product:null}),
     setEditProduct:(value)=> set({editProduct:value}),
     adminSignup:async(data)=>{
         try {
@@ -90,6 +91,22 @@ const useAdminBear = create((set,get) => ({
         try {
             const response = await adminAxios.get(`/orders/getan-order/${order_id}`);
             return response.data?.order
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminSearchOrder: async(search_id)=>{
+        try {
+            const response = await adminAxios.get(`/orders/search-order/${search_id}`);
+            return response.data
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminGetRevenue: async()=>{
+        try {
+            const response = await adminAxios.get('/orders/total-revenue');
+            return response.data;
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

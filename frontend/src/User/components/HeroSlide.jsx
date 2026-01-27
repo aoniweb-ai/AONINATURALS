@@ -1,4 +1,4 @@
-const HeroSlide = ({ title, desc, btn, img }) => {
+const HeroSlide = ({ title, desc, img }) => {
   return (
     <div className="grid md:grid-cols-2 gap-10 items-center">
 
@@ -12,9 +12,6 @@ const HeroSlide = ({ title, desc, btn, img }) => {
           {desc}
         </p>
 
-        <button className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold">
-          {btn}
-        </button>
       </div>
 
       

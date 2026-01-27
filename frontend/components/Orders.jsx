@@ -173,8 +173,14 @@ const Orders = ({ orders = [] }) => {
                         <p className="text-xl font-black text-gray-900">₹{order.total_price}</p>
                      </div>
                      
-                     {admin && <button
+                     {admin ? <button
                         onClick={() => navigate(`/admin/orders/details/${order.order_id}`)}
+                        className="group flex items-center gap-2 bg-black text-white pl-5 pr-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg shadow-black/10 active:scale-95"
+                     >
+                        Details
+                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform"/>
+                     </button> : <button
+                        onClick={() => navigate(`/orders/details/${order.order_id}`)}
                         className="group flex items-center gap-2 bg-black text-white pl-5 pr-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg shadow-black/10 active:scale-95"
                      >
                         Details

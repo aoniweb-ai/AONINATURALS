@@ -10,25 +10,21 @@ const slides = [
   {
     title: "Strong Hair Starts with Nature 🌿",
     desc: "100% natural hair oil that reduces hair fall.",
-    btn: "Buy Now",
     img: hero_1,
   },
   {
     title: "Say Goodbye to Hair Fall ❌",
     desc: "Clinically tested & trusted formula.",
-    btn: "Shop Now",
     img: hero_2,
   },
   {
     title: "Grow Hair Faster & Stronger 💪",
     desc: "Deep nourishment from roots to tips.",
-    btn: "Order Today",
     img: hero_3,
   },
   {
     title: "Healthy Hair, Naturally ✨",
     desc: "No chemicals. Only real results.",
-    btn: "Get Started",
     img: hero_4,
   },
 ];

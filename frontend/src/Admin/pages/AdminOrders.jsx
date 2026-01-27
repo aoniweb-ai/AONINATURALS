@@ -3,6 +3,7 @@ import Orders from "../../../components/Orders";
 import useAdminBear from "../../../store/admin.store";
 import OrdersSkeleton from "../../../components/OrderSkeleton";
 import { Search } from "lucide-react";
+import toast from "react-hot-toast";
 
 const TABS = ["pending", "shipped", "delivered", "cancelled"];
 
