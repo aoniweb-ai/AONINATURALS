@@ -92,11 +92,14 @@ const UserCart = () => {
           order_id: order.id,
           handler: async function (res) {
             try {
+              setLoader(true)
               await userVerifyPayment(res);
               toast.success("Payment Successful 🎉");
               navigate('/orders');
             } catch (error) {
               toast.error(error || "Payment verification failed");
+            } finally{
+              setLoader(false);
             }
           },
           theme: { color: "#000000" },
@@ -116,8 +119,7 @@ const UserCart = () => {
         }
       toast.error(error || "Checkout failed");
     } finally {
-      if (paymentMethod === "cod") setLoader(false);
-      else setLoader(false); 
+      setLoader(false); 
     }
   };
 

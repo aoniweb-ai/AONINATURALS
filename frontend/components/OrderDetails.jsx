@@ -50,13 +50,15 @@ const OrderDetails = () => {
 
   useEffect(() => {
     if(admin){
-        adminGetAnOrder(order_id)
-          .then((res) => setOrder(res))
-          .catch((err) => toast.error(err));
+      adminGetAnOrder(order_id)
+      .then((res) => setOrder(res))
+      .catch((err) => toast.error(err));
     } else if(user){
-        userGetOrder(order_id)
-        .then((res) => setOrder(res))
-        .catch((err) => toast.error(err));
+      userGetOrder(order_id)
+      .then((res) => {
+        setOrder(res)
+      })
+      .catch((err) => toast.error(err));
     }
   }, [order_id, adminGetAnOrder]);
 

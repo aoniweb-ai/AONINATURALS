@@ -252,7 +252,7 @@ const ProductDetails = () => {
       </div>
 
       {/* --- FULL WIDTH TABS SECTION (Improved for Heavy Data) --- */}
-      <div className="mt-24 bg-white border-t border-gray-100">
+      <div className="mt-24 bg-white border-t  border-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-20">
           <div className="flex flex-wrap justify-center gap-2 md:gap-8 mb-16 border-b border-gray-100 pb-4">
             {tabs.map((tab) => (

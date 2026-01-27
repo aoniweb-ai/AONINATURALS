@@ -30,7 +30,7 @@ export const createOrderController = async (req, res) => {
         const obj = {
           product: item.product._id,
           quantity: item.value,
-          price: item.product.final_price * item.value,
+          price: item.product.final_price,
           cod_charges:item.product.cod_charges
         }
         product_ids.push(obj)
