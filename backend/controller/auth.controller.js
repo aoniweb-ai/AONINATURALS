@@ -78,7 +78,10 @@ export const editProfileController = async(req,res)=>{
         const {fullname, phone} = req.body;
         if(!fullname || !phone || String(phone).length<10 ||String(phone).length>12) return res.status(400).json({success:false,message:"Invalid credentials"});
 
-        const updatedUser = await User.findOneAndUpdate({_id:user._id},{fullname,phone},{new:true});
+        const updatedUser = await User.findOneAndUpdate({_id:user._id},{fullname,phone},{new:true}).populate({
+            path: "cart.product",
+            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+        });
 
         if(!updatedUser) return res.status(401).json({success:false,message:"Unauthorized"});
 
@@ -95,7 +98,10 @@ export const editAddressController = async(req,res)=>{
         const {address} = req.body;
         if(!address) return res.status(400).json({success:false,message:"Invalid credentials"});
 
-        const updatedUser = await User.findOneAndUpdate({_id:user._id},{address},{new:true});
+        const updatedUser = await User.findOneAndUpdate({_id:user._id},{address},{new:true}).populate({
+            path: "cart.product",
+            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+        });
 
         if(!updatedUser) return res.status(401).json({success:false,message:"Unauthorized"});
 

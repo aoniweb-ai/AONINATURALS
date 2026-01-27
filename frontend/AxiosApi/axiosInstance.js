@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const adminAxios  = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/admin`,
+  baseURL: `${import.meta.env.VITE_API_URL}/admin`, // 
   timeout: 30000,
   // headers: {
   //   "Content-Type":["application/json","multipart/form-data"]

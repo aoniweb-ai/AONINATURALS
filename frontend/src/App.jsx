@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import useUserBear from "../store/user.store";
 import CenterLoader from "../components/CenterLoader";
 import { Menu } from "lucide-react";
+import ScrollToTop from "../components/ScrollToTop";
 function App() {
   const [loader, setLoader] = useState(true);
   const { userGet, userGetProduct } = useUserBear((state) => state);
@@ -12,8 +13,8 @@ function App() {
     async function run() {
       try {
         setLoader(true);
-        await userGet();
         await userGetProduct();
+        await userGet();
       }catch(error){
         toast.error(error)
       }finally {
@@ -25,6 +26,7 @@ function App() {
   return (
       !loader ? (
         <div className="drawer lg:drawer-open min-h-screen bg-base-200">
+          <ScrollToTop/>
           <input id="user-drawer" type="checkbox" className="drawer-toggle" />
 
           <UserHeader />

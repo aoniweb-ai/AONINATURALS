@@ -3,7 +3,7 @@ import { aProductController, productController, updateCartController, removeCart
 import { protectedRoute } from "../middleware/protectedRoute.js";
 const productRouter = express.Router();
 
-productRouter.get("/product",protectedRoute,productController);
+productRouter.get("/product",productController);
 productRouter.get("/product/:id",protectedRoute,aProductController);
 productRouter.put("/updatecart/:product_id/:quantity",protectedRoute,updateCartController);
 productRouter.put("/remove-product/:id",protectedRoute,removeCartItemController);

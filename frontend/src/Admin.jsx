@@ -3,10 +3,12 @@ import { Toaster } from "react-hot-toast";
 import useAdminBear from "../store/admin.store";
 import AdminHeader from "./Admin/components/AdminHeader";
 import { Menu } from "lucide-react";
+import ScrollToTop from "../components/ScrollToTop";
 const Admin = () => {
   const { admin } = useAdminBear((state) => state);
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200">
+      <ScrollToTop/>
       <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
 
       {admin && <AdminHeader />}
