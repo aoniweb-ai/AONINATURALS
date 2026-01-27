@@ -122,12 +122,12 @@ const ProductDetails = () => {
             </div>
             
             {/* Thumbnail Navigation */}
-            <div className="flex gap-4 overflow-x-auto py-2 no-scrollbar justify-center">
+            <div className="flex gap-2 overflow-x-auto py-2 no-scrollbar justify-center">
               {product.product_images?.map((img, idx) => (
                 <button
                   key={img.public_id}
                   onClick={() => setSelectedImg(idx)}
-                  className={`relative flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                  className={`relative shrink-0 w-[22%] h-[22%] rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
                     selectedImg === idx 
                     ? "border-black scale-105 shadow-lg" 
                     : "border-transparent opacity-50 hover:opacity-100 shadow-sm"
