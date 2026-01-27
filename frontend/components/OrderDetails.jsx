@@ -118,8 +118,8 @@ const OrderDetails = () => {
         {/* --- HEADER BANNER --- */}
         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-gray-900 tracking-tighter">
+            <div className="flex items-center sm:flex-row flex-col gap-3">
+              <h1 className="sm:text-3xl text-xl font-black  text-gray-900 tracking-tighter">
                 Order #{order.order_id}
               </h1>
               <span
