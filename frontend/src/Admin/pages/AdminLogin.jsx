@@ -16,8 +16,8 @@ const AdminLogin = () => {
       await adminLogin(data);
       navigate('/admin/dashboard');
     } catch (error) {
-      toast.error(error?.data.message)
-      // console.log("error in login ",error?.data.message);
+      toast.error(error)
+      toast.error(error);
     }
   }
 

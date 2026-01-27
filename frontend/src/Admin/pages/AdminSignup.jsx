@@ -23,7 +23,7 @@ const AdminSignup = () => {
       navigate('/admin/dashboard');
       
     } catch (error) {
-      toast.error(error?.data?.message);
+      toast.error(error);
     }
   }
   

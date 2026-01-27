@@ -84,7 +84,8 @@ export const adminAddProductController = async(req,res)=>{
         await product.save();
         return res.status(200).json({message:"successfully added",edit:false,product});
     } catch (error) {
-        console.log("error ",error);
+        console.log("error while creating a product ",error);
+        return res.status(500).json({success:false,message:"Product creation error"})
     }
 }
 
@@ -95,6 +96,7 @@ export const adminGetAllProductsController = async(req,res)=>{
         return res.status(200).json({message:"success",products});
     } catch (error) {
         console.log("error while getting products ",error);
+        return res.status(500).json({success:false,message:"Internal server error"})
     }
 }
 export const adminGetAProductController = async(req,res)=>{
@@ -106,6 +108,7 @@ export const adminGetAProductController = async(req,res)=>{
         if(!product) return res.status(500).json({message:"Internal server error"});
         return res.status(200).json({message:"success",product});
     } catch (error) {
-        console.log("error while getting products ",error);
+        console.log("error while getting a product ",error);
+        return res.status(500).json({success:false,message:"Internal server error"})
     }
 }

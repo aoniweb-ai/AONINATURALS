@@ -16,8 +16,8 @@ const AdminOrders = () => {
   useEffect(() => {
     setLoader(true)
     adminGetOrders(activeTab.toLocaleLowerCase())
-    .then(()=>{
-      
+    .catch((err)=>{
+      toast.error(err);
     })
     .finally(()=>{
       setLoader(false);

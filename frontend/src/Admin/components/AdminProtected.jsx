@@ -12,7 +12,7 @@ const AdminProtected = ({children}) => {
           setLoader(true);
           await getAdmin()
         }catch(error){
-          toast.error(error.data?.message)
+          toast.error(error)
         }
         finally{
           setLoader(false);

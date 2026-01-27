@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import useAdminBear from "../../../store/admin.store";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 const AddUpdateProduct = () => {
   const [step, setStep] = useState(1);
   const [contentStep, setContentStep] = useState(1);
@@ -68,8 +69,7 @@ const AddUpdateProduct = () => {
 
       await adminProduct_addUpdate(formData);
     } catch (error) {
-      
-      // console.log("error ", error);
+      toast.error(error);
     } finally {
       setLoader(false);
       reset();

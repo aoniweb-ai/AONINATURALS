@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2, ArrowLeft, Users, Boxes } from "lucide-react";
 import toast from "react-hot-toast";
@@ -16,7 +16,10 @@ const AdminProductDetails = () => {
   const { adminGetAproduct, setEditProduct, product } = useAdminBear((state) => state);
 
   useEffect(() => {
-    adminGetAproduct(id);
+    adminGetAproduct(id)
+    .catch((err)=>{
+      toast.error(err)
+    })
   }, [adminGetAproduct, id]);
 
   if (!product) {

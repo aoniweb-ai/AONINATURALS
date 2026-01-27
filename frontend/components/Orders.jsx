@@ -39,7 +39,7 @@ const Orders = ({ orders = [] }) => {
       await adminUpdateOrderStatus({ order_id: id, status: value });
       toast.success(`Order status updated to ${value}`);
     } catch (error) {
-      toast.error(error?.message || "Failed to update status");
+      toast.error(error || "Failed to update status");
     }
   };
 

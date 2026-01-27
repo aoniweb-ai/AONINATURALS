@@ -15,10 +15,9 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-    origin:process.env.FRONTEND_URI, // will use in .env 
+    origin:process.env.FRONTEND_URI, 
     credentials:true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    // allowedHeaders: ["Content-Type", "Authorization"],
 }))
 
 app.use(cookieParser());
@@ -35,20 +34,16 @@ const limiter = rateLimit({
     }
 })
 
-app.get("/ping", (req, res) => {
-  res.send("pong");
-});
-
 app.use('/api',limiter);
 
+app.use("/api/admin/auth",adminAuthRouter);
+app.use("/api/admin/product",adminProductRouter);
+app.use("/api/admin/orders",adminOrderRouter);
 
 app.use("/api/auth",authRouter);
 app.use("/api/product",productRouter);
 app.use("/api/orders",orderRouter);
 
-app.use("/api/admin/auth",adminAuthRouter);
-app.use("/api/admin/product",adminProductRouter);
-app.use("/api/admin/orders",adminOrderRouter);
 
 
 const PORT = process.env.PORT;

@@ -19,7 +19,8 @@ export const adminLoginController = async(req,res)=>{
         return res.status(200).json({message:"Login successfully",admin}) 
 
     } catch (error) {
-        
+        console.log("error while admin login",error);
+        return res.status(500).json({success:false,message:"Login error"})
     }
 }
 export const adminSignupController = async(req,res)=>{
@@ -36,7 +37,8 @@ export const adminSignupController = async(req,res)=>{
         return res.status(200).json({message:"Signup successfully",admin}) 
 
     } catch (error) {
-        
+        console.log("error while admin signup",error);
+        return res.status(500).json({success:false,message:"Signup error"})
     }
 }
 
@@ -46,13 +48,15 @@ export const adminLogoutController = async(req,res)=>{
         req.admin = undefined;
         return res.status(200).json({message:"Logout successfully"})
     } catch (error) {
-        console.log("error",error)
+        console.log("error while admin logout",error);
+        return res.status(500).json({success:false,message:"Logout error"})
     }
 }
 export const adminGetController = async(req,res)=>{
     try {
         return res.status(200).json({message:"admin successfully getted",admin:req.admin});
     } catch (error) {
-        console.log("admin getting error");
+        console.log("error while getting admin",error);
+        return res.status(500).json({success:false,message:"Internal server error"})
     }
 }

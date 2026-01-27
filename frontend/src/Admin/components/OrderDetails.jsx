@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAdminBear from "../../../store/admin.store";
 import OrdersSkeleton from "../../../components/OrderSkeleton";
+import toast from "react-hot-toast";
 
 const statusColor = (status) => {
   switch (status) {
@@ -29,9 +30,12 @@ const OrderDetails = () => {
     useEffect(()=>{
         adminGetAnOrder(order_id)
         .then((res)=>{
-            // console.log("resposne aa ",res);
             setOrder(res)
         })
+        .catch((err)=>{
+          toast.error(err)
+        })
+        
     },[])
 
   if (!order) return <OrdersSkeleton/>;

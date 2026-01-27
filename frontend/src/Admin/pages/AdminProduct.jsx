@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 
 const AdminProduct = () => {
-  const { adminGetproducts, products, setEditProduct } = useAdminBear(
+  const { adminGetproducts, products } = useAdminBear(
     (state) => state,
   );
   const navigate = useNavigate();
