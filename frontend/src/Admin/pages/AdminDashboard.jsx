@@ -130,9 +130,6 @@ const AdminDashboard = () => {
             </p>
           </div>
           <div className="flex gap-2">
-            {/* <button className="btn btn-sm bg-white border-gray-200 hover:bg-gray-50 text-gray-600 rounded-lg capitalize shadow-sm">
-              <Download size={14} className="mr-1" /> Export Report
-            </button> */}
             <label
               htmlFor="add_update_modal"
               className="btn btn-sm bg-black text-white hover:bg-gray-800 rounded-lg capitalize shadow-lg shadow-black/10"
@@ -145,7 +142,7 @@ const AdminDashboard = () => {
         {/* --- STATS GRID --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Sales */}
-          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+          <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-all">
                 <TrendingUp size={24} />
@@ -162,7 +159,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Orders */}
-          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+          <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
                 <ShoppingBag size={24} />
@@ -180,7 +177,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Customers */}
-          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+          <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-all">
                 <Users size={24} />
@@ -196,7 +193,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Products */}
-          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+          <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-all">
                 <Package size={24} />
@@ -208,7 +205,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* --- RECENT ORDERS TABLE --- */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 className="text-xl font-bold text-gray-900">Recent Orders</h3>
@@ -216,9 +213,6 @@ const AdminDashboard = () => {
                 Manage and track your latest transactions
               </p>
             </div>
-            {/* <button className="btn btn-ghost btn-sm text-gray-500 hover:bg-gray-50 rounded-lg">
-              <Filter size={16} className="mr-2" /> Filter
-            </button> */}
           </div>
 
           <div className="overflow-x-auto">

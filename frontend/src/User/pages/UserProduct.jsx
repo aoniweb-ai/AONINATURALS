@@ -194,7 +194,7 @@ const ProductSkeletonGrid = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
         <div key={i} className="bg-white p-4 rounded-3xl border border-gray-100 space-y-4">
-          <div className="bg-gray-200 aspect-[4/5] rounded-2xl animate-pulse"></div>
+          <div className="bg-gray-200 aspect-4/5 rounded-2xl animate-pulse"></div>
           <div className="space-y-2">
             <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
             <div className="h-3 bg-gray-200 rounded w-full animate-pulse"></div>

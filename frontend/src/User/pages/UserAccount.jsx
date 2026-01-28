@@ -30,6 +30,7 @@ const UserAccount = () => {
   } = useForm();
   const navigate = useNavigate();
 
+  const [signOutLoader,setSignOutLoader] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
   const [editAddress, setEditAddress] = useState(false);
   const [profileLoader, setProfileLoader] = useState(false);
@@ -429,14 +430,29 @@ const UserAccount = () => {
             {/* Logout Button */}
             <button
               onClick={() => {
-                userLogout();
-                toast.success("Logged out successfully");
-                navigate("/login");
+                setSignOutLoader(true)
+                userLogout()
+                .then(()=>{
+                    navigate("/login");
+                    toast.success("Logged out successfully");
+                })
+                .catch((err)=>{
+                    toast.error(err)
+                })
+                .finally(()=>{
+                    setSignOutLoader(false);
+                })
               }}
-              className="w-full bg-white border border-red-100 text-red-500 font-bold py-4 rounded-3xl flex items-center justify-center gap-2 hover:bg-red-50"
+              disabled={signOutLoader}
+              className={`w-full ${signOutLoader ? 'cursor-not-allowed bg-error text-error-content' : 'bg-white border cursor-pointer border-red-100 text-red-500 hover:bg-red-50'}  font-bold py-4 rounded-3xl flex items-center justify-center gap-2 `}
             >
-              <LogOut size={18} />
-              Sign Out
+              
+              {signOutLoader ? (<span className="loading loading-spinner loading-md"></span>) : (
+                <>
+                    <LogOut size={18} />
+                    Sign out
+                </>
+              )}
             </button>
 
             <p className="text-center text-xs text-gray-300">
