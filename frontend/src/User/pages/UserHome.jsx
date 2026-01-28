@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 
 const UserHome = () => {
-  const { products, userAddToCart } = useUserBear((state) => state);
+  const { products, userAddToCart, user } = useUserBear((state) => state);
   const [loader,setLoader] = useState(false);
   const navigate = useNavigate();
 
@@ -150,7 +150,10 @@ const UserHome = () => {
           {/* View All Button */}
           <div className="flex justify-center pt-10">
             <button 
-              onClick={() => navigate('/products')}
+              onClick={() =>{
+                if(!user) return navigate('/login');
+                 navigate('/products')
+              }}
               className="border-2 border-black text-black px-10 py-3 rounded-full font-bold hover:bg-black hover:text-white transition-colors uppercase tracking-widest text-sm"
             >
               View All Products
