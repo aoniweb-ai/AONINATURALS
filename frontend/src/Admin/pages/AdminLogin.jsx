@@ -9,15 +9,19 @@ const AdminLogin = () => {
   const [showUniqueId, setShowUniqueId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const {adminLogin} = useAdminBear(state=>state);
+  const [loader, setLoader] = useState(false);
 
   const {register, handleSubmit} = useForm()
   const loginSubmit = async(data)=>{
     try {
+      setLoader(true)
       await adminLogin(data);
-      navigate('/admin/dashboard');
+      navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/dashboard`);
     } catch (error) {
       toast.error(error)
       toast.error(error);
+    } finally{
+      setLoader(false)
     }
   }
 
@@ -126,9 +130,9 @@ const AdminLogin = () => {
 
             {/* Submit Button */}
             <div className="form-control mt-6">
-              <button className="btn btn-primary w-full gap-2 text-lg">
+              <button disabled={loader} className="btn btn-primary w-full gap-2 text-lg">
                 <LogIn className="w-5 h-5" />
-                Login
+                Login {loader && <span className="loading loading-spinner loading-sm"></span>}
               </button>
             </div>
 
