@@ -36,9 +36,9 @@ const limiter = rateLimit({
 
 app.use('/api',limiter);
 
-app.use("/api/admin/auth",adminAuthRouter);
-app.use("/api/admin/product",adminProductRouter);
-app.use("/api/admin/orders",adminOrderRouter);
+app.use(`/api/${process.env.ADMIN_POST_URI}/auth`,adminAuthRouter);
+app.use(`/api/${process.env.ADMIN_POST_URI}/product`,adminProductRouter);
+app.use(`/api/${process.env.ADMIN_POST_URI}/orders`,adminOrderRouter);
 
 app.use("/api/auth",authRouter);
 app.use("/api/product",productRouter);

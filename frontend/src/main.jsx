@@ -41,7 +41,7 @@ const router = createBrowserRouter(
         <Route path='orders/details/:order_id' element={<UserAuthenticate><OrderDetails/></UserAuthenticate>}/>
       </Route>
 
-      <Route path="/admin" element={<AdminProtected><Admin/></AdminProtected>} >
+      <Route path={`/${import.meta.env.VITE_ADMIN_POST_URI}`} element={<AdminProtected><Admin/></AdminProtected>} >
         <Route path='login' element={<AdminLogin/>}/>
         <Route path='signup' element={<AdminSignup/>}/>
         <Route path='dashboard' element={<AdminAuthenticate><AdminDashboard/></AdminAuthenticate>}/>

@@ -169,13 +169,12 @@ const UserHeader = () => {
                   }
                 `}
               >
-                {/* ICON LOGIC */}
                 {val.value === "Cart" ? (
                   <CartIconWithBadge
                     count={user?.cart?.length}
                     icon={val.icon}
                   />
-                ) : val.value === "Account" && user && !user.address ? (
+                ) : val.value === "Account" && user && (!user?.address?.address || !user?.address?.state  || !user?.address?.pincode) ? (
                   <AccountNotifyIcon icon={val.icon} />
                 ) : (
                   val.icon

@@ -22,9 +22,9 @@ import CenterLoader from "../../../components/CenterLoader";
 const statusColor = (status) => {
   switch (status) {
     case "pending":
-      return "bg-orange-50 text-orange-500";
+      return "bg-yellow-50 text-yellow-500";
     case "shipped":
-      return "bg-yellow-50 text-yellow-600";
+      return "bg-blue-50 text-blue-600";
     case "delivered":
       return "bg-emerald-50 text-emerald-600";
     case "cancelled":

@@ -6,6 +6,7 @@ const orderSchema = mongoose.Schema({
         unique:true,
         required:true
     },
+    delivery_date:Date,
     address:{
         address:{
             type:String,

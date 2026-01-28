@@ -236,8 +236,8 @@ const UserCart = () => {
 
                       {/* Quantity Controls */}
                       {!isOutOfStock && (
-                        <div className="flex items-center justify-between mt-auto pt-3">
-                          <div className="flex items-center bg-gray-50 rounded-lg p-1 border border-gray-200">
+                        <div className="flex  items-center justify-between mt-auto pt-3">
+                          <div className="flex items-center  bg-gray-50 rounded-lg p-1 border border-gray-200">
                             <button
                               disabled={value[index] <= 1}
                               onClick={() => {
@@ -277,7 +277,7 @@ const UserCart = () => {
                               disabled={cartUpdate_loader}
                               className="text-xs font-bold bg-black text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-all animate-pulse"
                             >
-                              {cartUpdate_loader ? "..." : "Update"}
+                              {cartUpdate_loader ? "..." : "Save"}
                             </button>
                           )}
                         </div>

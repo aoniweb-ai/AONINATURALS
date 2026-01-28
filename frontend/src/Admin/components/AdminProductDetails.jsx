@@ -27,9 +27,7 @@ const AdminProductDetails = () => {
   const navigate = useNavigate();
   const { adminGetAproduct, setEditProduct, product, setProductNull } = useAdminBear((state) => state);
   
-  // Tab state for premium navigation
   const [activeTab, setActiveTab] = useState("Description");
-  // Main image preview state
   const [selectedImg, setSelectedImg] = useState("");
 
   useEffect(() => {
@@ -71,9 +69,6 @@ const AdminProductDetails = () => {
             >
               <Pencil size={16} /> Edit Product
             </label>
-            <button className="flex-1 sm:flex-none btn btn-ghost text-red-500 hover:bg-red-50 rounded-2xl border border-red-50">
-              <Trash2 size={16} /> Delete
-            </button>
           </div>
         </div>
 
@@ -97,7 +92,7 @@ const AdminProductDetails = () => {
                             onClick={() => setSelectedImg(img.secure_url)}
                             className={`w-20 h-20 rounded-2xl cursor-pointer border-2 transition-all p-1 bg-white ${selectedImg === img.secure_url ? 'border-black scale-105 shadow-md' : 'border-transparent opacity-50'}`}
                         >
-                            <img src={getCloudinaryImage(img.secure_url, { width: 150 })} className="w-full h-full object-cover rounded-xl" />
+                            <img src={getCloudinaryImage(img.secure_url, { width: 150, quality:100 })} className="w-full h-full object-cover rounded-xl" />
                         </div>
                     ))}
                 </div>

@@ -72,8 +72,8 @@ const useAdminBear = create((set,get) => ({
     },
     adminUpdateOrderStatus: async(data)=>{
         try {
-            await adminAxios.put("/orders/updateorder",data);
-
+            const response = await adminAxios.put("/orders/updateorder",data);
+            return response.data?.order;
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

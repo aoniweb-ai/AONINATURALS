@@ -2,12 +2,11 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 
 export const adminUpdateStatusController = async (req, res) => {
-    const { order_id, status } = req.body;
     try {
+        const { order_id, status, delivery_date='' } = req.body;
         if (!["delivered", "pending", "shipped", "cancelled"].includes(status)) return res.status(400).json({ success: false, message: "Invalid credentials" });
 
         if (status.toLowerCase() == "cancelled") {
-            console.log("chla chal")
             const order = await Order.findOne({ order_id });
             if (order.status == status) return res.status(401).json({ success: false, message: "Invalid input" })
             const bulkOps = [];
@@ -48,15 +47,24 @@ export const adminUpdateStatusController = async (req, res) => {
             return res.status(200).json({ success: true, message: "Successfully updated", order: updatedOrder });
         }
 
-        const order = await Order.findOne({ order_id });
-        if (order.status == status || order.status == "cancelled") return res.status(401).json({ success: false, message: "Invalid input" })
+        const order = await Order.findOne({ order_id })
+        .populate({
+                path: "user",
+                select: "fullname phone address email"
+            })
+            .populate({
+                path: "product.product",
+                select: "product_name product_images final_price",
+            })
+        if (order.status == "cancelled") return res.status(401).json({ success: false, message: "Invalid input" })
         order.status = status;
         order.payment_status = "paid";
-        const updatedUser = await order.save();
+        order.delivery_date = delivery_date;
+        const updatedOrder = await order.save();
 
-        if (!updatedUser) return res.status(400).json({ success: false, message: "Invalid credentials" });
+        if (!updatedOrder) return res.status(400).json({ success: false, message: "Invalid credentials" });
 
-        return res.status(200).json({ success: true, message: "Successfully updated", order: updatedUser });
+        return res.status(200).json({ success: true, message: "Successfully updated", order: updatedOrder });
 
 
     } catch (error) {

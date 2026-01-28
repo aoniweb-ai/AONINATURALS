@@ -39,51 +39,64 @@ const OrderDetails = () => {
   const { adminGetAnOrder, adminUpdateOrderStatus, admin } = useAdminBear(
     (state) => state,
   );
-  const {userGetOrder, user} = useUserBear(state=>state);
-  const { register, handleSubmit } = useForm();
+  const { userGetOrder, user } = useUserBear((state) => state);
+  const { register, handleSubmit, reset} = useForm();
   const printRef = useRef();
 
   const [order, setOrder] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [updateLoader, setUpdateLoader] = useState(false);
   const { order_id } = useParams();
   const navigate = useNavigate();
 
+  useEffect(()=>{
+    reset({
+      status:order?.status,
+      delivery_date:order?.delivery_date ? new Date(order.delivery_date).toISOString().split('T')[0] : ''
+    })
+  },[order,reset])
+
   useEffect(() => {
-    if(admin){
+    if (admin) {
       adminGetAnOrder(order_id)
-      .then((res) => setOrder(res))
-      .catch((err) => toast.error(err));
-    } else if(user){
+        .then((res) => setOrder(res))
+        .catch((err) => toast.error(err));
+    } else if (user) {
       userGetOrder(order_id)
-      .then((res) => {
-        setOrder(res)
-      })
-      .catch((err) => toast.error(err));
+        .then((res) => {
+          setOrder(res);
+        })
+        .catch((err) => toast.error(err));
     }
   }, [order_id, adminGetAnOrder]);
 
   const onSubmitStatus = async (data) => {
     try {
-      await adminUpdateOrderStatus({
+      setUpdateLoader(true);
+      console.log(data);
+      const res = await adminUpdateOrderStatus({
         order_id: order.order_id,
         status: data.status,
+        delivery_date: data.delivery_date,
       });
+      setOrder(res);
       toast.success(`Order status updated to ${data?.status}`);
     } catch (error) {
       toast.error(error || "Failed to update status");
     } finally {
+      setUpdateLoader(false);
       setOpenModal(false);
     }
   };
 
   const handlePrintInvoice = () => {
-    const original = document.body.innerHTML;
-    const invoiceHTML = printRef.current.innerHTML;
+    const original = document?.body?.innerHTML;
+    const invoiceHTML = printRef?.current?.innerHTML;
 
     document.body.innerHTML = invoiceHTML;
     window.print();
     document.body.innerHTML = original;
-    window.location.reload(); // restore react
+    window.location.reload();
   };
 
   if (!order) return <OrdersSkeleton />;
@@ -106,12 +119,14 @@ const OrderDetails = () => {
             >
               Print Invoice
             </button>
-            {admin && <button
-              onClick={() => setOpenModal(true)}
-              className="btn btn-sm bg-black text-white rounded-xl px-6"
-            >
-              Update Status
-            </button>}
+            {admin && (
+              <button
+                onClick={() => setOpenModal(true)}
+                className="btn btn-sm bg-black text-white rounded-xl px-6"
+              >
+                Update Status
+              </button>
+            )}
           </div>
         </div>
 
@@ -129,8 +144,8 @@ const OrderDetails = () => {
               </span>
             </div>
             <p className="text-gray-400 text-sm flex items-center gap-2">
-              <Calendar size={14} /> {admin && 'Received on'}{user && 'Placed on'}{" "}
-              {formatDateTime(order.createdAt)}
+              <Calendar size={14} /> {admin && "Received on"}
+              {user && "Placed on"} {formatDateTime(order.createdAt)}
             </p>
           </div>
 
@@ -184,13 +199,16 @@ const OrderDetails = () => {
                   {order?.address?.address}
                 </p>
                 <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
-                  <span className="font-bold">STATE</span> : {order?.address?.state}
+                  <span className="font-bold">STATE</span> :{" "}
+                  {order?.address?.state}
                 </p>
                 <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
-                  <span className="font-bold">PINCODE</span> : {order?.address?.pincode}
+                  <span className="font-bold">PINCODE</span> :{" "}
+                  {order?.address?.pincode}
                 </p>
                 <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
-                  <span className="font-bold">LANDMARK</span> : {order?.address?.landmark}
+                  <span className="font-bold">LANDMARK</span> :{" "}
+                  {order?.address?.landmark}
                 </p>
               </div>
             </div>
@@ -248,6 +266,28 @@ const OrderDetails = () => {
                   <Truck size={24} className="opacity-50" />
                 </div>
               </div>
+              <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                <div
+                  className={`p-3 rounded-xl ${order.status === "delivered" ? "bg-green-50 text-green-600" : "bg-blue-50 text-blue-600"}`}
+                >
+                  {order.status === "delivered" ? (
+                    <Truck size={24} />
+                  ) : (
+                    <Calendar size={24} />
+                  )}
+                </div>
+
+                <div className="flex flex-col">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                    {order.status === "delivered"
+                      ? "Delivered On"
+                      : "Estimated Delivery"}
+                  </h3>
+                  <span className="text-lg font-black text-gray-900">
+                    {order?.delivery_date && formatDateTime(order?.delivery_date).slice(0,formatDateTime(order?.delivery_date).indexOf(',')) || "Check later"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -300,7 +340,7 @@ const OrderDetails = () => {
 
           {/* FINAL SUMMARY FOOTER */}
           <div className="bg-gray-50/50 p-8 lg:px-12">
-            <div className="max-w-xs ml-auto space-y-3">
+            <div className="w-full space-y-3">
               <div className="flex justify-between text-sm text-gray-500 font-medium">
                 <span>Order Subtotal</span>
                 <span>₹{order.total_price - (order.cod_charges || 0)}</span>
@@ -320,7 +360,7 @@ const OrderDetails = () => {
           </div>
         </div>
       </div>
-      {(openModal && admin) && (
+      {openModal && admin && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
           <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl">
             <h2 className="text-xl font-black mb-4">Update Order Status</h2>
@@ -344,6 +384,16 @@ const OrderDetails = () => {
                 ),
               )}
 
+              <div>
+                <label htmlFor="delivery_date" className="font-black text-gray-900 uppercase tracking-widest text-xs">Delivery Date : </label>
+                <input
+                  {...register("delivery_date")}
+                  id="delivery_date"
+                  type="date"
+                  className="input mt-3"
+                />
+              </div>
+
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
@@ -352,8 +402,16 @@ const OrderDetails = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-neutral">
-                  Update
+                <button
+                  type="submit"
+                  disabled={updateLoader}
+                  className="btn btn-neutral"
+                >
+                  {updateLoader ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Update"
+                  )}
                 </button>
               </div>
             </form>
@@ -363,7 +421,5 @@ const OrderDetails = () => {
     </section>
   );
 };
-
-
 
 export default OrderDetails;

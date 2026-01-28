@@ -18,37 +18,38 @@ const AdminHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [logoutLoader, setLogoutLoader] = useState(false)
   const routes = [
     {
-      path: "/admin/dashboard",
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/dashboard`,
       value: "Dashboard",
       icon: <LayoutDashboard size={20} />,
     },
     {
-      path: "/admin/products",
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/products`,
       value: "Products",
       icon: <Package size={20} />,
     },
     {
-      path: "/admin/orders",
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/orders`,
       value: "Orders",
       icon: <ShoppingCart size={20} />,
     },
-    {
-      path: "/admin/customers",
-      value: "Customers",
-      icon: <Users size={20} />,
-    },
-    {
-      path: "/admin/analytics",
-      value: "Analytics",
-      icon: <BarChart3 size={20} />,
-    },
-    {
-      path: "/admin/settings",
-      value: "Settings",
-      icon: <Settings size={20} />,
-    },
+    // {
+    //   path: "/admin/customers",
+    //   value: "Customers",
+    //   icon: <Users size={20} />,
+    // },
+    // {
+    //   path: "/admin/analytics",
+    //   value: "Analytics",
+    //   icon: <BarChart3 size={20} />,
+    // },
+    // {
+    //   path: "/admin/settings",
+    //   value: "Settings",
+    //   icon: <Settings size={20} />,
+    // },
   ];
 
   const closeDrawer = () => {
@@ -96,7 +97,7 @@ const AdminHeader = () => {
                 ${collapsed ? "px-3" : ""}
                 ${
                   location.pathname.includes(val.path)
-                    ? "bg-primary text-primary-content"
+                    ? "bg-black text-white"
                     : "hover:bg-base-200"
                 }
               `}
@@ -110,15 +111,22 @@ const AdminHeader = () => {
         {/* LOGOUT */}
         <button
           onClick={() => {
-            adminLogout();
-            navigate("/");
-            closeDrawer();
+            setLogoutLoader(true);
+            adminLogout()
+            .then(()=>{
+              navigate("/");
+            })
+            .finally(()=>{
+              closeDrawer();
+              setLogoutLoader(false)
+            })
           }}
           title={collapsed ? "Logout" : ""}
+          disabled={logoutLoader}
           className={`btn btn-error mt-auto gap-2 ${collapsed ? "px-3" : ""}`}
         >
           <LogOut size={18} />
-          {!collapsed && "Logout"}
+          {!collapsed && "Logout"} {logoutLoader && <span className="loading loading-spinner loading-sm"></span>}
         </button>
       </div>
     </aside>
