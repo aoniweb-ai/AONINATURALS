@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import Hero from "../components/Hero";
 import useUserBear from "../../../store/user.store";
-import { useEffect } from "react";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -19,17 +18,13 @@ const UserHome = () => {
   const { products, userAddToCart } = useUserBear((state) => state);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // console.log("Homepage Loaded");
-  }, [products]);
-
   const handleAddToCart = async (e, id) => {
     e.stopPropagation();
     try {
       await userAddToCart({ id, quantity: 1 });
       toast.success("Added to cart");
     } catch (error) {
-      toast.error("Failed to add");
+      toast.error(error);
     }
   };
 

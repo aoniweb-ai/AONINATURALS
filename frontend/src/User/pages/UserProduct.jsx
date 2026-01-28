@@ -29,7 +29,7 @@ const UserProduct = () => {
       setLoader(true);
       await userGetProduct();
     } catch (error) {
-      toast.error(error.message || "Failed to fetch products");
+      toast.error(error || "Failed to fetch products");
     } finally {
       setLoader(false);
     }
