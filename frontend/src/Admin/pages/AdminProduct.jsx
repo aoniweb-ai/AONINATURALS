@@ -138,7 +138,7 @@ const AdminProduct = () => {
                   {/* Actions */}
                   <td className="pr-8 text-right ">
                     <button
-                      onClick={() => navigate(`/admin/products/details/${item._id}`)}
+                      onClick={() => navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/products/details/${item._id}`)}
                       className="p-2.5 bg-slate-100 cursor-pointer text-slate-600 hover:bg-slate-900 hover:text-white rounded-xl transition-all inline-flex items-center gap-2 group/btn"
                     >
                       <span className="text-xs font-bold px-1 overflow-hidden w-0 group-hover/btn:w-16 transition-all duration-300">View Details</span>
