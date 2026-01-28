@@ -1,9 +1,9 @@
-import { 
-  RefreshCcw, 
-  Search, 
-  ShoppingCart, 
+import {
+  RefreshCcw,
+  Search,
+  ShoppingCart,
   Filter,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useNavigate } from "react-router-dom";
@@ -12,14 +12,16 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
 const UserProduct = () => {
-  const { products, userGetProduct, userAddToCart } = useUserBear((state) => state);
+  const { products, userGetProduct, userAddToCart } = useUserBear(
+    (state) => state,
+  );
   const [loader, setLoader] = useState(false);
-  const [cartLoader, setCartLoader] = useState({}); 
+  const [cartLoader, setCartLoader] = useState({});
   const navigate = useNavigate();
 
-  useEffect(()=>{
+  useEffect(() => {
     userGetProduct();
-  },[userGetProduct])
+  }, [userGetProduct]);
 
   const getProducts = async () => {
     try {
@@ -53,10 +55,47 @@ const UserProduct = () => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
+  if (products.length === 0) {
+    return (
+      <section className="bg-[#f8f9fa] min-h-screen font-sans">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+          <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 gap-6">
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
+                Explore Collection
+              </h1>
+              <p className="text-gray-500 max-w-md text-sm md:text-base leading-relaxed">
+                Premium essentials crafted for your daily routine. Discover the
+                perfect balance of quality and care.
+              </p>
+            </div>
+
+            {/* Action Bar */}
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <button
+                onClick={getProducts}
+                className="bg-white border border-gray-200 p-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm text-gray-600"
+                title="Refresh List"
+              >
+                <RefreshCcw
+                  size={20}
+                  className={loader ? "animate-spin" : ""}
+                />
+              </button>
+              <button className="bg-black text-white p-2.5 rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-black/20">
+                <Filter size={20} />
+              </button>
+            </div>
+          </div>
+          <p className="text-gray-500">No products available.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-[#f8f9fa] min-h-screen font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        
         {/* --- HEADER SECTION --- */}
         <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 gap-6">
           <div className="space-y-2">
@@ -64,22 +103,14 @@ const UserProduct = () => {
               Explore Collection
             </h1>
             <p className="text-gray-500 max-w-md text-sm md:text-base leading-relaxed">
-              Premium essentials crafted for your daily routine. 
-              Discover the perfect balance of quality and care.
+              Premium essentials crafted for your daily routine. Discover the
+              perfect balance of quality and care.
             </p>
           </div>
 
           {/* Action Bar */}
           <div className="flex items-center gap-3 w-full md:w-auto">
-            {/* <div className="relative group w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" size={18} />
-              <input 
-                type="text" 
-                placeholder="Search products..." 
-                className="w-full bg-white border border-gray-200 pl-10 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all shadow-sm"
-              />
-            </div> */}
-            <button 
+            <button
               onClick={getProducts}
               className="bg-white border border-gray-200 p-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm text-gray-600"
               title="Refresh List"
@@ -94,11 +125,12 @@ const UserProduct = () => {
 
         {/* --- PRODUCTS GRID --- */}
         {loader && (!products || products.length === 0) ? (
-           <ProductSkeletonGrid />
+          <ProductSkeletonGrid />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {products?.map((product) => {
-              const hasDiscount = product.discount > 0 || product.price > product.final_price;
+              const hasDiscount =
+                product.discount > 0 || product.price > product.final_price;
               const displayPrice = product.final_price || product.price;
 
               return (
@@ -110,14 +142,17 @@ const UserProduct = () => {
                   {/* Image Container */}
                   <div className="relative aspect-square overflow-hidden rounded-2xl bg-[#f4f4f5] mb-4">
                     <img
-                      src={getCloudinaryImage(product.product_images?.[0]?.secure_url, {
-                        width: 500,
-                        quality:80,
-                      })}
+                      src={getCloudinaryImage(
+                        product.product_images?.[0]?.secure_url,
+                        {
+                          width: 500,
+                          quality: 80,
+                        },
+                      )}
                       alt={product.product_name}
                       className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105 mix-blend-multiply"
                     />
-                    
+
                     {/* Badges */}
                     <div className="absolute top-3 left-3 flex flex-col gap-2">
                       {hasDiscount && (
@@ -133,9 +168,13 @@ const UserProduct = () => {
                     </div>
 
                     {/* Quick Add Button (Visible on Hover/Mobile) */}
-                    <button 
+                    <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      disabled={cartLoader[product._id] || (product.stock <= 0 || product.sold)}
+                      disabled={
+                        cartLoader[product._id] ||
+                        product.stock <= 0 ||
+                        product.sold
+                      }
                       className="absolute bottom-3 right-3 w-10 h-10 bg-white text-black rounded-full flex items-center justify-center shadow-lg translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {cartLoader[product._id] ? (
@@ -153,14 +192,16 @@ const UserProduct = () => {
                         {product.product_name}
                       </h3>
                     </div>
-                    
+
                     <p className="text-xs text-gray-500 mt-1 leading-relaxed h-8">
                       {truncateText(product.description, 55)}
                     </p>
 
                     <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
                       <div className="flex flex-col">
-                        <span className="text-xs text-gray-400 font-medium">Price</span>
+                        <span className="text-xs text-gray-400 font-medium">
+                          Price
+                        </span>
                         <div className="flex items-center gap-2">
                           <span className="text-lg font-black text-gray-900">
                             ₹{Math.round(displayPrice)}
@@ -172,7 +213,7 @@ const UserProduct = () => {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-black group-hover:text-white transition-colors">
                         <ArrowRight size={16} />
                       </div>
@@ -188,12 +229,14 @@ const UserProduct = () => {
   );
 };
 
-// Simple Skeleton Component for better UX
 const ProductSkeletonGrid = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-        <div key={i} className="bg-white p-4 rounded-3xl border border-gray-100 space-y-4">
+        <div
+          key={i}
+          className="bg-white p-4 rounded-3xl border border-gray-100 space-y-4"
+        >
           <div className="bg-gray-200 aspect-4/5 rounded-2xl animate-pulse"></div>
           <div className="space-y-2">
             <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>

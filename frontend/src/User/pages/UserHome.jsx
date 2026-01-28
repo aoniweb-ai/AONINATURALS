@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
+
+
 const UserHome = () => {
   const { products, userAddToCart, user } = useUserBear((state) => state);
   const [loader,setLoader] = useState(false);
@@ -34,6 +36,11 @@ const UserHome = () => {
     } finally{
       setLoader(false);
     }
+  };
+
+  const truncateText = (text, length) => {
+    if (!text) return "";
+    return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
   // Features Data with Icons
@@ -122,7 +129,7 @@ const UserHome = () => {
                   </div>
 
                   <p className="text-gray-500 text-lg leading-relaxed line-clamp-3">
-                    {item?.description}
+                    {truncateText(item?.description, 55)}
                   </p>
 
                   <div className="flex items-center justify-center lg:justify-start gap-4 pt-4">
