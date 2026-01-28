@@ -167,7 +167,7 @@ const ProductDetails = () => {
                 {product.product_name}
               </h1>
               <span className=" badge badge-accent text-accent-content font-bold text-sm">
-                {product.discount }% {product?.extra_discount &&  '+ '+product.extra_discount} OFF
+                {product.discount }% {product?.extra_discount &&  '+ '+product.extra_discount}% OFF
               </span>
             </div>
 
