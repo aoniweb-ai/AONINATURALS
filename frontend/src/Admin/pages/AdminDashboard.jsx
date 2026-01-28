@@ -232,7 +232,7 @@ const AdminDashboard = () => {
                 {recentOrders?.map((item) => (
                   <tr 
                   key={item?.order_id}
-                    onClick={()=>navigate(`/admin/orders/details/${item.order_id}`)}
+                    onClick={()=>navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/orders/details/${item.order_id}`)}
 
                   className="hover:bg-gray-50/50 cursor-pointer transition-colors group">
                     <td className="font-bold text-gray-900 py-4 border-none">
@@ -272,7 +272,7 @@ const AdminDashboard = () => {
           >{recentOrders?.length<=0 && 'No orders here'}</p>
           <div className="p-4 bg-gray-50/50 border-t border-gray-50 text-center">
             <button
-              onClick={()=>navigate('/admin/orders')}
+              onClick={()=>navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/orders`)}
             className="text-xs font-bold text-gray-400 hover:text-black transition-colors">
               View All Transactions
             </button>

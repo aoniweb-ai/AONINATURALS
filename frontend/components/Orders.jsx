@@ -174,7 +174,7 @@ const Orders = ({ orders = [] }) => {
                      </div>
                      
                      {admin ? <button
-                        onClick={() => navigate(`/admin/orders/details/${order.order_id}`)}
+                        onClick={() => navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/orders/details/${order.order_id}`)}
                         className="group flex items-center gap-2 bg-black text-white pl-5 pr-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg shadow-black/10 active:scale-95"
                      >
                         Details

@@ -166,9 +166,9 @@ const ProductDetails = () => {
               <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-[1.1]">
                 {product.product_name}
               </h1>
-              <span className=" badge badge-accent text-accent-content font-bold text-sm">
-                {product.discount }% {product?.extra_discount &&  '+ '+product.extra_discount}% OFF
-              </span>
+              {(product?.extra_discount || product?.discount) && <span className=" badge badge-accent text-accent-content font-bold text-sm">
+                {product?.discount && product?.discount+'%' } {product?.extra_discount &&  '+ '+product.extra_discount+'%'} OFF
+              </span>}
             </div>
 
             {/* Price & Offers */}

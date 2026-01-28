@@ -38,7 +38,7 @@ export const adminAddProductController = async(req,res)=>{
         }
         }
 
-        const final_price = Math.round(((parseInt(price || 0)*(100-parseInt(discount || 0))/100)*(100-parseInt(extra_discount || 0))/100));
+        const final_price = Math.round(((parseInt(price || 0)*(100-parseFloat(discount || 0))/100)*(100-parseFloat(extra_discount || 0))/100));
         console.log("final price value ",final_price,price,discount,extra_discount)
         if(editProduct){
             editProduct.product_name = product_name
