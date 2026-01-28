@@ -73,7 +73,6 @@ const OrderDetails = () => {
   const onSubmitStatus = async (data) => {
     try {
       setUpdateLoader(true);
-      console.log(data);
       const res = await adminUpdateOrderStatus({
         order_id: order.order_id,
         status: data.status,

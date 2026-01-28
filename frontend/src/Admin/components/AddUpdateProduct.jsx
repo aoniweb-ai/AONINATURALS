@@ -150,8 +150,6 @@ const AddUpdateProduct = () => {
 
   // --- SUBMIT HANDLER ---
   const formHandler = async (data) => {
-    // Final check to ensure we are at the end
-    console.log("Submitting Data:", step);
     if (step < 4) return;
 
     try {
