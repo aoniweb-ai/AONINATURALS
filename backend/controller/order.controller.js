@@ -14,7 +14,7 @@ export const createOrderController = async (req, res) => {
     });
     const cart = user.cart;
     if (cart.length == 0) return res.status(401).json({ message: "Invalid cart items" });
-    if (!user.address || !user.phone) return res.status(401).json({ message: "Profile Incompleted" });
+    if (!user?.address?.address || !user?.phone) return res.status(401).json({ message: "Profile Incompleted" });
 
     let amount = 0;
     let product_ids = [];
