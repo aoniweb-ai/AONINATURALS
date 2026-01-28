@@ -27,8 +27,9 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { userGetaProduct, userAddToCart, product, setProduct } =
-    useUserBear((state) => state);
+  const { userGetaProduct, userAddToCart, product, setProduct } = useUserBear(
+    (state) => state,
+  );
 
   useEffect(() => {
     setProduct(null);
@@ -80,7 +81,10 @@ const ProductDetails = () => {
             onClick={() => navigate(-1)}
             className="group flex items-center gap-2 font-semibold text-gray-700 hover:text-black transition-all"
           >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             <span>Back</span>
           </button>
 
@@ -100,27 +104,29 @@ const ProductDetails = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          
           {/* --- LEFT: IMAGE GALLERY (STIKCY) --- */}
           <div className="lg:sticky lg:top-24 space-y-6">
             <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-white border border-gray-100 shadow-xl shadow-gray-200/40">
               <img
-                src={getCloudinaryImage(product.product_images?.[selectedImg]?.secure_url, {
-                  width: 1200,
-                  quality: 100,
-                })}
+                src={getCloudinaryImage(
+                  product.product_images?.[selectedImg]?.secure_url,
+                  {
+                    width: 1200,
+                    quality: 100,
+                  },
+                )}
                 alt={product.product_name}
                 className="w-full h-full object-contain p-8 transition-all duration-700 hover:scale-110"
               />
-              
+
               {/* Discount Tag on Image */}
-              {(product.discount > 0) && (
+              {product.discount > 0 && (
                 <div className="absolute top-6 left-6 bg-black text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase">
-                  {product.discount}% OFF
+                  {product.discount+product?.extra_discount}% OFF
                 </div>
               )}
             </div>
-            
+
             {/* Thumbnail Navigation */}
             <div className="flex gap-2 overflow-x-auto py-2 no-scrollbar justify-center">
               {product.product_images?.map((img, idx) => (
@@ -128,15 +134,19 @@ const ProductDetails = () => {
                   key={img.public_id}
                   onClick={() => setSelectedImg(idx)}
                   className={`relative shrink-0 w-[22%] h-[22%] rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
-                    selectedImg === idx 
-                    ? "border-black scale-105 shadow-lg" 
-                    : "border-transparent opacity-50 hover:opacity-100 shadow-sm"
+                    selectedImg === idx
+                      ? "border-black scale-105 shadow-lg"
+                      : "border-transparent opacity-50 hover:opacity-100 shadow-sm"
                   }`}
                 >
-                  <img src={getCloudinaryImage(img.secure_url, {
-                  width: 200,
-                  quality: 20,
-                })} className="w-full h-full object-cover" alt="thumbnail" />
+                  <img
+                    src={getCloudinaryImage(img.secure_url, {
+                      width: 200,
+                      quality: 20,
+                    })}
+                    className="w-full h-full object-cover"
+                    alt="thumbnail"
+                  />
                 </button>
               ))}
             </div>
@@ -156,10 +166,13 @@ const ProductDetails = () => {
               <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-[1.1]">
                 {product.product_name}
               </h1>
+              <span className=" badge badge-accent text-accent-content font-bold text-sm">
+                {product.discount }% {product?.extra_discount &&  '+ '+product.extra_discount} OFF
+              </span>
             </div>
 
             {/* Price & Offers */}
-            <div className="p-8 rounded-[2rem] bg-white border border-gray-100 shadow-sm space-y-6">
+            <div className="p-8 rounded-4xl bg-white border border-gray-100 shadow-sm space-y-6">
               <div className="flex items-end gap-4">
                 <span className="text-5xl font-black text-black tracking-tight">
                   ₹{Math.round(product.final_price)}
@@ -195,14 +208,14 @@ const ProductDetails = () => {
               {product.stock > 0 && !product.sold ? (
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex items-center justify-between bg-white border-2 border-gray-100 p-1.5 rounded-2xl w-full sm:w-1/3">
-                    <button 
+                    <button
                       className="w-10 h-10 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors text-gray-500"
                       onClick={() => setQty(qty > 1 ? qty - 1 : 1)}
                     >
                       <Minus size={20} />
                     </button>
                     <span className="font-black text-xl">{qty}</span>
-                    <button 
+                    <button
                       className="w-10 h-10 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors text-gray-500"
                       onClick={() => product.stock > qty && setQty(qty + 1)}
                     >
@@ -235,15 +248,34 @@ const ProductDetails = () => {
             {/* Trust Badges */}
             <div className="grid grid-cols-3 gap-6 py-4">
               {[
-                { icon: <Truck />, label: "Express Shipping", bg: "bg-blue-50", text: "text-blue-600" },
-                { icon: <Leaf />, label: "100% Organic", bg: "bg-emerald-50", text: "text-emerald-600" },
-                { icon: <ShieldCheck />, label: "Secure Payment", bg: "bg-amber-50", text: "text-amber-600" },
+                {
+                  icon: <Truck />,
+                  label: "Express Shipping",
+                  bg: "bg-blue-50",
+                  text: "text-blue-600",
+                },
+                {
+                  icon: <Leaf />,
+                  label: "100% Organic",
+                  bg: "bg-emerald-50",
+                  text: "text-emerald-600",
+                },
+                {
+                  icon: <ShieldCheck />,
+                  label: "Secure Payment",
+                  bg: "bg-amber-50",
+                  text: "text-amber-600",
+                },
               ].map((badge, i) => (
                 <div key={i} className="flex flex-col items-center gap-2 group">
-                  <div className={`${badge.bg} ${badge.text} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <div
+                    className={`${badge.bg} ${badge.text} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}
+                  >
                     {badge.icon}
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">{badge.label}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">
+                    {badge.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -272,11 +304,13 @@ const ProductDetails = () => {
 
           <div className="min-h-75 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-3xl font-black text-gray-900 mb-8 capitalize">
-              {activeTab.replace('_', ' ')}
+              {activeTab.replace("_", " ")}
             </h2>
             <div className="text-gray-600 text-lg md:text-xl leading-[1.8] space-y-6 whitespace-pre-wrap">
               {tabs.find((t) => t.key === activeTab)?.content || (
-                <p className="italic text-gray-400 text-base">Detailed information is not available for this section yet.</p>
+                <p className="italic text-gray-400 text-base">
+                  Detailed information is not available for this section yet.
+                </p>
               )}
             </div>
           </div>

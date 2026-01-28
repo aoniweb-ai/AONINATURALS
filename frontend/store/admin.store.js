@@ -19,7 +19,6 @@ const useAdminBear = create((set,get) => ({
     },
     adminLogin:async(data)=>{
         try {
-            console.log("admin det ",adminAxios.getUri())
             const response = await adminAxios.post("/auth/login",data);
             
             set({admin:response.data?.admin});

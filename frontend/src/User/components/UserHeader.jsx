@@ -14,7 +14,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import useUserBear from "../../../store/user.store";
 
-/* ---------------- ICON HELPERS ---------------- */
 
 const CartIconWithBadge = ({ count, icon }) => {
   if (!count || count === 0) return icon;
@@ -36,7 +35,6 @@ const AccountNotifyIcon = ({ icon }) => (
   </div>
 );
 
-/* ---------------- COMPONENT ---------------- */
 
 const UserHeader = () => {
   const { user, userLogout } = useUserBear((state) => state);
@@ -44,6 +42,7 @@ const UserHeader = () => {
   const location = useLocation();
 
   const [collapsed, setCollapsed] = useState(false);
+  const [loader, setLoader] = useState(false)
 
   const routes = [
     {
@@ -190,19 +189,23 @@ const UserHeader = () => {
 
         {/* LOGOUT */}
         {user && (
-          <button
+          <button disabled={loader}
             onClick={() => {
-              userLogout();
-              navigate("/");
-              closeDrawer();
+              setLoader(true)
+              userLogout()
+              .then(()=>{
+                navigate('/')
+              })
+              .finally(()=>{
+                setLoader(false)
+                closeDrawer();
+              })
             }}
             title={collapsed ? "Logout" : ""}
-            className={`btn btn-error mt-auto gap-2 ${
-              collapsed ? "px-3" : ""
-            }`}
+            className={` mt-auto gap-2 ${loader ? 'cursor-not-allowed bg-error text-error-content flex items-center py-3 justify-center rounded-3xl' : 'btn btn-error'} ${collapsed ? "px-3" : ""}`}
           >
             <LogOut size={18} />
-            {!collapsed && "Logout"}
+            {!collapsed && "Logout"} {loader && <span className="loading loading-ring loading-sm"></span>}
           </button>
         )}
       </div>

@@ -68,7 +68,6 @@ const AdminDashboard = () => {
       setSearchLoader(true)
       const data = await adminSearchOrder(searchRef?.current?.value.trim())
       setRecentOrders(data?.orders)
-      console.log("data ",data);
     } catch (error) {
       toast.error(error);
     } finally{

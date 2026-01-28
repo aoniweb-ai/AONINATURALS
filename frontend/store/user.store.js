@@ -25,7 +25,7 @@ const useUserBear = create((set)=>({
     userGet : async()=>{
         try {
             const response = await userAxios.get("/auth/getuser",);
-            set({user:response.data?.user}); 
+            set({user:response.data?.user});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

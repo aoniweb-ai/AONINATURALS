@@ -13,18 +13,26 @@ import useUserBear from "../../../store/user.store";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 const UserHome = () => {
   const { products, userAddToCart } = useUserBear((state) => state);
+  const [loader,setLoader] = useState(false);
   const navigate = useNavigate();
 
   const handleAddToCart = async (e, id) => {
     e.stopPropagation();
     try {
+      setLoader(true)
       await userAddToCart({ id, quantity: 1 });
       toast.success("Added to cart");
     } catch (error) {
-      toast.error(error);
+      if(error=="Unauthorized"){
+        toast("Create your account and Login first",{icon:'🔑'})
+        navigate('/login')
+      }
+    } finally{
+      setLoader(false);
     }
   };
 
@@ -52,7 +60,7 @@ const UserHome = () => {
             {features.map((item, i) => (
               <div
                 key={i}
-                className="bg-white border border-gray-100 p-8 rounded-[2rem] hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 group text-center flex flex-col items-center"
+                className="bg-white border border-gray-100 p-8 rounded-4xl hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 group text-center flex flex-col items-center"
               >
                 <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   {item.icon}
@@ -68,51 +76,49 @@ const UserHome = () => {
       </section>
 
       {/* --- FEATURED PRODUCTS (ZIG-ZAG LAYOUT) --- */}
-      <section className="py-24 bg-white overflow-hidden">
+      <section className="py-24 bg-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 space-y-24">
           <div className="text-center mb-16">
             <span className="text-emerald-600 font-bold tracking-widest uppercase text-sm">Our Collection</span>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mt-3">Featured Products</h2>
           </div>
-
           {products?.slice(0, 3).map((item, index) => { // Showing top 3 only to keep home clean
              const isEven = index % 2 === 0;
              return (
               <div 
                 key={item._id} 
                 onClick={() => navigate(`/products/details/${item._id}`)}
-                className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-24 group cursor-pointer`}
+                className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center sm:gap-12 lg:gap-24 group cursor-pointer`}
               >
                 {/* Image Side */}
-                <div className="w-full lg:w-1/2 relative">
-                  <div className={`absolute inset-0 bg-gradient-to-tr ${isEven ? 'from-emerald-50 to-transparent' : 'from-blue-50 to-transparent'} rounded-[3rem] -rotate-3 group-hover:rotate-0 transition-transform duration-500`}></div>
-                  <div className="relative bg-white border border-gray-100 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-gray-200/50">
+                <div className="w-full  lg:w-1/2 relative">
+                  <div className={`absolute inset-0 bg-linear-to-tr ${isEven ? 'from-emerald-50 to-transparent' : 'from-blue-50 to-transparent'} rounded-[3rem] -rotate-3 group-hover:rotate-0 transition-transform duration-500`}></div>
+                  <div className="relative bg-base-200 border border-gray-100 rounded-[2.5rem] p-2 md:p-12 shadow-2xl shadow-gray-200/50">
                     <img
                       src={getCloudinaryImage(item.product_images[0]?.secure_url, {
                         width: 600,
                         quality: 80,
                       })}
                       alt={item.product_name}
-                      className="w-full h-80 md:h-[400px] object-contain drop-shadow-lg transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-80 md:h-100 object-contain drop-shadow-lg transition-transform duration-700 group-hover:scale-105"
                     />
                     {item.discount > 0 && (
                       <div className="absolute top-8 right-8 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-widest">
-                        {item.discount}% OFF
+                        {item.discount+item?.extra_discount}% OFF
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Content Side */}
-                <div className="w-full lg:w-1/2 space-y-6 text-center lg:text-left">
+                <div className="w-full lg:w-1/2 bg- space-y-2 text-center lg:text-left">
                   <div className="space-y-2">
                     <h3 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
                       {item?.product_name}
                     </h3>
-                    <div className="flex items-center justify-center lg:justify-start gap-2 text-yellow-400">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
-                      <span className="text-gray-400 text-sm font-medium ml-2">(120+ Reviews)</span>
-                    </div>
+                    <span className=" badge badge-accent text-accent-content font-bold text-sm">
+                {item.discount }% {item?.extra_discount &&  '+ '+item.extra_discount} OFF
+              </span>
                   </div>
 
                   <p className="text-gray-500 text-lg leading-relaxed line-clamp-3">
@@ -133,7 +139,7 @@ const UserHome = () => {
                       onClick={(e) => (item.stock>0 && !item.sold) && handleAddToCart(e, item._id)}
                       className={`ml-4 bg-black ${(item.stock<=0 || item.sold) && 'cursor-not-allowed '} text-white px-8 py-4 rounded-xl font-bold flex items-center gap-3 hover:bg-gray-800 hover:gap-4 transition-all active:scale-95 shadow-xl shadow-black/10`}
                     >
-                      Add to Cart <ArrowRight size={18} />
+                      Add to Cart {loader ? <span className="loading loading-spinner loading-sm"></span> : <ArrowRight size={18} />} 
                     </button>
                   </div>
                 </div>
@@ -182,7 +188,7 @@ const UserHome = () => {
                   "{review.text}"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center font-bold text-white">
+                  <div className="w-10 h-10 bg-linear-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center font-bold text-white">
                     {review.name.charAt(0)}
                   </div>
                   <div>

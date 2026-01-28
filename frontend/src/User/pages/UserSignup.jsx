@@ -170,14 +170,14 @@ const UserSignup = () => {
           </div>
 
           {/* Submit */}
-          <button className={`btn ${loader ? "cursor-progress" : 'cursor-pointer'} btn-primary w-full`}>
+          <button disabled={loader} className={`${loader ? "cursor-progress bg-error text-error-content font-bold py-3 rounded-3xl" : 'cursor-pointer btn btn-primary w-full'} `}>
             {loader ? 'Signing...' : 'Sign up'} {loader && (<span className="loading loading-spinner loading-xs"></span>)}
           </button>
 
           {/* Footer */}
           <p className="text-center text-sm opacity-70">
             Already have an account?{" "}
-            <span className="text-primary cursor-pointer font-medium">
+            <span onClick={()=>navigate('/login')} className="text-primary link cursor-pointer font-medium">
               Login
             </span>
           </p>

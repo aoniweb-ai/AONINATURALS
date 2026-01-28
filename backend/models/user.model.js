@@ -22,7 +22,10 @@ const userSchema = new mongoose.Schema({
 
     },
     address:{
-        type:String,
+        address:String,
+        pincode:Number,
+        landmark:String,
+        state:String
     },
     cart:[{
         product:{

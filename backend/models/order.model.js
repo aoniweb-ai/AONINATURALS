@@ -7,8 +7,13 @@ const orderSchema = mongoose.Schema({
         required:true
     },
     address:{
-        type:String,
-        required:true
+        address:{
+            type:String,
+            required:true
+        },
+        pincode:Number,
+        landmark:String,
+        state:String
     },
     phone_no:{
         type:Number,

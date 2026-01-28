@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import UserHeader from "./User/components/UserHeader";
-import toast, { Toaster } from "react-hot-toast";
+import  { Toaster } from "react-hot-toast";
 import useUserBear from "../store/user.store";
 import CenterLoader from "../components/CenterLoader";
 import { Menu } from "lucide-react";
@@ -15,8 +15,6 @@ function App() {
         setLoader(true);
         await userGetProduct();
         await userGet();
-      }catch(error){
-        toast.error(error)
       }finally {
         setLoader(false);
       }

@@ -14,15 +14,12 @@ import { useEffect, useState } from "react";
 const UserProduct = () => {
   const { products, userGetProduct, userAddToCart } = useUserBear((state) => state);
   const [loader, setLoader] = useState(false);
-  const [cartLoader, setCartLoader] = useState({}); // Track loader for specific product ID
+  const [cartLoader, setCartLoader] = useState({}); 
   const navigate = useNavigate();
 
-  // Initial Load
-  useEffect(() => {
-    if(!products || products.length === 0) {
-      getProducts();
-    }
-  }, []);
+  useEffect(()=>{
+    userGetProduct();
+  },[userGetProduct])
 
   const getProducts = async () => {
     try {
@@ -36,16 +33,16 @@ const UserProduct = () => {
   };
 
   const handleAddToCart = async (e, product) => {
-    e.stopPropagation(); // Card click hone se rokne ke liye
+    e.stopPropagation();
     try {
       setCartLoader((prev) => ({ ...prev, [product._id]: true }));
       await userAddToCart({
         id: product._id,
         quantity: 1,
       });
-      toast.success("Added to bag! 🛍️");
+      toast.success("Added to cart! 🛍️");
     } catch (err) {
-      toast.error(err?.message || "Could not add to cart");
+      toast.error(err || "Could not add to cart");
     } finally {
       setCartLoader((prev) => ({ ...prev, [product._id]: false }));
     }
@@ -74,14 +71,14 @@ const UserProduct = () => {
 
           {/* Action Bar */}
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="relative group w-full md:w-64">
+            {/* <div className="relative group w-full md:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" size={18} />
               <input 
                 type="text" 
                 placeholder="Search products..." 
                 className="w-full bg-white border border-gray-200 pl-10 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all shadow-sm"
               />
-            </div>
+            </div> */}
             <button 
               onClick={getProducts}
               className="bg-white border border-gray-200 p-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm text-gray-600"
@@ -101,7 +98,6 @@ const UserProduct = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {products?.map((product) => {
-              // Price Logic (Assuming backend sends final_price, or we calculate)
               const hasDiscount = product.discount > 0 || product.price > product.final_price;
               const displayPrice = product.final_price || product.price;
 
@@ -116,7 +112,7 @@ const UserProduct = () => {
                     <img
                       src={getCloudinaryImage(product.product_images?.[0]?.secure_url, {
                         width: 500,
-                        quality: 80,
+                        quality:80,
                       })}
                       alt={product.product_name}
                       className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105 mix-blend-multiply"
@@ -177,7 +173,6 @@ const UserProduct = () => {
                         </div>
                       </div>
                       
-                      {/* Mobile Only 'View' Icon or Arrow */}
                       <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-black group-hover:text-white transition-colors">
                         <ArrowRight size={16} />
                       </div>

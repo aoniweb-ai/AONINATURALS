@@ -116,7 +116,7 @@ const OrderDetails = () => {
         </div>
 
         {/* --- HEADER BANNER --- */}
-        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="bg-white rounded-4xl p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-1">
             <div className="flex items-center sm:flex-row flex-col gap-3">
               <h1 className="sm:text-3xl text-xl font-black  text-gray-900 tracking-tighter">
@@ -181,7 +181,16 @@ const OrderDetails = () => {
                   <MapPin size={14} /> SHIPPING ADDRESS
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
-                  {order.address}
+                  {order?.address?.address}
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
+                  <span className="font-bold">STATE</span> : {order?.address?.state}
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
+                  <span className="font-bold">PINCODE</span> : {order?.address?.pincode}
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed font-medium bg-gray-50 p-4 rounded-2xl">
+                  <span className="font-bold">LANDMARK</span> : {order?.address?.landmark}
                 </p>
               </div>
             </div>

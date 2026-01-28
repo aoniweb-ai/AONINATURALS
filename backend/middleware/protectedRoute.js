@@ -14,7 +14,8 @@ export const protectedRoute = async(req,res,next)=>{
         next();
 
     } catch (error) {
-        
+        console.log("error while verifying user ",error)
+        return res.status(500).json({success:false,message:"Internal server error"})
     }
 }
 export const adminProtectedRoute = async(req,res,next)=>{
@@ -31,6 +32,7 @@ export const adminProtectedRoute = async(req,res,next)=>{
         next();
 
     } catch (error) {
-        console.log("error ",error);
+        console.log("error while verifying admin ",error);
+        return res.status(500).json({success:false,message:"Internal server error"})
     }
 }
