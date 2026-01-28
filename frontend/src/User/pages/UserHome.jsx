@@ -94,7 +94,13 @@ const UserHome = () => {
              return (
               <div 
                 key={item._id} 
-                onClick={() => navigate(`/products/details/${item._id}`)}
+                onClick={() => {
+                  if(!user){
+                    toast("Create your account and Login first",{icon:'🔑'});
+                    return navigate('/login');
+                  }
+                  navigate(`/products/details/${item._id}`)
+                }}
                 className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center sm:gap-12 lg:gap-24 group cursor-pointer`}
               >
                 {/* Image Side */}
