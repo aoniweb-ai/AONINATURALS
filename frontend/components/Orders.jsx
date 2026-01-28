@@ -82,7 +82,7 @@ const Orders = ({ orders = [] }) => {
                              Order #{order.order_id.slice(order.order_id.indexOf("_") + 1)}
                         </span>
                         {/* Mobile Status Badge (if not admin) */}
-                        {!admin && (
+                        {user && (
                              <span className={`sm:hidden flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${statusStyle.color}`}>
                                 {statusStyle.icon} {order.status}
                              </span>
@@ -96,7 +96,7 @@ const Orders = ({ orders = [] }) => {
 
                   {/* ADMIN CONTROLS or DESKTOP STATUS */}
                   <div className="flex items-center">
-                    {admin ? (
+                    {admin && (
                       <div className="relative">
                         <select
                           defaultValue={order.status}
@@ -113,7 +113,7 @@ const Orders = ({ orders = [] }) => {
                             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                         </div>
                       </div>
-                    ) : (
+                    )}  {user && (
                       <div className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold uppercase tracking-wider ${statusStyle.color}`}>
                         {statusStyle.icon}
                         <span>{order.status}</span>
