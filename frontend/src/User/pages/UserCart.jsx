@@ -77,7 +77,7 @@ const UserCart = () => {
   };
 
   const handleCheckout = async () => {
-    if(!user?.address?.address || !user?.address?.phone){
+    if(!user?.address?.address || !user?.address?.pincode){
       toast("Please complete your profile details before checkout",{icon:'ℹ️'});
       return navigate('/account')
     }

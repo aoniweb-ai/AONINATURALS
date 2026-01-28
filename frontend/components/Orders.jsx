@@ -1,6 +1,7 @@
 import { Package, ChevronRight, Calendar, CreditCard, Box, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
 import useAdminBear from "../store/admin.store";
+import useUserBear from "../store/user.store";
 import toast from "react-hot-toast";
 import { timeAgo } from "../utils/timeAgo";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +33,8 @@ const getPaymentBadgeColor = (status) => {
 
 const Orders = ({ orders = [] }) => {
   const { admin, adminUpdateOrderStatus } = useAdminBear((state) => state);
+  const {user} = useUserBear((state) => state);
+  
   const navigate = useNavigate();
 
   const updateStatus = async (id, value) => {
@@ -173,13 +176,13 @@ const Orders = ({ orders = [] }) => {
                         <p className="text-xl font-black text-gray-900">₹{order.total_price}</p>
                      </div>
                      
-                     {admin ? <button
+                     {admin && <button
                         onClick={() => navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/orders/details/${order.order_id}`)}
                         className="group flex items-center gap-2 bg-black text-white pl-5 pr-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg shadow-black/10 active:scale-95"
                      >
                         Details
                         <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform"/>
-                     </button> : <button
+                     </button>}  {user && <button
                         onClick={() => navigate(`/orders/details/${order.order_id}`)}
                         className="group flex items-center gap-2 bg-black text-white pl-5 pr-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-lg shadow-black/10 active:scale-95"
                      >
