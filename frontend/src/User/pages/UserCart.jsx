@@ -78,7 +78,8 @@ const UserCart = () => {
 
   const handleCheckout = async () => {
     if(!user?.address?.address || !user?.address?.phone){
-      return toast("Please complete your profile details before checkout",{icon:'ℹ️'});
+      toast("Please complete your profile details before checkout",{icon:'ℹ️'});
+      return navigate('/account')
     }
     try {
       setLoader(true);
