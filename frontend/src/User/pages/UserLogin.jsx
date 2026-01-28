@@ -47,7 +47,7 @@ const UserLogin = () => {
             </label>
             <input
               type="email"
-              placeholder="Enter email or phone number"
+              placeholder="Enter email"
               className="input input-bordered w-full"
               {...register("email", { required: true })}
             />
