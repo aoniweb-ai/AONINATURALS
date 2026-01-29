@@ -90,7 +90,7 @@ const UserSignup = () => {
       toast.success("Account created successfully! 🚀");
       navigate("/");
     } catch (error) {
-      toast.error(error?.message || "Signup failed");
+      toast.error(error || "Signup failed");
     } finally {
       setLoader(false);
     }

@@ -95,7 +95,7 @@ const UserAccount = () => {
       toast.success("Profile updated successfully");
       setEditProfile(false);
     } catch (error) {
-      toast.error(error?.message || "Update failed");
+      toast.error(error || "Update failed");
     } finally {
       setProfileLoader(false);
     }
