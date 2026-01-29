@@ -8,6 +8,7 @@ import {
   CreditCard,
   Banknote,
   Percent,
+  CheckCircle2,
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useEffect, useState } from "react";
@@ -77,9 +78,11 @@ const UserCart = () => {
   };
 
   const handleCheckout = async () => {
-    if(!user?.address?.address || !user?.address?.pincode){
-      toast("Please complete your profile details before checkout",{icon:'ℹ️'});
-      return navigate('/account')
+    if (!user?.address?.address || !user?.address?.pincode) {
+      toast("Please complete your profile details before checkout", {
+        icon: "ℹ️",
+      });
+      return navigate("/account");
     }
     try {
       setLoader(true);
@@ -376,6 +379,10 @@ const UserCart = () => {
                     ₹{Math.ceil(finalPayableAmount)}
                   </span>
                 </div>
+              </div>
+              <div className="flex items-center my-3 gap-3 text-sm text-gray-600 font-medium">
+                <CheckCircle2 size={18} className="text-green-500" />
+                Included of all taxes
               </div>
 
               <button

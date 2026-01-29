@@ -39,6 +39,7 @@ const AdminDashboard = () => {
   const [totalRevenue, setTotalRevenue] = useState(null);
   const [deliveredOrders, setDeliveredOrders] = useState(null);
   const [recentOrders, setRecentOrders] = useState(null);
+  const [totalCustomers, setTotalCustomers] = useState(null);
   const [loader,setLoader]=  useState(false);
   const [searchLoader,setSearchLoader]=  useState(false);
   const searchRef = useRef(null);
@@ -51,6 +52,7 @@ const AdminDashboard = () => {
       setTotalRevenue(res?.totalRevenue);
       setDeliveredOrders(res?.totalDeliveredOrders);
       setRecentOrders(res?.recentOrders);
+      setTotalCustomers(res?.totalCustomers);
     })
     .catch((err)=>{
       toast.error(err);
@@ -154,7 +156,7 @@ const AdminDashboard = () => {
             </div>
             <p className="text-sm font-medium text-gray-400">Total Revenue</p>
             <h3 className="text-3xl font-black text-gray-900 mt-1">
-              ₹{totalRevenue}
+              ₹{totalRevenue ? totalRevenue : "0"}
             </h3>
           </div>
 
@@ -172,7 +174,7 @@ const AdminDashboard = () => {
               Delivered Orders
             </p>
             <h3 className="text-3xl font-black text-gray-900 mt-1">
-              {deliveredOrders}
+              {deliveredOrders ? deliveredOrders : "0"}
             </h3>
           </div>
 
@@ -189,7 +191,7 @@ const AdminDashboard = () => {
             <p className="text-sm font-medium text-gray-400">
               Active Customers
             </p>
-            <h3 className="text-3xl font-black text-gray-900 mt-1">No data</h3>
+            <h3 className="text-3xl font-black text-gray-900 mt-1">{totalCustomers ? totalCustomers : "No data"}</h3>
           </div>
 
           {/* Products */}

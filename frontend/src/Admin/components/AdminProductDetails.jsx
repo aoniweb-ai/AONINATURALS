@@ -85,12 +85,12 @@ const AdminProductDetails = () => {
                     />
                 </div>
                 {/* Modern Thumbnail Bar */}
-                <div className="flex gap-4 mt-6 overflow-x-auto pb-2 no-scrollbar">
+                <div className="flex gap-4 mt-6 overflow-x-auto py-2 justify-center px-3 no-scrollbar">
                     {product.product_images.map((img, i) => (
                         <div 
                             key={i}
                             onClick={() => setSelectedImg(img.secure_url)}
-                            className={`w-20 h-20 rounded-2xl cursor-pointer border-2 transition-all p-1 bg-white ${selectedImg === img.secure_url ? 'border-black scale-105 shadow-md' : 'border-transparent opacity-50'}`}
+                            className={`w-[20%] h-[20%] rounded-2xl cursor-pointer border-2 transition-all p-1 bg-white ${selectedImg === img.secure_url ? 'border-black scale-105 shadow-md' : 'border-transparent opacity-50'}`}
                         >
                             <img src={getCloudinaryImage(img.secure_url, { width: 150, quality:100 })} className="w-full h-full object-cover rounded-xl" />
                         </div>
@@ -118,8 +118,8 @@ const AdminProductDetails = () => {
                         <h2 className="text-5xl font-black text-gray-900 tracking-tighter">₹{finalPrice}</h2>
                     </div>
                     <div className="mb-1">
-                        <span className="text-xl text-gray-300 line-through font-bold">₹{product.price}</span>
-                        <div className="mt-1 inline-flex items-center gap-1 bg-black text-white px-3 py-1 rounded-full text-[10px] font-black tracking-tighter">
+                        <span className="text-xl text-gray-300 font-bold">MRP: <span className="line-through">₹{product.price}</span></span>
+                        <div className="mt-1 inline-flex ms-2 items-center gap-1 bg-black text-white px-3 py-1 rounded-full text-[10px] font-black tracking-tighter">
                             <BadgePercent size={12} />
                             {product.discount + (product.extra_discount || 0)}% SAVING
                         </div>

@@ -1,9 +1,10 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
+import User from "../models/user.model.js";
 
 export const adminUpdateStatusController = async (req, res) => {
     try {
-        const { order_id, status, delivery_date='' } = req.body;
+        const { order_id, status, delivery_date = '' } = req.body;
         if (!["delivered", "pending", "shipped", "cancelled"].includes(status)) return res.status(400).json({ success: false, message: "Invalid credentials" });
 
         if (status.toLowerCase() == "cancelled") {
@@ -48,7 +49,7 @@ export const adminUpdateStatusController = async (req, res) => {
         }
 
         const order = await Order.findOne({ order_id })
-        .populate({
+            .populate({
                 path: "user",
                 select: "fullname phone address email"
             })
@@ -76,9 +77,19 @@ export const adminUpdateStatusController = async (req, res) => {
 export const adminGetOrdersContoller = async (req, res) => {
     try {
         const status = req.params?.status;
-        console.log("status ", status)
-        const admin = req.admin;
-        const orders = await Order.find({ status: status || "pending" })
+        const finalStatus = status || "pending";
+        const query = {
+            status: finalStatus
+        };
+
+        if (finalStatus === "cancelled" || finalStatus === "delivered") {
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+            query.createdAt = { $gte: oneMonthAgo };
+        }
+
+        const orders = await Order.find(query)
             .populate({
                 path: "user",
                 select: "fullname phone address email"
@@ -136,11 +147,13 @@ export const adminGetTotalRevenueController = async (req, res) => {
             .sort({ createdAt: -1 })
             .limit(4);
 
+        const totalCustomers = await User.countDocuments();
         return res.status(200).json({
             success: true,
             totalRevenue: revenue[0]?.totalRevenue || 0,
             totalDeliveredOrders: revenue[0]?.totalOrders || 0,
-            recentOrders
+            recentOrders,
+            totalCustomers
         });
 
     } catch (error) {
@@ -156,8 +169,8 @@ export const adminSearchOrdersController = async (req, res) => {
         const orders = await Order.find({
             order_id: { $regex: search, $options: "i" },
         })
-        .populate("user", "fullname email phone")
-        .sort({ createdAt: -1 });
+            .populate("user", "fullname email phone")
+            .sort({ createdAt: -1 });
 
         return res.status(200).json({
             success: true,

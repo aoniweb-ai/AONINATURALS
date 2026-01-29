@@ -183,8 +183,8 @@ const ProductDetails = () => {
                 </span>
                 {(product.discount > 0 || product.extra_discount > 0) && (
                   <div className="flex flex-col mb-1">
-                    <span className="text-xl text-gray-400 line-through font-medium">
-                      ₹{product.price}
+                    <span className="text-xl text-gray-400 font-medium">
+                      MRP: <span className="line-through">₹{product.price}</span>
                     </span>
                     <span className="text-green-600 font-bold text-sm">
                       You Save ₹{product.price - product.final_price}
@@ -196,7 +196,7 @@ const ProductDetails = () => {
               <div className="grid grid-cols-1 gap-3 border-t border-gray-50 pt-6">
                 <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
                   <CheckCircle2 size={18} className="text-green-500" />
-                  Free Delivery on orders above ₹499
+                  Included of all taxes 
                 </div>
                 {product.cod_charges > 0 && (
                   <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">

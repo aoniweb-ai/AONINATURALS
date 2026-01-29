@@ -113,7 +113,7 @@ const AdminProduct = () => {
                       </div>
                       <div className="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
                         <div 
-                          className={`h-full rounded-full ${item.stock < 10 ? 'bg-rose-500' : 'bg-emerald-500'}`} 
+                          className={`h-full rounded-full ${item.stock < 20 ? 'bg-rose-500' : 'bg-emerald-500'}`} 
                           style={{ width: `${Math.min(item.stock, 100)}%` }}
                         ></div>
                       </div>

@@ -7,6 +7,7 @@ import {
   Calendar,
   ExternalLink,
   ArrowLeft,
+  CheckCircle2,
 } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
 import { formatDateTime } from "../utils/formatDateTime";
@@ -354,6 +355,10 @@ const OrderDetails = () => {
               <div className="flex justify-between items-center text-xl font-black text-gray-900">
                 <span>Grand Total</span>
                 <span>₹{order.total_price}</span>
+              </div>
+              <div className="flex items-center my-3 gap-3 text-sm text-gray-600 font-medium">
+                <CheckCircle2 size={18} className="text-green-500" />
+                Included of all taxes
               </div>
             </div>
           </div>

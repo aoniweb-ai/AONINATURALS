@@ -104,7 +104,9 @@ const AdminOrders = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
+          {(activeTab == "cancelled" || activeTab == "delivered") && <p className="text-sm font-bold text-slate-500 mt-1 text-end">Last one month</p> }
         </div>
+
 
         {/* --- CONTENT AREA --- */}
         <div className="relative">
