@@ -27,7 +27,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { userGetaProduct, userAddToCart, product, setProduct } = useUserBear(
+  const { userGetaProduct, userAddToCart, product, setProduct, user } = useUserBear(
     (state) => state,
   );
 
@@ -37,6 +37,10 @@ const ProductDetails = () => {
   }, [id, userGetaProduct, setProduct]);
 
   const addToCartProduct = async () => {
+    if(!user){
+      toast("Create an account or login to add cart",{icon: 'ℹ️'});
+      return navigate("/login");
+    }
     try {
       setLoader(true);
       await userAddToCart({
@@ -45,7 +49,7 @@ const ProductDetails = () => {
       });
       toast.success("Added to your bag! 🛍️");
     } catch (err) {
-      toast.error(err?.message || "Something went wrong");
+      toast.error(err || "Something went wrong");
     } finally {
       setLoader(false);
     }

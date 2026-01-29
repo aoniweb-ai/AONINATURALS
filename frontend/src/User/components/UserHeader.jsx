@@ -49,7 +49,7 @@ const UserHeader = () => {
       path: "/products",
       value: "Products",
       icon: <Package size={20} />,
-      auth: true,
+      auth: !user ? false : true,
     },
     {
       path: "/orders",

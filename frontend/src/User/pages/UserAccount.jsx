@@ -74,7 +74,7 @@ const UserAccount = () => {
     try {
       if (
         user.address?.address == data.address.trim() &&
-        user.address?.pincode == data.pincode.trim() &&
+        user.address?.pincode == data.pincode &&
         user.address?.state == data.state.trim() &&
         user.address?.landmark == data.landmark.trim()
       ) {
@@ -124,10 +124,6 @@ const UserAccount = () => {
                 <div className="relative group mx-auto sm:mx-0">
                   <div className="w-24 h-24 rounded-full bg-black text-white flex items-center justify-center text-4xl font-bold shadow-lg shadow-black/20">
                     {user?.fullname?.charAt(0).toUpperCase()}
-                  </div>
-                  {/* Fake Edit Overlay */}
-                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                    <Camera className="text-white" size={24} />
                   </div>
                 </div>
 

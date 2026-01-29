@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
 const UserProduct = () => {
-  const { products, userGetProduct, userAddToCart } = useUserBear(
+  const { products, userGetProduct, userAddToCart, user } = useUserBear(
     (state) => state,
   );
   const [loader, setLoader] = useState(false);
@@ -36,6 +36,10 @@ const UserProduct = () => {
 
   const handleAddToCart = async (e, product) => {
     e.stopPropagation();
+    if(!user){
+      toast("Create an account or login to add cart",{icon: 'ℹ️'});
+      return navigate("/login");
+    }
     try {
       setCartLoader((prev) => ({ ...prev, [product._id]: true }));
       await userAddToCart({
@@ -187,17 +191,20 @@ const UserProduct = () => {
 
                   {/* Content */}
                   <div className="flex flex-col flex-1 gap-2">
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col justify-between items-start">
                       <h3 className="text-base font-bold text-gray-900 line-clamp-1 group-hover:text-primary transition-colors">
                         {product.product_name}
                       </h3>
+                      {product?.discount && <span className=" badge text-[12px] font-bold badge-accent">
+                        {product?.discount+'% '} {product?.extra_discount && '+ '+product.extra_discount+'% '} OFF
+                      </span>}
                     </div>
 
-                    <p className="text-xs text-gray-500 mt-1 leading-relaxed h-8">
-                      {truncateText(product.description, 55)}
+                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                      {truncateText(product.description, 95)}
                     </p>
 
-                    <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
+                    <div className="mt-auto pt-2 flex items-center justify-between border-t border-gray-50">
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-400 font-medium">
                           Price

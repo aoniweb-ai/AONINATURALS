@@ -33,8 +33,8 @@ const router = createBrowserRouter(
         <Route path='' element={<UserHome/>} />
         <Route path='signup' element={<UserSignup/>}/>
         <Route path='login' element={<UserLogin/>} />
-        <Route path='products' element={<UserAuthenticate><UserProduct/></UserAuthenticate>}/>
-        <Route path='products/details/:id' element={<UserAuthenticate><ProductDetails/></UserAuthenticate>}/>
+        <Route path='products' element={<UserProduct/>}/>
+        <Route path='products/details/:id' element={<ProductDetails/>}/>
         <Route path='cart' element={<UserAuthenticate><UserCart/></UserAuthenticate>}/>
         <Route path='orders' element={<UserAuthenticate><UserOrders/></UserAuthenticate>}/>
         <Route path='account' element={<UserAuthenticate><UserAccount/></UserAuthenticate>}/>
