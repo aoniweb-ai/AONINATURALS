@@ -70,7 +70,7 @@ const AdminOrders = () => {
         </div>
 
         {/* --- CONTROLS: TABS + SEARCH --- */}
-        <div className="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col xl:flex-row gap-6 items-center justify-between mb-8">
+        <div className="bg-white p-4 rounded-4xl shadow-sm border border-slate-100 flex flex-col xl:flex-row gap-6 items-center justify-between mb-8">
           
           {/* CUSTOM TABS */}
           <div className="flex p-1 bg-slate-100 rounded-2xl w-full xl:w-auto overflow-x-auto no-scrollbar">

@@ -209,7 +209,7 @@ const AddUpdateProduct = () => {
       >
         <form
           onSubmit={handleSubmit(formHandler)}
-          className="modal-box w-full max-w-5xl p-0 bg-[#F8FAFC] overflow-hidden rounded-[2rem] shadow-2xl"
+          className="modal-box w-full max-w-5xl p-0 bg-[#F8FAFC] overflow-hidden rounded-4xl shadow-2xl"
           onKeyDown={(e) => {
             if (e.key === "Enter") e.preventDefault();
           }} // 🛑 BLOCK ENTER KEY SUBMIT

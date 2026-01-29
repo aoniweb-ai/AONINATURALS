@@ -17,7 +17,7 @@ const AdminProduct = () => {
     <div className="p-4 md:p-8 flex flex-col gap-8 bg-[#fcfcfc] min-h-screen">
       
       {/* --- HEADER SECTION --- */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
         <div>
           <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-xl text-primary">
