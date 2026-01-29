@@ -45,7 +45,6 @@ const UserHome = () => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
-  // --- ANIMATION VARIANTS ---
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
@@ -101,7 +100,7 @@ const UserHome = () => {
                 key={i}
                 variants={fadeInUp}
                 whileHover={{ y: -10 }}
-                className="bg-gray-50/50 border border-gray-100 p-8 rounded-[2rem] hover:bg-white hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 group text-center flex flex-col items-center"
+                className="bg-gray-50/50 border border-gray-100 p-8 rounded-4xl hover:bg-white hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 group text-center flex flex-col items-center"
               >
                 <div className="w-16 h-16 bg-white shadow-sm rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-gray-50">
                   {item.icon}

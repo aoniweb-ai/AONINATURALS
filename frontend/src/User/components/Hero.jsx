@@ -32,14 +32,6 @@ const slides = [
     bg: "bg-orange-50",
     accent: "text-orange-600",
   },
-  // {
-  //   id: 4,
-  //   title: "Healthy Hair, Naturally ✨",
-  //   desc: "No chemicals. Only real results.",
-  //   img: hero_4,
-  //   bg: "bg-rose-50",
-  //   accent: "text-rose-600",
-  // },
 ];
 
 const variants = {
@@ -67,7 +59,7 @@ const swipePower = (offset, velocity) => {
 const Hero = () => {
   const [[page, direction], setPage] = useState([0, 0]);
   const [pause, setPause] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const imageIndex = wrap(0, slides.length, page);
 
   const paginate = (newDirection) => {
@@ -85,7 +77,8 @@ const Hero = () => {
   const currentSlide = slides[imageIndex];
 
   return (
-    <section className="relative h-[650px] w-full overflow-hidden bg-white">
+    // Reduced height slightly on mobile to fit everything better
+    <section className="relative h-[600px] lg:h-[650px] w-full overflow-hidden bg-white">
       {/* Dynamic Background Blob */}
       <motion.div
         key={currentSlide.id + "-bg"}
@@ -98,8 +91,8 @@ const Hero = () => {
         <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-gradient-to-t from-white/80 to-transparent rounded-full blur-[80px]" />
       </motion.div>
 
-      <div 
-        className="relative h-full max-w-7xl mx-auto flex items-center px-6 lg:px-8"
+      <div
+        className="relative h-full max-w-7xl mx-auto flex items-center px-4 lg:px-8"
         onMouseEnter={() => setPause(true)}
         onMouseLeave={() => setPause(false)}
       >
@@ -126,15 +119,42 @@ const Hero = () => {
                 paginate(-1);
               }
             }}
-            className="absolute w-full h-full left-0 top-0 flex items-center justify-center lg:justify-between px-6 lg:px-12"
+            // FLEX-COL for mobile (stacking), FLEX-ROW for desktop
+            className="absolute w-full h-full left-0 top-0 flex flex-col lg:flex-row items-center justify-center lg:justify-between px-4 lg:px-12 py-12 lg:py-0"
           >
-            {/* CONTENT LEFT */}
-            <div className="w-full lg:w-1/2 z-10 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 pt-20 lg:pt-0">
+            
+            {/* --- IMAGE SECTION (Order 1 on Mobile, Order 2 on Desktop) --- */}
+            <div className="w-full lg:w-1/2 h-[40%] lg:h-full flex items-center justify-center relative pointer-events-none order-1 lg:order-2 mb-4 lg:mb-0">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0, rotate: 10 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                // Controlled width for mobile (w-48/w-64) so it's not too big
+                className="relative z-10 w-48 sm:w-64 lg:w-[80%] max-w-125"
+              >
+                <img
+                  src={currentSlide.img}
+                  alt="Hero"
+                  className="w-full h-auto object-contain drop-shadow-2xl"
+                />
+              </motion.div>
+
+              {/* Decorative Circle */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.8 }}
+                className="absolute w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-white rounded-full opacity-40 blur-3xl"
+              />
+            </div>
+
+            {/* --- CONTENT SECTION (Order 2 on Mobile, Order 1 on Desktop) --- */}
+            <div className="w-full lg:w-1/2 z-10 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 lg:space-y-6 order-2 lg:order-1">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`inline-block px-4 py-1.5 rounded-full bg-white border border-gray-100 shadow-sm text-sm font-bold uppercase tracking-wider ${currentSlide.accent}`}
+                className={`inline-block px-3 py-1 lg:px-4 lg:py-1.5 rounded-full bg-white border border-gray-100 shadow-sm text-xs lg:text-sm font-bold uppercase tracking-wider ${currentSlide.accent}`}
               >
                 Best Seller Product
               </motion.span>
@@ -143,7 +163,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-4xl md:text-6xl font-black text-gray-900 leading-[1.1]"
+                className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-900 leading-[1.1]"
               >
                 {currentSlide.title}
               </motion.h1>
@@ -152,69 +172,45 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-lg text-gray-600 max-w-lg"
+                className="text-base lg:text-lg text-gray-600 max-w-md lg:max-w-lg px-2 lg:px-0"
               >
                 {currentSlide.desc}
               </motion.p>
 
               <motion.button
-              onClick={()=>navigate('/products')}
+                onClick={() => navigate("/products")}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ delay: 0.5 }}
-                className="bg-black text-white px-8 py-4 rounded-full font-bold text-lg flex items-center gap-2 hover:bg-gray-800 transition-colors shadow-xl shadow-black/10 mt-4"
+                className="bg-black text-white px-6 py-3 lg:px-8 lg:py-4 rounded-full font-bold text-sm lg:text-lg flex items-center gap-2 hover:bg-gray-800 transition-colors shadow-xl shadow-black/10 mt-2"
               >
-                Shop Now <ArrowRight size={20} />
+                Shop Now <ArrowRight size={18} />
               </motion.button>
             </div>
 
-            {/* IMAGE RIGHT */}
-            <div className="w-full lg:w-1/2 h-full hidden lg:flex items-center justify-center relative pointer-events-none">
-              <motion.div
-                 initial={{ scale: 0.8, opacity: 0, rotate: 10 }}
-                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                 transition={{ delay: 0.2, duration: 0.6 }}
-                 className="relative z-10 w-[80%] max-w-[500px]"
-              >
-                  <img
-                    src={currentSlide.img}
-                    alt="Hero"
-                    className="w-full h-auto object-contain drop-shadow-2xl"
-                  />
-              </motion.div>
-              
-              {/* Decorative Circle behind image */}
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.1, duration: 0.8 }}
-                className="absolute w-[500px] h-[500px] bg-white rounded-full opacity-40 blur-3xl" 
-              />
-            </div>
           </motion.div>
         </AnimatePresence>
 
         {/* --- CONTROLS --- */}
-        
-        {/* Navigation Arrows (Glassmorphism) */}
+        {/* Hiding Arrows on small mobile to avoid clutter, visible on SM+ */}
         <button
           onClick={() => paginate(-1)}
-          className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center hover:bg-white hover:scale-110 transition-all z-20 shadow-lg text-gray-700 hover:text-black hidden sm:flex"
+          className="absolute left-2 lg:left-8 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center hover:bg-white hover:scale-110 transition-all z-20 shadow-lg text-gray-700 hover:text-black hidden sm:flex"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} />
         </button>
 
         <button
           onClick={() => paginate(1)}
-          className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center hover:bg-white hover:scale-110 transition-all z-20 shadow-lg text-gray-700 hover:text-black hidden sm:flex"
+          className="absolute right-2 lg:right-8 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center hover:bg-white hover:scale-110 transition-all z-20 shadow-lg text-gray-700 hover:text-black hidden sm:flex"
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={20} />
         </button>
 
         {/* Pagination Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+        <div className="absolute bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -224,15 +220,15 @@ const Hero = () => {
               }}
               className="relative h-2 rounded-full overflow-hidden transition-all duration-300"
               style={{
-                width: imageIndex === i ? "32px" : "8px",
-                backgroundColor: imageIndex === i ? "transparent" : "#d1d5db"
+                width: imageIndex === i ? "24px" : "6px", // Smaller dots on mobile logic
+                backgroundColor: imageIndex === i ? "transparent" : "#9ca3af",
               }}
             >
               {imageIndex === i && (
-                 <motion.div 
-                   layoutId="active-pill"
-                   className="absolute inset-0 bg-black rounded-full"
-                 />
+                <motion.div
+                  layoutId="active-pill"
+                  className="absolute inset-0 bg-black rounded-full"
+                />
               )}
             </button>
           ))}

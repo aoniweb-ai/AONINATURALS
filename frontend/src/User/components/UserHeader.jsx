@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -9,205 +10,248 @@ import {
   ShoppingBag,
   User,
   UserPen,
+  Menu,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
 import useUserBear from "../../../store/user.store";
+import { motion, AnimatePresence } from "framer-motion";
 
 
-const CartIconWithBadge = ({ count, icon }) => {
-  if (!count || count === 0) return icon;
-
-  return (
-    <div className="relative">
-      {icon}
-      <span className="absolute -top-2 -right-2 badge badge-xs badge-error">
-        {count}
-      </span>
-    </div>
-  );
-};
+const CartIconWithBadge = ({ count, icon }) => (
+  <div className="relative">
+    {icon}
+    <AnimatePresence>
+      {count > 0 && (
+        <motion.span
+          key="cart-badge"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0 }}
+          className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm"
+        >
+          {count}
+        </motion.span>
+      )}
+    </AnimatePresence>
+  </div>
+);
 
 const AccountNotifyIcon = ({ icon }) => (
   <div className="relative">
     {icon}
-    <span className="absolute -top-1 -right-1 w-2 h-2 bg-warning rounded-full animate-pulse"></span>
+    <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
+    </span>
   </div>
 );
 
+const SidebarItem = ({ 
+  icon, 
+  label, 
+  isActive, 
+  collapsed, 
+  onClick, 
+  badge = null 
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors duration-200 z-10 w-full
+        ${isActive ? "text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"}
+      `}
+    >
+      {/* Gliding Background for Active State */}
+      {isActive && (
+        <motion.div
+          layoutId="activeTab"
+          className="absolute inset-0 rounded-xl bg-black shadow-lg shadow-black/20"
+          initial={false}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          style={{ zIndex: -1 }}
+        />
+      )}
+
+      <span className="relative z-10">{icon}</span>
+      
+      <AnimatePresence mode="wait">
+        {!collapsed && (
+          <motion.span
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: "auto" }}
+            exit={{ opacity: 0, width: 0 }}
+            className="whitespace-nowrap overflow-hidden relative z-10"
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+      
+      {/* Badge rendering for collapsed state/active state handling */}
+      {badge}
+    </button>
+  );
+};
+
+// --- Main Sidebar Component ---
 
 const UserHeader = () => {
   const { user, userLogout } = useUserBear((state) => state);
   const navigate = useNavigate();
   const location = useLocation();
-
   const [collapsed, setCollapsed] = useState(false);
-  const [loader, setLoader] = useState(false)
+  const [loader, setLoader] = useState(false);
 
-  const routes = [
-    {
-      path: "/products",
-      value: "Products",
-      icon: <Package size={20} />,
-      auth: !user ? false : true,
-    },
-    {
-      path: "/orders",
-      value: "Orders",
-      icon: <ShoppingBag size={20} />,
-      auth: true,
-    },
-    {
-      path: "/cart",
-      value: "Cart",
-      icon: <ShoppingCart size={20} />,
-      auth: true,
-    },
-    {
-      path: "/account",
-      value: "Account",
-      icon: <UserPen size={20} />,
-      auth: true,
-    },
-    // {
-    //   path: "/settings",
-    //   value: "Settings",
-    //   icon: <Settings size={20} />,
-    //   auth: true,
-    // },
-    {
-      path: "/login",
-      value: "Login",
-      icon: <User size={20} />,
-      auth: false,
-    },
-    {
-      path: "/signup",
-      value: "Signup",
-      icon: <Users size={20} />,
-      auth: false,
-    },
-  ];
+  const isActive = (path) => {
+      if (path === '/' && location.pathname === '/') return true;
+      if (path !== '/' && location.pathname.includes(path)) return true;
+      return false;
+  };
 
-  const isActive = (path) => location.pathname.includes(path);
-
-  // mobile drawer close
   const closeDrawer = () => {
     const drawer = document.getElementById("user-drawer");
     if (drawer) drawer.checked = false;
   };
 
+  const routes = [
+    { path: "/", value: "Home", icon: <LayoutDashboard size={20} />, auth: null }, // auth null means public/always show if not restricted
+    { path: "/products", value: "Products", icon: <Package size={20} />, auth: true },
+    { path: "/orders", value: "Orders", icon: <ShoppingBag size={20} />, auth: true },
+    { path: "/cart", value: "Cart", icon: <ShoppingCart size={20} />, auth: true },
+    { path: "/account", value: "Account", icon: <UserPen size={20} />, auth: true },
+    { path: "/login", value: "Login", icon: <User size={20} />, auth: false },
+    { path: "/signup", value: "Signup", icon: <Users size={20} />, auth: false },
+  ];
+
   return (
-    <aside className="drawer-side z-30">
+    <aside className="drawer-side z-50">
       <label htmlFor="user-drawer" className="drawer-overlay"></label>
 
-      <div
-        className={`min-h-screen bg-base-100 border-r border-base-300 flex flex-col transition-all duration-300
-        ${collapsed ? "w-20" : "w-64"} p-4`}
+      <motion.div
+        initial={false}
+        animate={{ width: collapsed ? 80 : 280 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="min-h-screen bg-white/95 backdrop-blur-xl border-r border-gray-100 flex flex-col p-4 shadow-2xl shadow-gray-200/50"
       >
-        {/* TOP */}
-        <div className="flex items-center justify-between mb-8">
-          {!collapsed && (
-            <h1 className="text-xl font-bold text-primary">
-              Aoni Naturals
-            </h1>
-          )}
-
+        
+        {/* --- TOP HEADER --- */}
+        <div className="flex items-center justify-between mb-8 px-1">
+          <AnimatePresence mode="wait">
+            {!collapsed && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="flex items-center gap-2"
+              >
+                <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">A</span>
+                </div>
+                <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                  Aoni
+                </h1>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="btn btn-ghost btn-sm"
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
           >
-            <ChevronLeft
-              size={20}
-              className={`${collapsed ? "rotate-180" : ""} transition-transform`}
-            />
+            <motion.div
+                animate={{ rotate: collapsed ? 180 : 0 }}
+                transition={{ type: "spring", stiffness: 200 }}
+            >
+                <ChevronLeft size={20} />
+            </motion.div>
           </button>
         </div>
 
-        {/* NAV */}
-        <nav className="flex flex-col gap-1">
-          <button
-                key={'Home'}
-                onClick={() => {
-                  navigate("/");
-                  closeDrawer();
-                }}
-                title={collapsed ? 'Home' : ""}
-                className={`
-                  btn btn-ghost justify-start gap-3
-                  ${collapsed ? "px-3" : ""}
-                  ${
-                    location.pathname === '/'
-                      ? "bg-black text-white"
-                      : "hover:bg-base-200"
-                  }
-                `}
-              >
-                <LayoutDashboard size={20} />
-                {!collapsed && <span> {'Home'}</span>}
-              </button>
-          {routes.map((val) => {
-            // AUTH CHECK
-            if (val.auth && !user) return null;
-            if (val.auth === false && user) return null;
+        {/* --- NAVIGATION --- */}
+        <nav className="flex-1 flex flex-col gap-2">
+          {routes.map((route) => {
+            // Auth Guard Logic
+            if (route.auth === true && !user) return null;
+            if (route.auth === false && user) return null;
+
+            // Icon Customization Logic
+            let displayIcon = route.icon;
+            
+            // Cart Logic
+            if (route.value === "Cart") {
+               displayIcon = <CartIconWithBadge count={user?.cart?.length} icon={route.icon} />;
+            } 
+            // Account Logic
+            else if (route.value === "Account" && user && (!user?.address?.address || !user?.address?.state || !user?.address?.pincode)) {
+               displayIcon = <AccountNotifyIcon icon={route.icon} />;
+            }
 
             return (
-              <button
-                key={val.value}
+              <SidebarItem
+                key={route.path}
+                label={route.value}
+                icon={displayIcon}
+                isActive={isActive(route.path)}
+                collapsed={collapsed}
                 onClick={() => {
-                  navigate(val.path);
+                  navigate(route.path);
                   closeDrawer();
                 }}
-                title={collapsed ? val.value : ""}
-                className={`
-                  btn btn-ghost justify-start gap-3
-                  ${collapsed ? "px-3" : ""}
-                  ${
-                    isActive(val.path)
-                      ? "bg-black text-white"
-                      : "hover:bg-base-200"
-                  }
-                `}
-              >
-                {val.value === "Cart" ? (
-                  <CartIconWithBadge
-                    count={user?.cart?.length}
-                    icon={val.icon}
-                  />
-                ) : val.value === "Account" && user && (!user?.address?.address || !user?.address?.state  || !user?.address?.pincode) ? (
-                  <AccountNotifyIcon icon={val.icon} />
-                ) : (
-                  val.icon
-                )}
-
-                {!collapsed && <span>{val.value}</span>}
-              </button>
+              />
             );
           })}
         </nav>
 
-        {/* LOGOUT */}
+        {/* --- LOGOUT SECTION --- */}
         {user && (
-          <button disabled={loader}
-            onClick={() => {
-              setLoader(true)
-              userLogout()
-              .then(()=>{
-                navigate('/')
-              })
-              .finally(()=>{
-                setLoader(false)
-                closeDrawer();
-              })
-            }}
-            title={collapsed ? "Logout" : ""}
-            className={` mt-auto gap-2 ${loader ? 'cursor-not-allowed bg-error text-error-content flex items-center py-3 justify-center rounded-3xl' : 'btn btn-error'} ${collapsed ? "px-3" : ""}`}
-          >
-            <LogOut size={18} />
-            {!collapsed && "Logout"} {loader && <span className="loading loading-ring loading-sm"></span>}
-          </button>
+          <div className="mt-auto border-t border-gray-100 pt-4">
+             <motion.button
+              layout
+              disabled={loader}
+              onClick={() => {
+                setLoader(true);
+                userLogout()
+                  .then(() => navigate("/"))
+                  .finally(() => {
+                    setLoader(false);
+                    closeDrawer();
+                  });
+              }}
+              className={`w-full relative flex items-center justify-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200 overflow-hidden group
+                ${loader ? "bg-red-50 text-red-500 cursor-not-allowed" : "hover:bg-red-50 text-gray-500 hover:text-red-600"}
+              `}
+            >
+               {/* Loader Background Fill */}
+               {loader && (
+                   <motion.div 
+                    layoutId="loader-bg"
+                    className="absolute inset-0 bg-red-100"
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 1.5 }}
+                   />
+               )}
+
+              <span className="relative z-10">
+                 {loader ? <span className="loading loading-spinner loading-xs"/> : <LogOut size={20} />}
+              </span>
+              
+              <AnimatePresence>
+                {!collapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="whitespace-nowrap relative z-10"
+                  >
+                    {loader ? "Signing out..." : "Logout"}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </div>
         )}
-      </div>
+      </motion.div>
     </aside>
   );
 };
