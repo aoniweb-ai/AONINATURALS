@@ -4,6 +4,7 @@ import Admin from "../models/admin.model.js";
 export const protectedRoute = async(req,res,next)=>{
     try {
         const token = req.cookies.jwt;
+        console.log("token is  ",token)
         if(!token) return res.status(401).json({message:"Unauthorized"});
         const {value} = jwt.verify(token,process.env.SECRET_KEY);
         if(!value) return res.status(500).json({message:"Internal error"});
