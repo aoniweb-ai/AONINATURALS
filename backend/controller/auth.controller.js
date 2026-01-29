@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs"
 
 export const logoutController = async (req, res) => {
     try {
-        res.clearCookie('jwt', { httpOnly: true, path: '/', sameSite: 'none' });
+        res.clearCookie('jwt', { httpOnly: true, path: '/', sameSite: 'none', secure:process.env.PRODUCTION!='DEVELOPMENT' });
         req.user = undefined;
         return res.status(200).json({ success: true, message: "Logout successfully" })
     } catch (error) {
