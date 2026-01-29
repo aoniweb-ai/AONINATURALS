@@ -16,7 +16,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useUserBear from "../../../store/user.store";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 const CartIconWithBadge = ({ count, icon }) => (
   <div className="relative">
     {icon}
@@ -57,7 +56,8 @@ const SidebarItem = ({
   return (
     <button
       onClick={onClick}
-      className={`relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors duration-200 z-10 w-full
+      // Added 'overflow-hidden' and 'isolation-isolate' to prevent glitching outside bounds
+      className={`relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors duration-200 z-10 w-full overflow-hidden isolate
         ${isActive ? "text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"}
       `}
     >
@@ -65,7 +65,7 @@ const SidebarItem = ({
       {isActive && (
         <motion.div
           layoutId="activeTab"
-          className="absolute inset-0 rounded-xl bg-black shadow-lg shadow-black/20"
+          className="absolute inset-0 bg-black" // Removed rounded-xl here because parent has overflow-hidden
           initial={false}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
           style={{ zIndex: -1 }}
@@ -87,7 +87,6 @@ const SidebarItem = ({
         )}
       </AnimatePresence>
       
-      {/* Badge rendering for collapsed state/active state handling */}
       {badge}
     </button>
   );
@@ -114,7 +113,7 @@ const UserHeader = () => {
   };
 
   const routes = [
-    { path: "/", value: "Home", icon: <LayoutDashboard size={20} />, auth: null }, // auth null means public/always show if not restricted
+    { path: "/", value: "Home", icon: <LayoutDashboard size={20} />, auth: null },
     { path: "/products", value: "Products", icon: <Package size={20} />, auth: true },
     { path: "/orders", value: "Orders", icon: <ShoppingBag size={20} />, auth: true },
     { path: "/cart", value: "Cart", icon: <ShoppingCart size={20} />, auth: true },
@@ -131,7 +130,8 @@ const UserHeader = () => {
         initial={false}
         animate={{ width: collapsed ? 80 : 280 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="min-h-screen bg-white/95 backdrop-blur-xl border-r border-gray-100 flex flex-col p-4 shadow-2xl shadow-gray-200/50"
+        // Added 'h-screen sticky top-0' to keep sidebar stable during page scroll
+        className="h-screen sticky top-0 bg-white/95 backdrop-blur-xl border-r border-gray-100 flex flex-col p-4 shadow-2xl shadow-gray-200/50 overflow-hidden"
       >
         
         {/* --- TOP HEADER --- */}
@@ -168,21 +168,16 @@ const UserHeader = () => {
         </div>
 
         {/* --- NAVIGATION --- */}
-        <nav className="flex-1 flex flex-col gap-2">
+        {/* Added overflow-y-auto and overflow-x-hidden here is CRUCIAL */}
+        <nav className="flex-1 flex flex-col gap-2 overflow-y-auto overflow-x-hidden scrollbar-hide">
           {routes.map((route) => {
-            // Auth Guard Logic
             if (route.auth === true && !user) return null;
             if (route.auth === false && user) return null;
 
-            // Icon Customization Logic
             let displayIcon = route.icon;
-            
-            // Cart Logic
             if (route.value === "Cart") {
                displayIcon = <CartIconWithBadge count={user?.cart?.length} icon={route.icon} />;
-            } 
-            // Account Logic
-            else if (route.value === "Account" && user && (!user?.address?.address || !user?.address?.state || !user?.address?.pincode)) {
+            } else if (route.value === "Account" && user && (!user?.address?.address || !user?.address?.state || !user?.address?.pincode)) {
                displayIcon = <AccountNotifyIcon icon={route.icon} />;
             }
 
@@ -221,7 +216,6 @@ const UserHeader = () => {
                 ${loader ? "bg-red-50 text-red-500 cursor-not-allowed" : "hover:bg-red-50 text-gray-500 hover:text-red-600"}
               `}
             >
-               {/* Loader Background Fill */}
                {loader && (
                    <motion.div 
                     layoutId="loader-bg"
