@@ -7,42 +7,14 @@ import {
   Phone, 
   Lock, 
   Check, 
+  X, 
   ArrowRight,
-  Loader2,
-  ShieldCheck
+  Loader2
 } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import useUserBear from "../../../store/user.store";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
-
-// --- Animation Variants ---
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 50, damping: 15 },
-  },
-};
-
-const errorVariants = {
-  hidden: { opacity: 0, height: 0, marginTop: 0 },
-  visible: { opacity: 1, height: "auto", marginTop: 4 },
-  exit: { opacity: 0, height: 0, marginTop: 0 },
-};
 
 const UserSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -73,15 +45,6 @@ const UserSignup = () => {
 
   const passedRulesCount = Object.values(rules).filter(Boolean).length;
 
-  // Calculate strength color and text
-  const getStrengthStats = () => {
-    if (passedRulesCount <= 2) return { color: "#ef4444", text: "Weak", width: "33%" };
-    if (passedRulesCount <= 4) return { color: "#eab308", text: "Good", width: "66%" };
-    return { color: "#10b981", text: "Strong", width: "100%" };
-  };
-
-  const strengthStats = getStrengthStats();
-
   const signupHandler = async (data) => {
     try {
       setLoader(true);
@@ -90,60 +53,42 @@ const UserSignup = () => {
       toast.success("Account created successfully! 🚀");
       navigate("/");
     } catch (error) {
-      toast.error(error || "Signup failed");
+      toast.error(error);
     } finally {
       setLoader(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] p-4 font-sans relative overflow-hidden selection:bg-black selection:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] p-4 font-sans relative overflow-hidden">
       
-      {/* --- ANIMATED BACKGROUND --- */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0], opacity: [0.3, 0.2, 0.3] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[10%] -right-[10%] w-[80vh] h-[80vh] rounded-full bg-gradient-to-bl from-blue-100/50 to-purple-100/50 blur-3xl"
-        />
-        <motion.div 
-          animate={{ scale: [1, 1.1, 1], x: [0, 50, 0], opacity: [0.3, 0.2, 0.3] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-[10%] -left-[10%] w-[70vh] h-[70vh] rounded-full bg-gradient-to-tr from-emerald-100/50 to-teal-100/50 blur-3xl"
-        />
-      </div>
+      {/* Background decoration (Subtle Gradients) */}
+      <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-gray-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-gray-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="w-full max-w-lg bg-white/80 backdrop-blur-xl rounded-[2rem] border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-10"
-      >
+      <div className="w-full max-w-125 bg-white rounded-3xl border border-gray-100 relative z-10 animate-in fade-in zoom-in-95 duration-300">
         <div className="p-8 sm:p-10">
           
           {/* Header */}
-          <motion.div variants={itemVariants} className="text-center mb-8">
-            <motion.div 
-              whileHover={{ rotate: 5, scale: 1.05 }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-black text-white mb-4 shadow-xl shadow-black/20"
-            >
-              <UserPlus size={28} strokeWidth={2.5} />
-            </motion.div>
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-black text-white mb-4 shadow-lg shadow-black/20 transform rotate-3">
+              <UserPlus size={28} />
+            </div>
             <h2 className="text-3xl font-black text-gray-900 tracking-tight">Create Account</h2>
             <p className="text-gray-500 mt-2 font-medium">Join us to start your journey</p>
-          </motion.div>
+          </div>
 
           <form onSubmit={handleSubmit(signupHandler)} className="space-y-5">
             
             {/* Email Input */}
-            <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Email</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-900 uppercase tracking-widest ml-1">Email</label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" size={18} />
                 <input
                   type="email"
                   placeholder="name@example.com"
-                  className={`w-full bg-gray-50 border-2 ${errors.email ? 'border-red-500/50 bg-red-50' : 'border-transparent hover:bg-gray-100 focus:bg-white focus:border-black'} text-gray-900 text-sm rounded-xl block pl-11 p-3.5 transition-all outline-none font-medium placeholder:font-normal placeholder:text-gray-400`}
+                  className={`w-full bg-gray-50 border ${errors.email ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-black'} text-gray-900 text-sm rounded-xl focus:ring-2 focus:border-transparent block pl-11 p-3.5 transition-all outline-none font-medium placeholder:font-normal`}
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -153,24 +98,18 @@ const UserSignup = () => {
                   })}
                 />
               </div>
-              <AnimatePresence>
-                {errors.email && (
-                  <motion.p variants={errorVariants} initial="hidden" animate="visible" exit="exit" className="text-red-500 text-xs font-bold ml-1 flex items-center gap-1">
-                     <ShieldCheck size={12}/> {errors.email.message}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              {errors.email && <p className="text-red-500 text-xs font-semibold ml-1">{errors.email.message}</p>}
+            </div>
 
             {/* Phone Input */}
-            <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-900 uppercase tracking-widest ml-1">Phone Number</label>
               <div className="relative group">
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" size={18} />
                 <input
                   type="tel"
                   placeholder="98765 43210"
-                  className={`w-full bg-gray-50 border-2 ${errors.phone ? 'border-red-500/50 bg-red-50' : 'border-transparent hover:bg-gray-100 focus:bg-white focus:border-black'} text-gray-900 text-sm rounded-xl block pl-11 p-3.5 transition-all outline-none font-medium placeholder:font-normal placeholder:text-gray-400`}
+                  className={`w-full bg-gray-50 border ${errors.phone ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-black'} text-gray-900 text-sm rounded-xl focus:ring-2 focus:border-transparent block pl-11 p-3.5 transition-all outline-none font-medium placeholder:font-normal`}
                   {...register("phone", {
                     required: "Phone number is required",
                     pattern: {
@@ -180,24 +119,18 @@ const UserSignup = () => {
                   })}
                 />
               </div>
-              <AnimatePresence>
-                {errors.phone && (
-                  <motion.p variants={errorVariants} initial="hidden" animate="visible" exit="exit" className="text-red-500 text-xs font-bold ml-1 flex items-center gap-1">
-                     <ShieldCheck size={12}/> {errors.phone.message}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              {errors.phone && <p className="text-red-500 text-xs font-semibold ml-1">{errors.phone.message}</p>}
+            </div>
 
             {/* Password Input */}
-            <motion.div variants={itemVariants} className="space-y-1.5">
-              <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Password</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-900 uppercase tracking-widest ml-1">Password</label>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" size={18} />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
-                  className={`w-full bg-gray-50 border-2 ${errors.password ? 'border-red-500/50 bg-red-50' : 'border-transparent hover:bg-gray-100 focus:bg-white focus:border-black'} text-gray-900 text-sm rounded-xl block pl-11 pr-12 p-3.5 transition-all outline-none font-medium placeholder:font-normal placeholder:text-gray-400`}
+                  className={`w-full bg-gray-50 border ${errors.password ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-black'} text-gray-900 text-sm rounded-xl focus:ring-2 focus:border-transparent block pl-11 pr-12 p-3.5 transition-all outline-none font-medium placeholder:font-normal`}
                   {...register("password", {
                     required: "Password is required",
                     pattern: {
@@ -208,121 +141,85 @@ const UserSignup = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors focus:outline-none"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                        key={showPassword ? "hide" : "show"}
-                        initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                        animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                        exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </motion.div>
-                  </AnimatePresence>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               
-              {/* Animated Strength Bar */}
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mt-3 relative">
-                 <motion.div 
-                   className="h-full rounded-full"
-                   initial={{ width: 0 }}
-                   animate={{ 
-                     width: password ? strengthStats.width : 0, 
-                     backgroundColor: strengthStats.color 
-                   }}
-                   transition={{ type: "spring", stiffness: 50, damping: 15 }}
-                 />
-              </div>
-            </motion.div>
+              {/* Strength Bar */}
+              {password && (
+                <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden mt-2">
+                  <div 
+                    className={`h-full transition-all duration-500 ease-out ${
+                      passedRulesCount <= 2 ? 'bg-red-500 w-1/3' : 
+                      passedRulesCount <= 4 ? 'bg-yellow-500 w-2/3' : 
+                      'bg-emerald-500 w-full'
+                    }`}
+                  />
+                </div>
+              )}
+            </div>
 
             {/* Password Rules Grid */}
-            <motion.div variants={itemVariants} className="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
-                <div className="flex justify-between items-center mb-3">
-                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Requirements</p>
-                    {password && (
-                        <motion.span 
-                            key={strengthStats.text}
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-[10px] font-bold uppercase tracking-wider"
-                            style={{ color: strengthStats.color }}
-                        >
-                            {strengthStats.text}
-                        </motion.span>
-                    )}
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <p className="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest">Password Requirements</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+                    <Rule text="Min 8 chars" ok={rules.length} />
+                    <Rule text="Lowercase (a-z)" ok={rules.lowercase} />
+                    <Rule text="Uppercase (A-Z)" ok={rules.uppercase} />
+                    <Rule text="Number (0-9)" ok={rules.number} />
+                    <Rule text="Special Char (@#$)" ok={rules.special} />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-4">
-                  <Rule text="Min 8 chars" ok={rules.length} />
-                  <Rule text="Lowercase (a-z)" ok={rules.lowercase} />
-                  <Rule text="Uppercase (A-Z)" ok={rules.uppercase} />
-                  <Rule text="Number (0-9)" ok={rules.number} />
-                  <Rule text="Special Char (@#$)" ok={rules.special} />
-                </div>
-            </motion.div>
+            </div>
 
             {/* Submit Button */}
-            <motion.div variants={itemVariants} className="pt-2">
-                <motion.button
-                disabled={loader}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full bg-black text-white hover:bg-gray-900 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed font-bold rounded-xl text-sm px-5 py-4 text-center flex items-center justify-center gap-2 transition-all shadow-xl shadow-black/10"
-                >
-                {loader ? (
-                    <>
-                    <Loader2 className="animate-spin" size={20} />
-                    <span>Creating Account...</span>
-                    </>
-                ) : (
-                    <>
-                    <span>Sign Up</span>
-                    <ArrowRight size={18} />
-                    </>
-                )}
-                </motion.button>
-            </motion.div>
+            <button
+              disabled={loader}
+              className="w-full bg-black text-white hover:bg-gray-800 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed font-bold rounded-xl text-sm px-5 py-4 text-center flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-black/20 mt-4"
+            >
+              {loader ? (
+                 <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Creating Account...</span>
+                 </>
+              ) : (
+                <>
+                  <span>Sign Up</span>
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
           </form>
 
           {/* Footer */}
-          <motion.div variants={itemVariants} className="mt-8 text-center">
+          <div className="mt-8 text-center">
             <p className="text-sm text-gray-500 font-medium">
               Already have an account?{" "}
               <button 
                 onClick={() => navigate('/login')} 
-                className="text-black font-bold hover:underline underline-offset-4 transition-all"
+                className="text-black font-bold hover:underline transition-all"
               >
                 Log in
               </button>
             </p>
-          </motion.div>
+          </div>
 
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
 
-// Animated Rule Component
+// Simplified Rule Component
 const Rule = ({ text, ok }) => (
-  <motion.div 
-    animate={{ opacity: ok ? 1 : 0.5 }}
-    className="flex items-center gap-2.5 text-xs font-bold transition-colors duration-300"
-  >
-    <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300 ${ok ? "bg-emerald-100 text-emerald-600" : "bg-gray-200 text-transparent"}`}>
-       <motion.div
-         initial={{ scale: 0 }}
-         animate={{ scale: ok ? 1 : 0 }}
-         transition={{ type: "spring", stiffness: 200, damping: 10 }}
-       >
-         <Check size={12} strokeWidth={4} />
-       </motion.div>
+  <div className={`flex items-center gap-2 text-xs font-medium transition-colors duration-300 ${ok ? "text-emerald-600" : "text-gray-400"}`}>
+    <div className={`w-4 h-4 rounded-full flex items-center justify-center border ${ok ? "bg-emerald-100 border-emerald-200" : "bg-gray-200 border-gray-300"}`}>
+        {ok ? <Check size={10} strokeWidth={4} /> : <div className="w-1 h-1 bg-gray-400 rounded-full" />}
     </div>
-    <span className={`transition-colors duration-300 ${ok ? "text-gray-900" : "text-gray-400"}`}>{text}</span>
-  </motion.div>
+    <span className={ok ? "opacity-100" : "opacity-70"}>{text}</span>
+  </div>
 );
 
 export default UserSignup;
