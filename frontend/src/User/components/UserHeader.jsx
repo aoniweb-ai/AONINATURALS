@@ -114,7 +114,7 @@ const UserHeader = () => {
 
   const routes = [
     { path: "/", value: "Home", icon: <LayoutDashboard size={20} />, auth: null },
-    { path: "/products", value: "Products", icon: <Package size={20} />, auth: true },
+    { path: "/products", value: "Products", icon: <Package size={20} />, auth: !user ? false : true },
     { path: "/orders", value: "Orders", icon: <ShoppingBag size={20} />, auth: true },
     { path: "/cart", value: "Cart", icon: <ShoppingCart size={20} />, auth: true },
     { path: "/account", value: "Account", icon: <UserPen size={20} />, auth: true },
