@@ -23,7 +23,7 @@ const UserHome = () => {
   const handleAddToCart = async (e, id) => {
     e.stopPropagation();
     if (!user) {
-      toast("Create an account or login to add cart",{icon: 'ℹ️'});
+      toast("Create an account or login to add cart", { icon: "ℹ️" });
       return navigate("/login");
     }
     try {
@@ -155,10 +155,14 @@ const UserHome = () => {
                     <h3 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
                       {item?.product_name}
                     </h3>
-                    {item?.discount && <span className=" badge badge-accent text-accent-content font-bold text-sm">
-                      {item.discount}%{" "}
-                      {item?.extra_discount && "+ " + item.extra_discount + '%'} OFF
-                    </span>}
+                    {item?.discount && (
+                      <span className=" badge badge-accent text-accent-content font-bold text-sm">
+                        {item.discount}%{" "}
+                        {item?.extra_discount &&
+                          "+ " + item.extra_discount + "%"}{" "}
+                        OFF
+                      </span>
+                    )}
                   </div>
 
                   <p className="text-gray-500 text-lg leading-relaxed line-clamp-3">
@@ -171,8 +175,8 @@ const UserHome = () => {
                         ₹{Math.round(item?.final_price)}
                       </span>
                       {item.price > item.final_price && (
-                        <span className="block text-sm text-gray-400 line-through decoration-gray-300">
-                          MRP: ₹{item?.price}
+                        <span className="block text-sm text-gray-400 font-bold">
+                          MRP: <span className="line-through font-normal decoration-red-300">₹{item?.price}</span>
                         </span>
                       )}
                     </div>
