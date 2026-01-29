@@ -46,7 +46,7 @@ export const signupController = async (req, res) => {
         if (!email || !password || String(phone).length < 10 || String(phone).length > 12) return res.status(400).json({ message: "Bad Request" });
 
         const preUser = await User.findOne({ phone });
-        if (preUser) return res.status(302).json({ message: "User already exist" });
+        if (preUser) return res.status(302).json({ message: "The number is already registered" });
 
 
         const salt = await bcrypt.genSalt(10);
