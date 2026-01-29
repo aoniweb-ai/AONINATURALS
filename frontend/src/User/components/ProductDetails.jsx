@@ -10,12 +10,15 @@ import {
   Minus,
   CheckCircle2,
   Clock,
+  Star,
+  Zap
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductDetailsSkeleton from "./Skeleton/ProductDetailsSkeleton";
 import toast from "react-hot-toast";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ProductDetails = () => {
   const [qty, setQty] = useState(1);
@@ -76,118 +79,162 @@ const ProductDetails = () => {
     { key: "recommended", label: "Recommended", content: product.recommended },
   ];
 
-  return (
-    <section className="bg-[#fcfcfc] min-h-screen pb-20 font-sans w-full">
-      {/* --- TOP NAVIGATION --- */}
-      <div className="bg-white/70 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
-          <button
-            onClick={() => navigate(-1)}
-            className="group flex items-center gap-2 font-semibold text-gray-700 hover:text-black transition-all"
-          >
-            <ArrowLeft
-              size={20}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            <span>Back</span>
-          </button>
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
 
-          <button
-            onClick={refreshProduct}
-            className="flex items-center gap-2 text-sm font-bold text-primary px-4 py-2 rounded-full hover:bg-primary/5 transition-colors"
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+  };
+
+  return (
+    <motion.section 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="bg-[#fcfcfc] min-h-screen pb-20 font-sans w-full"
+    >
+      {/* --- TOP NAVIGATION --- */}
+      <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
+          <motion.button
+            whileHover={{ x: -5 }}
+            onClick={() => navigate(-1)}
+            className="group flex items-center gap-2 font-bold text-gray-700 hover:text-black transition-all"
           >
-            {refreshLoader ? (
-              <RefreshCcw size={16} className="animate-spin" />
-            ) : (
-              <RefreshCcw size={16} />
-            )}
+            <ArrowLeft size={20} />
+            <span>Back</span>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={refreshProduct}
+            className="flex items-center gap-2 text-sm font-bold text-primary px-4 py-2 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors"
+          >
+            <RefreshCcw size={16} className={refreshLoader ? "animate-spin" : ""} />
             {refreshLoader ? "Syncing..." : "Refresh"}
-          </button>
+          </motion.button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* --- LEFT: IMAGE GALLERY (STIKCY) --- */}
+          
+          {/* --- LEFT: IMAGE GALLERY (STICKY) --- */}
           <div className="lg:sticky lg:top-24 space-y-6">
-            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-white border border-gray-100 shadow-xl shadow-gray-200/40">
-              <img
-                src={getCloudinaryImage(
-                  product.product_images?.[selectedImg]?.secure_url,
-                  {
-                    width: 1200,
-                    quality: 100,
-                  },
-                )}
-                alt={product.product_name}
-                className="w-full h-full object-contain p-8 transition-all duration-700 hover:scale-110"
-              />
+             {/* Main Image with Transition */}
+            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-white border border-gray-100 shadow-2xl shadow-gray-200/50">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={selectedImg} // Key change hone par animation trigger hogi
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  src={getCloudinaryImage(
+                    product.product_images?.[selectedImg]?.secure_url,
+                    { width: 1200, quality: 100 }
+                  )}
+                  alt={product.product_name}
+                  className="w-full h-full object-contain p-8"
+                />
+              </AnimatePresence>
 
-              {/* Discount Tag on Image */}
-              {product.discount > 0 && (
-                <div className="absolute top-6 left-6 bg-black text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase">
-                  {product.discount+product?.extra_discount}% OFF
-                </div>
+              {/* Discount Tag */}
+              {product?.discount > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="absolute top-6 left-6 bg-black/90 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-black tracking-widest uppercase shadow-lg flex items-center gap-1"
+                >
+                  <Zap size={12} className="text-yellow-400 fill-yellow-400"/>
+                  {product.discount}%{product?.extra_discount && ' + '+product.extra_discount+'%'} OFF
+                </motion.div>
               )}
             </div>
 
             {/* Thumbnail Navigation */}
-            <div className="flex gap-2 overflow-x-auto py-2 no-scrollbar justify-center">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex gap-3 overflow-x-auto py-2 no-scrollbar justify-center"
+            >
               {product.product_images?.map((img, idx) => (
-                <button
+                <motion.button
+                  variants={itemVariants}
                   key={img.public_id}
                   onClick={() => setSelectedImg(idx)}
-                  className={`relative shrink-0 w-[22%] h-[22%] rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`relative shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
                     selectedImg === idx
-                      ? "border-black scale-105 shadow-lg"
-                      : "border-transparent opacity-50 hover:opacity-100 shadow-sm"
+                      ? "border-black shadow-lg"
+                      : "border-transparent opacity-60 hover:opacity-100"
                   }`}
                 >
                   <img
-                    src={getCloudinaryImage(img.secure_url, {
-                      width: 200,
-                      quality: 20,
-                    })}
+                    src={getCloudinaryImage(img.secure_url, { width: 200, quality: 20 })}
                     className="w-full h-full object-cover"
                     alt="thumbnail"
                   />
-                </button>
+                  {selectedImg === idx && (
+                    <motion.div 
+                      layoutId="active-ring"
+                      className="absolute inset-0 border-2 border-black rounded-2xl"
+                    />
+                  )}
+                </motion.button>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* --- RIGHT: PRODUCT CONTENT --- */}
-          <div className="flex flex-col space-y-8">
-            <div className="space-y-3">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col space-y-8"
+          >
+            <motion.div variants={itemVariants} className="space-y-3">
               <div className="flex items-center gap-2">
-                <span className="bg-primary/10 text-primary text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest">
+                <span className="bg-linear-to-r from-primary/10 to-primary/5 text-primary text-[10px] font-black px-3 py-1.5 rounded-md uppercase tracking-widest border border-primary/10">
                   Best Seller
                 </span>
-                <span className="text-gray-400 text-xs font-medium flex items-center gap-1">
+                <span className="text-gray-400 text-xs font-bold flex items-center gap-1">
                   <Clock size={12} /> Fast Moving
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-[1.1]">
+              <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-[1.1] tracking-tight">
                 {product.product_name}
               </h1>
-              {(product?.extra_discount || product?.discount) && <span className=" badge badge-accent text-accent-content font-bold text-sm">
-                {product?.discount && product?.discount+'%' } {product?.extra_discount &&  '+ '+product.extra_discount+'%'} OFF
-              </span>}
-            </div>
+              <div className="flex items-center gap-2">
+                  <div className="flex text-yellow-400">
+                    {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="currentColor" />)}
+                  </div>
+                  <span className="text-sm font-medium text-gray-400">BEST SELLER</span>
+              </div>
+            </motion.div>
 
             {/* Price & Offers */}
-            <div className="p-8 rounded-4xl bg-white border border-gray-100 shadow-sm space-y-6">
+            <motion.div variants={itemVariants} className="p-8 rounded-4xl bg-white border border-gray-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] space-y-6 relative overflow-hidden">
+              {/* Background Decoration */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-full blur-3xl -z-10" />
+
               <div className="flex items-end gap-4">
-                <span className="text-5xl font-black text-black tracking-tight">
+                <span className="text-5xl font-black text-black tracking-tighter">
                   ₹{Math.round(product.final_price)}
                 </span>
                 {(product.discount > 0 || product.extra_discount > 0) && (
-                  <div className="flex flex-col mb-1">
-                    <span className="text-xl text-gray-400 font-medium">
-                      MRP: <span className="line-through">₹{product.price}</span>
+                  <div className="flex flex-col mb-1.5">
+                    <span className="text-lg text-gray-400 font-bold line-through decoration-2 decoration-red-300">
+                      ₹{product.price}
                     </span>
-                    <span className="text-green-600 font-bold text-sm">
-                      You Save ₹{product.price - product.final_price}
+                    <span className="text-emerald-600 font-bold text-xs bg-emerald-50 px-2 py-0.5 rounded">
+                      Save ₹{product.price - product.final_price}
                     </span>
                   </div>
                 )}
@@ -195,132 +242,143 @@ const ProductDetails = () => {
 
               <div className="grid grid-cols-1 gap-3 border-t border-gray-50 pt-6">
                 <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                  <CheckCircle2 size={18} className="text-green-500" />
-                  Included of all taxes 
+                  <CheckCircle2 size={18} className="text-emerald-500 fill-emerald-50" />
+                  Inclusive of all taxes 
                 </div>
                 {product.cod_charges > 0 && (
                   <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                    <CheckCircle2 size={18} className="text-green-500" />
+                    <CheckCircle2 size={18} className="text-emerald-500 fill-emerald-50" />
                     Cash on Delivery available (₹{product.cod_charges})
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* Cart Actions */}
-            <div className="space-y-4">
+            <motion.div variants={itemVariants} className="space-y-4">
               {product.stock > 0 && !product.sold ? (
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex items-center justify-between bg-white border-2 border-gray-100 p-1.5 rounded-2xl w-full sm:w-1/3">
-                    <button
-                      className="w-10 h-10 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors text-gray-500"
+                  {/* Quantity Selector */}
+                  <div className="flex items-center justify-between bg-white border border-gray-200 p-2 rounded-2xl w-full sm:w-40 shadow-sm">
+                    <motion.button
+                      whileTap={{ scale: 0.8 }}
+                      className="w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-colors text-gray-600"
                       onClick={() => setQty(qty > 1 ? qty - 1 : 1)}
                     >
-                      <Minus size={20} />
-                    </button>
-                    <span className="font-black text-xl">{qty}</span>
-                    <button
-                      className="w-10 h-10 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors text-gray-500"
+                      <Minus size={20} strokeWidth={2.5} />
+                    </motion.button>
+                    <span className="font-black text-xl tabular-nums">{qty}</span>
+                    <motion.button
+                      whileTap={{ scale: 0.8 }}
+                      className="w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-colors text-gray-600"
                       onClick={() => product.stock > qty && setQty(qty + 1)}
                     >
-                      <Plus size={20} />
-                    </button>
+                      <Plus size={20} strokeWidth={2.5} />
+                    </motion.button>
                   </div>
 
-                  <button
+                  {/* Add To Cart Button */}
+                  <motion.button
                     onClick={addToCartProduct}
                     disabled={loader}
-                    className="flex-1 bg-black text-white py-5 rounded-2xl text-lg font-black hover:bg-gray-800 transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-xl shadow-black/10"
+                    whileHover={{ scale: 1.02, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 bg-black text-white py-5 rounded-2xl text-lg font-bold hover:bg-gray-900 transition-all flex items-center justify-center gap-3 shadow-xl relative overflow-hidden"
                   >
                     {loader ? (
-                      <span className="loading loading-spinner loading-md"></span>
+                      <span className="loading loading-dots loading-md"></span>
                     ) : (
                       <>
                         <ShoppingCart size={22} strokeWidth={2.5} />
                         Add to Cart
                       </>
                     )}
-                  </button>
+                  </motion.button>
                 </div>
               ) : (
-                <div className="w-full bg-red-50 text-red-600 py-6 rounded-2xl text-center font-black text-xl border-2 border-red-100">
-                  Out of Stock
+                <div className="w-full bg-red-50 text-red-600 py-6 rounded-2xl text-center font-black text-xl border border-red-100 flex items-center justify-center gap-2">
+                  <ShieldCheck size={24}/> Out of Stock
                 </div>
               )}
-            </div>
+            </motion.div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-6 py-4">
+            {/* Trust Badges - Staggered */}
+            <motion.div 
+              variants={containerVariants}
+              className="grid grid-cols-3 gap-6 py-4"
+            >
               {[
-                {
-                  icon: <Truck />,
-                  label: "Express Shipping",
-                  bg: "bg-blue-50",
-                  text: "text-blue-600",
-                },
-                {
-                  icon: <Leaf />,
-                  label: "100% Organic",
-                  bg: "bg-emerald-50",
-                  text: "text-emerald-600",
-                },
-                {
-                  icon: <ShieldCheck />,
-                  label: "Secure Payment",
-                  bg: "bg-amber-50",
-                  text: "text-amber-600",
-                },
+                { icon: <Truck />, label: "Express Shipping", color: "blue" },
+                { icon: <Leaf />, label: "100% Organic", color: "emerald" },
+                { icon: <ShieldCheck />, label: "Secure Payment", color: "amber" },
               ].map((badge, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 group">
-                  <div
-                    className={`${badge.bg} ${badge.text} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}
-                  >
+                <motion.div variants={itemVariants} key={i} className="flex flex-col items-center gap-3 group p-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 border border-transparent hover:border-gray-50">
+                  <div className={`text-${badge.color}-600 bg-${badge.color}-50 w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                     {badge.icon}
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">
                     {badge.label}
                   </span>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
-      {/* --- FULL WIDTH TABS SECTION (Improved for Heavy Data) --- */}
-      <div className="mt-24 bg-white border-t  border-gray-100">
+      {/* --- ANIMATED TABS SECTION --- */}
+      <div className="mt-24 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-20">
-          <div className="flex flex-wrap justify-center gap-2 md:gap-8 mb-16 border-b border-gray-100 pb-4">
+          
+          {/* Tab Headers */}
+          <div className="flex flex-wrap justify-center gap-4 md:gap-10 mb-16 border-b border-gray-100 pb-2 relative">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`relative px-4 py-2 text-sm font-bold uppercase tracking-[0.2em] transition-all
-                  ${activeTab === tab.key ? "text-black" : "text-gray-300 hover:text-gray-500"}`}
+                className={`relative px-4 py-4 text-sm font-bold uppercase tracking-[0.2em] transition-colors z-10 ${
+                   activeTab === tab.key ? "text-black" : "text-gray-400 hover:text-gray-600"
+                }`}
               >
                 {tab.label}
+                {/* The Magic Sliding Line */}
                 {activeTab === tab.key && (
-                  <span className="absolute -bottom-4.25 left-0 w-full h-1 bg-black rounded-full animate-in fade-in zoom-in"></span>
+                  <motion.span 
+                    layoutId="tab-underline"
+                    className="absolute bottom-0 left-0 w-full h-1 bg-black rounded-t-full"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
                 )}
               </button>
             ))}
           </div>
 
-          <div className="min-h-75 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-3xl font-black text-gray-900 mb-8 capitalize">
-              {activeTab.replace("_", " ")}
-            </h2>
-            <div className="text-gray-600 text-lg md:text-xl leading-[1.8] space-y-6 whitespace-pre-wrap">
-              {tabs.find((t) => t.key === activeTab)?.content || (
-                <p className="italic text-gray-400 text-base">
-                  Detailed information is not available for this section yet.
-                </p>
-              )}
-            </div>
-          </div>
+          {/* Tab Content with Fade Transition */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="min-h-75"
+            >
+              <h2 className="text-3xl font-black text-gray-900 mb-8 capitalize tracking-tight">
+                {activeTab.replace("_", " ")}
+              </h2>
+              <div className="text-gray-600 text-lg md:text-xl leading-[1.8] space-y-6 whitespace-pre-wrap font-medium">
+                {tabs.find((t) => t.key === activeTab)?.content || (
+                  <div className="flex flex-col items-center justify-center py-10 opacity-50">
+                      <Zap size={40} className="mb-4"/>
+                      <p className="italic">Detailed information coming soon.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

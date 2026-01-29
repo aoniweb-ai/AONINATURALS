@@ -105,7 +105,7 @@ export const editAddressController = async (req, res) => {
         const updatedUser = await User.findOneAndUpdate({ _id: user._id }, {
             address: {
                 address: address.address.trim(),
-                pincode: address.pincode.trim(),
+                pincode: address.pincode,
                 state: address.state.trim(),
                 landmark: address.landmark.trim()
             }

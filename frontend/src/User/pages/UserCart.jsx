@@ -9,6 +9,8 @@ import {
   Banknote,
   Percent,
   CheckCircle2,
+  Truck,
+  AlertCircle
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useEffect, useState } from "react";
@@ -17,6 +19,7 @@ import { loadRazorpay } from "../../../utils/loadRazorpay";
 import toast from "react-hot-toast";
 import CenterLoader from "../../../components/CenterLoader";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const UserCart = () => {
   const {
@@ -46,7 +49,6 @@ const UserCart = () => {
     setValue([]);
 
     user?.cart?.map((item) => {
-      // Logic: Only calculate for In-Stock items
       if (item.product.stock > 0 && !item.product.sold) {
         setMrp((prev) => prev + item.product.price * item.value);
         setSellingPrice((prev) => prev + item.product.final_price * item.value);
@@ -126,9 +128,6 @@ const UserCart = () => {
       }
     } catch (error) {
       if (error)
-        if (error == "Profile Incompleted") {
-          navigate("/account");
-        }
       toast.error(error || "Checkout failed");
     } finally {
       setLoader(false);
@@ -141,201 +140,243 @@ const UserCart = () => {
 
   if (loader) return <CenterLoader />;
 
-  // --- Empty State ---
+  // --- Empty State with Animation ---
   if (!user?.cart || user?.cart.length === 0) {
     return (
-      <section className="min-h-[80vh] flex flex-col items-center justify-center bg-white px-4 text-center">
-        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 animate-bounce-slow">
+      <motion.section 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="h-full flex flex-col items-center justify-center bg-white px-4 text-center"
+      >
+        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 relative">
           <ShoppingBag size={40} className="text-gray-300" />
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="absolute top-0 right-0 w-3 h-3 bg-red-400 rounded-full"
+          />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Your cart is empty
+        <h2 className="text-2xl font-black text-gray-900 mb-2">
+          Your cart is feeling lonely
         </h2>
+        <p className="text-gray-500 mb-8 max-w-sm">
+            Looks like you haven't added anything yet. Explore our best sellers and find something you love.
+        </p>
         <button
           onClick={() => navigate("/products")}
-          className="mt-4 bg-black text-white px-8 py-3 rounded-xl font-medium hover:bg-gray-800 transition-all"
+          className="bg-black text-white px-8 py-3 rounded-xl font-medium hover:bg-gray-800 hover:scale-105 transition-all shadow-lg shadow-black/20"
         >
           Start Shopping
         </button>
-      </section>
+      </motion.section>
     );
   }
 
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <section className="bg-[#f9fafb] min-h-screen font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="text-3xl font-black text-gray-900 mb-8 tracking-tight flex items-center gap-3">
-          Shopping Cart{" "}
+    <section className="bg-gray-50 min-h-screen font-sans pb-32 lg:pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
+        <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-3xl lg:text-4xl font-black text-gray-900 mb-8 tracking-tight flex items-baseline gap-3"
+        >
+          Shopping Cart
           <span className="text-lg font-medium text-gray-400">
-            ({user?.cart?.length})
+            ({user?.cart?.length} Items)
           </span>
-        </h1>
+        </motion.h1>
 
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+          
           {/* --- LEFT: PRODUCTS --- */}
-          <div className="lg:col-span-2 space-y-4">
-            {user?.cart?.map((item, index) => {
-              const isOutOfStock = item.product.stock <= 0 || item.product.sold;
-              const hasQuantityChanged = value[index] !== item.value;
+          <div className="lg:col-span-2">
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="space-y-4"
+            >
+              <AnimatePresence mode="popLayout">
+                {user?.cart?.map((item, index) => {
+                  const isOutOfStock = item.product.stock <= 0 || item.product.sold;
+                  const hasQuantityChanged = value[index] !== item.value;
 
-              return (
-                <div
-                  key={item._id}
-                  className={`bg-white rounded-3xl p-4 sm:p-5 border border-transparent shadow-sm hover:shadow-md transition-all ${isOutOfStock ? "opacity-70 bg-gray-50" : ""}`}
-                >
-                  <div className="flex gap-4 sm:gap-6 items-start">
-                    {/* Image */}
-                    <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-[#f4f4f5] rounded-2xl p-2 overflow-hidden">
-                      <img
-                        src={getCloudinaryImage(
-                          item.product.product_images?.[0]?.secure_url,
-                          { width: 300, quality: 60 },
-                        )}
-                        alt={item.product.product_name}
-                        className={`w-full h-full object-contain mix-blend-multiply ${isOutOfStock ? "grayscale" : ""}`}
-                      />
-                      {isOutOfStock && (
-                        <span className="absolute inset-0 flex items-center justify-center bg-black/10 text-[10px] font-bold text-white uppercase">
-                          <span className="bg-red-500 px-2 py-1 rounded">
-                            Sold Out
-                          </span>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex-1 flex flex-col justify-between min-h-28">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-gray-900 text-base sm:text-lg line-clamp-1">
-                            {item.product.product_name}
-                          </h3>
-                          <p className="text-gray-500 text-xs mt-1 line-clamp-1">
-                            {item.product.description}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => removeCartItem(item._id)}
-                          className="text-gray-300 hover:text-red-500"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-lg font-bold text-gray-900">
-                          ₹{Math.round(item.product.final_price)}
-                        </span>
-                        {(item.product.discount > 0 ||
-                          item.product.extra_discount > 0) && (
-                          <>
-                            <span className="text-sm text-gray-400 line-through">
-                              ₹{item.product.price}
-                            </span>
-                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                              {item.product.discount +
-                                item.product.extra_discount}
-                              % OFF
-                            </span>
-                          </>
-                        )}
-                      </div>
-
-                      {/* Quantity Controls */}
-                      {!isOutOfStock && (
-                        <div className="flex  items-center justify-between mt-auto pt-3">
-                          <div className="flex items-center  bg-gray-50 rounded-lg p-1 border border-gray-200">
-                            <button
-                              disabled={value[index] <= 1}
-                              onClick={() => {
-                                const arr = [...value];
-                                arr[index] = Math.max(
-                                  1,
-                                  (value[index] || 1) - 1,
-                                );
-                                setValue(arr);
-                              }}
-                              className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm text-gray-600 disabled:opacity-50"
-                            >
-                              <Minus size={14} />
-                            </button>
-                            <span className="w-8 text-center font-bold text-sm">
-                              {value[index]}
-                            </span>
-                            <button
-                              onClick={() => {
-                                const arr = [...value];
-                                arr[index] = (value[index] || 1) + 1;
-                                setValue(arr);
-                              }}
-                              className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm text-gray-600"
-                            >
-                              <Plus size={14} />
-                            </button>
-                          </div>
-                          {hasQuantityChanged && (
-                            <button
-                              onClick={() =>
-                                updateTheCart(
-                                  value[index] - item.value,
-                                  item.product._id,
-                                )
-                              }
-                              disabled={cartUpdate_loader}
-                              className="text-xs font-bold bg-black text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-all animate-pulse"
-                            >
-                              {cartUpdate_loader ? "..." : "Save"}
-                            </button>
+                  return (
+                    <motion.div
+                      layout
+                      key={item._id}
+                      variants={itemVariants}
+                      exit={{ scale: 0.9, opacity: 0, height: 0, marginBottom: 0 }}
+                      className={`group bg-white rounded-3xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden ${isOutOfStock ? "opacity-75 bg-gray-50" : ""}`}
+                    >
+                      <div className="flex gap-4 sm:gap-6 items-start relative z-10">
+                        {/* Image */}
+                        <div className="relative shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#f4f4f5] rounded-2xl p-2 overflow-hidden border border-gray-100">
+                          <img
+                            src={getCloudinaryImage(
+                              item.product.product_images?.[0]?.secure_url,
+                              { width: 300, quality: 70 },
+                            )}
+                            alt={item.product.product_name}
+                            className={`w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110 ${isOutOfStock ? "grayscale" : ""}`}
+                          />
+                          {isOutOfStock && (
+                            <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+                              <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
+                                Sold Out
+                              </span>
+                            </div>
                           )}
                         </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+
+                        {/* Details */}
+                        <div className="flex-1 flex flex-col justify-between min-h-24 sm:min-h-32">
+                          <div>
+                            <div className="flex justify-between items-start gap-2">
+                              <div>
+                                <h3 className="font-bold text-gray-900 text-base sm:text-xl line-clamp-1 leading-tight">
+                                  {item.product.product_name}
+                                </h3>
+                                <p className="text-gray-500 text-xs sm:text-sm mt-1 line-clamp-2">
+                                  {item.product.description}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => removeCartItem(item._id)}
+                                className="text-gray-300 hover:text-red-500 p-1 hover:bg-red-50 rounded-full transition-colors"
+                              >
+                                <Trash2 size={20} />
+                              </button>
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="text-lg sm:text-xl font-bold text-gray-900">
+                                ₹{Math.round(item.product.final_price)}
+                              </span>
+                              {(item.product.discount > 0 ||
+                                item.product.extra_discount > 0) && (
+                                <>
+                                  <span className="text-sm text-gray-400 line-through">
+                                    ₹{item.product.price}
+                                  </span>
+                                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                    {item.product.discount + item.product.extra_discount}% OFF
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Quantity Controls */}
+                          {!isOutOfStock && (
+                            <div className="flex items-center justify-between mt-3 pt-2">
+                              <div className="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-200 shadow-inner">
+                                <motion.button
+                                  whileTap={{ scale: 0.9 }}
+                                  disabled={value[index] <= 1}
+                                  onClick={() => {
+                                    const arr = [...value];
+                                    arr[index] = Math.max(1, (value[index] || 1) - 1);
+                                    setValue(arr);
+                                  }}
+                                  className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-gray-700 hover:text-black disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                  <Minus size={14} />
+                                </motion.button>
+                                
+                                <span className="w-10 text-center font-bold text-sm text-gray-900">
+                                  {value[index]}
+                                </span>
+                                
+                                <motion.button
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => {
+                                    const arr = [...value];
+                                    arr[index] = (value[index] || 1) + 1;
+                                    setValue(arr);
+                                  }}
+                                  className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-gray-700 hover:text-black"
+                                >
+                                  <Plus size={14} />
+                                </motion.button>
+                              </div>
+
+                              {hasQuantityChanged && (
+                                <motion.button
+                                  initial={{ opacity: 0, scale: 0.8 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  onClick={() => updateTheCart(value[index] - item.value, item.product._id)}
+                                  disabled={cartUpdate_loader}
+                                  className="text-xs font-bold bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all shadow-md shadow-black/20"
+                                >
+                                  {cartUpdate_loader ? "Updating..." : "Update"}
+                                </motion.button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
           </div>
 
           {/* --- RIGHT: DETAILED SUMMARY --- */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 sticky top-24">
-              <h2 className="text-xl font-black text-gray-900 mb-6">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-100 border border-white sticky top-24"
+            >
+              <h2 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
                 Order Summary
               </h2>
 
-              {/* DETAILS SECTION (Restored) */}
-              <div className="space-y-3 text-sm mb-6 pb-6 border-b border-gray-100">
-                {/* MRP */}
+              <div className="space-y-4 text-sm mb-6 pb-6 border-b border-gray-100">
                 <div className="flex justify-between text-gray-600">
-                  <span>Price ({user?.cart?.length} items)</span>
+                  <span>Subtotal ({user?.cart?.length} items)</span>
                   <span className="font-medium">₹{Math.round(mrp)}</span>
                 </div>
 
-                {/* Savings */}
                 {totalDiscountPercent > 0 && (
                   <div className="flex justify-between text-emerald-600 items-center">
                     <span className="flex items-center gap-1">
-                      <Percent size={14} /> You Saved
+                      <Percent size={14} /> Discount
                     </span>
-                    <span className="font-bold bg-emerald-50 px-2 py-0.5 rounded text-xs">
-                      - ₹{Math.round(mrp - sellingPrice)} (
-                      {totalDiscountPercent}%)
+                    <span className="font-bold">
+                      - ₹{Math.round(mrp - sellingPrice)}
                     </span>
                   </div>
                 )}
 
-                {/* Delivery Charges */}
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Delivery Charges</span>
+                  <span className="text-gray-600 flex items-center gap-1"><Truck size={14}/> Delivery</span>
                   {paymentMethod === "online" ? (
-                    <span className="text-emerald-600 font-medium text-xs">
-                      FREE
+                    <span className="text-emerald-600 font-bold text-xs uppercase bg-emerald-50 px-2 py-0.5 rounded">
+                      Free
                     </span>
                   ) : (
                     <span className="font-medium text-gray-900">
-                      {codCharges === 0
-                        ? "Free"
-                        : `+ ₹${Math.round(codCharges)}`}
+                      {codCharges === 0 ? "Free" : `+ ₹${Math.round(codCharges)}`}
                     </span>
                   )}
                 </div>
@@ -347,74 +388,81 @@ const UserCart = () => {
                   Payment Method
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  <button
+                  <div 
                     onClick={() => setPaymentMethod("online")}
-                    className={`border rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === "online" ? "border-black bg-black text-white shadow-lg" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+                    className={`cursor-pointer border rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all relative overflow-hidden ${paymentMethod === "online" ? "border-black bg-gray-900 text-white shadow-lg scale-[1.02]" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
                   >
-                    <CreditCard size={20} />
-                    <span className="text-xs font-bold">Online</span>
-                  </button>
-                  <button
+                     {paymentMethod === "online" && <div className="absolute top-2 right-2"><CheckCircle2 size={14} className="text-emerald-400"/></div>}
+                    <CreditCard size={24} />
+                    <span className="text-xs font-bold">Pay Online</span>
+                    {paymentMethod === "online" && <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 rounded">Free Delivery</span>}
+                  </div>
+                  
+                  <div 
                     onClick={() => setPaymentMethod("cod")}
-                    className={`border rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === "cod" ? "border-black bg-black text-white shadow-lg" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+                    className={`cursor-pointer border rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all relative overflow-hidden ${paymentMethod === "cod" ? "border-black bg-gray-900 text-white shadow-lg scale-[1.02]" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
                   >
-                    <Banknote size={20} />
-                    <span className="text-xs font-bold">COD</span>
-                  </button>
+                     {paymentMethod === "cod" && <div className="absolute top-2 right-2"><CheckCircle2 size={14} className="text-emerald-400"/></div>}
+                    <Banknote size={24} />
+                    <span className="text-xs font-bold">Cash on Delivery</span>
+                    {codCharges > 0 && <span className="text-[10px] bg-white/20 px-1.5 rounded">+₹{codCharges} Fee</span>}
+                  </div>
                 </div>
+                
+                {paymentMethod === "cod" && codCharges > 0 && (
+                   <div className="mt-3 flex items-start gap-2 text-[11px] text-orange-600 bg-orange-50 p-2 rounded-lg">
+                       <AlertCircle size={14} className="shrink-0 mt-0.5"/>
+                       <p>Pay online to save ₹{codCharges} on COD charges.</p>
+                   </div>
+                )}
               </div>
 
               {/* TOTAL & BUTTON */}
               <div className="flex justify-between items-end mb-6">
-                <span className="font-bold text-gray-900 text-lg">
-                  Total Amount
-                </span>
+                <span className="font-bold text-gray-900 text-lg">Total</span>
                 <div className="text-right">
-                  {paymentMethod === "cod" && codCharges > 0 && (
-                    <p className="text-xs text-gray-400 line-through mr-1">
-                      ₹{Math.round(sellingPrice)}
-                    </p>
-                  )}
-                  <span className="font-black text-2xl text-gray-900">
+                  <motion.span 
+                    key={finalPayableAmount}
+                    initial={{ scale: 1.2, color: "#10b981" }}
+                    animate={{ scale: 1, color: "#111827" }}
+                    className="font-black text-3xl text-gray-900"
+                  >
                     ₹{Math.ceil(finalPayableAmount)}
-                  </span>
+                  </motion.span>
                 </div>
               </div>
-              <div className="flex items-center my-3 gap-3 text-sm text-gray-600 font-medium">
-                <CheckCircle2 size={18} className="text-green-500" />
-                Included of all taxes
-              </div>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => finalPayableAmount > 0 && handleCheckout()}
                 disabled={finalPayableAmount <= 0}
-                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-xl active:scale-95 ${finalPayableAmount <= 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-black text-white hover:bg-gray-800 shadow-black/20"}`}
+                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-xl ${finalPayableAmount <= 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-black text-white hover:bg-gray-800 shadow-black/20"}`}
               >
-                {paymentMethod === "cod" ? "Place Order" : "Proceed to Pay"}{" "}
+                {paymentMethod === "cod" ? "Place Order" : "Proceed to Pay"}
                 <ArrowRight size={18} />
-              </button>
+              </motion.button>
 
               <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-400 uppercase font-bold tracking-widest">
-                <ShieldCheck size={14} className="text-emerald-500" /> Secure
-                Payment
+                <ShieldCheck size={14} className="text-emerald-500" /> 100% Secure Payment
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
-      {/* --- MOBILE FOOTER --- */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
+      {/* --- MOBILE FOOTER (Glassmorphism) --- */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4 pb-6 z-50">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-gray-500 uppercase font-bold">Total</p>
-            <p className="text-xl font-black">
+            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Total Payable</p>
+            <p className="text-2xl font-black text-gray-900 leading-none">
               ₹{Math.ceil(finalPayableAmount)}
             </p>
           </div>
           <button
             onClick={() => finalPayableAmount > 0 && handleCheckout()}
-            className="flex-1 bg-black text-white py-3 rounded-xl font-bold"
+            className="flex-1 bg-black text-white py-3.5 rounded-xl font-bold shadow-lg shadow-black/20 active:scale-95 transition-transform"
           >
             {paymentMethod === "cod" ? "Place Order" : "Pay Now"}
           </button>
