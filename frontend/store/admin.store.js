@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { adminAxios } from '../AxiosApi/axiosInstance'
-const useAdminBear = create((set,get) => ({
+const useAdminBear = create((set, get) => ({
     checkAdmin:false,
     admin:null,
     editProduct:null,
@@ -46,7 +46,9 @@ const useAdminBear = create((set,get) => ({
         try {
             const response = await adminAxios.post("/product/addupdateproduct",data);
             if(response.data?.edit==false){
-                set({products:[...get().products.push(response.data?.product)]})
+                let product_arry = get().products;
+                product_arry.push(response.data?.product)
+                set({products:[...product_arry]})
             }else{
                 set({product:response.data?.product})
             }
