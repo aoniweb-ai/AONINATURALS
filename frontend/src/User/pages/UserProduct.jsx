@@ -56,13 +56,12 @@ const UserProduct = () => {
     }
   };
 
-  // --- Animation Variants ---
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1, // Har card 0.1s ke gap pe aayega
+        staggerChildren: 0.1,
       },
     },
   };
@@ -165,7 +164,6 @@ const UserProduct = () => {
   );
 };
 
-// --- Extracted Product Card Component for Cleanliness ---
 const ProductCard = ({ product, navigate, handleAddToCart, cartLoader, cardVariants }) => {
   const hasDiscount = product.discount > 0 || product.price > product.final_price;
   const displayPrice = product.final_price || product.price;
@@ -287,7 +285,6 @@ const ProductSkeletonGrid = () => (
   </div>
 );
 
-// --- Empty State ---
 const EmptyState = ({ onRefresh }) => (
   <motion.div 
     initial={{ opacity: 0, scale: 0.9 }}

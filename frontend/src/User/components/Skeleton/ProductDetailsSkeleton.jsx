@@ -5,7 +5,7 @@ const ProductDetailsSkeleton = () => {
         <div className="grid lg:grid-cols-2 gap-12">
 
           {/* IMAGE SKELETON */}
-          <div className="bg-gray-100 rounded-3xl h-[380px]" />
+          <div className="bg-gray-100 rounded-3xl h-95" />
 
           {/* CONTENT SKELETON */}
           <div>

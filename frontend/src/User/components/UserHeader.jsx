@@ -45,27 +45,25 @@ const AccountNotifyIcon = ({ icon }) => (
   </div>
 );
 
-const SidebarItem = ({ 
-  icon, 
-  label, 
-  isActive, 
-  collapsed, 
-  onClick, 
-  badge = null 
+const SidebarItem = ({
+  icon,
+  label,
+  isActive,
+  collapsed,
+  onClick,
+  badge = null,
 }) => {
   return (
     <button
       onClick={onClick}
-      // Added 'overflow-hidden' and 'isolation-isolate' to prevent glitching outside bounds
       className={`relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors duration-200 z-10 w-full overflow-hidden isolate
         ${isActive ? "text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"}
       `}
     >
-      {/* Gliding Background for Active State */}
       {isActive && (
         <motion.div
           layoutId="activeTab"
-          className="absolute inset-0 bg-black" // Removed rounded-xl here because parent has overflow-hidden
+          className="absolute inset-0 bg-black"
           initial={false}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
           style={{ zIndex: -1 }}
@@ -73,7 +71,7 @@ const SidebarItem = ({
       )}
 
       <span className="relative z-10">{icon}</span>
-      
+
       <AnimatePresence mode="wait">
         {!collapsed && (
           <motion.span
@@ -86,13 +84,11 @@ const SidebarItem = ({
           </motion.span>
         )}
       </AnimatePresence>
-      
+
       {badge}
     </button>
   );
 };
-
-// --- Main Sidebar Component ---
 
 const UserHeader = () => {
   const { user, userLogout } = useUserBear((state) => state);
@@ -102,9 +98,9 @@ const UserHeader = () => {
   const [loader, setLoader] = useState(false);
 
   const isActive = (path) => {
-      if (path === '/' && location.pathname === '/') return true;
-      if (path !== '/' && location.pathname.includes(path)) return true;
-      return false;
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.includes(path)) return true;
+    return false;
   };
 
   const closeDrawer = () => {
@@ -113,13 +109,43 @@ const UserHeader = () => {
   };
 
   const routes = [
-    { path: "/", value: "Home", icon: <LayoutDashboard size={20} />, auth: null },
-    { path: "/products", value: "Products", icon: <Package size={20} />, auth: !user ? false : true },
-    { path: "/orders", value: "Orders", icon: <ShoppingBag size={20} />, auth: true },
-    { path: "/cart", value: "Cart", icon: <ShoppingCart size={20} />, auth: true },
-    { path: "/account", value: "Account", icon: <UserPen size={20} />, auth: true },
+    {
+      path: "/",
+      value: "Home",
+      icon: <LayoutDashboard size={20} />,
+      auth: null,
+    },
+    {
+      path: "/products",
+      value: "Products",
+      icon: <Package size={20} />,
+      auth: !user ? false : true,
+    },
+    {
+      path: "/orders",
+      value: "Orders",
+      icon: <ShoppingBag size={20} />,
+      auth: true,
+    },
+    {
+      path: "/cart",
+      value: "Cart",
+      icon: <ShoppingCart size={20} />,
+      auth: true,
+    },
+    {
+      path: "/account",
+      value: "Account",
+      icon: <UserPen size={20} />,
+      auth: true,
+    },
     { path: "/login", value: "Login", icon: <User size={20} />, auth: false },
-    { path: "/signup", value: "Signup", icon: <Users size={20} />, auth: false },
+    {
+      path: "/signup",
+      value: "Signup",
+      icon: <Users size={20} />,
+      auth: false,
+    },
   ];
 
   return (
@@ -130,10 +156,8 @@ const UserHeader = () => {
         initial={false}
         animate={{ width: collapsed ? 80 : 280 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        // Added 'h-screen sticky top-0' to keep sidebar stable during page scroll
         className="h-screen sticky top-0 bg-white/95 backdrop-blur-xl border-r border-gray-100 flex flex-col p-4 shadow-2xl shadow-gray-200/50 overflow-hidden"
       >
-        
         {/* --- TOP HEADER --- */}
         <div className="flex items-center justify-between mb-8 px-1">
           <AnimatePresence mode="wait">
@@ -145,7 +169,7 @@ const UserHeader = () => {
                 className="flex items-center gap-2"
               >
                 <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">A</span>
+                  <span className="text-white font-bold text-lg">A</span>
                 </div>
                 <h1 className="text-xl font-bold tracking-tight text-gray-900">
                   Aoni
@@ -153,22 +177,21 @@ const UserHeader = () => {
               </motion.div>
             )}
           </AnimatePresence>
-          
+
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
           >
             <motion.div
-                animate={{ rotate: collapsed ? 180 : 0 }}
-                transition={{ type: "spring", stiffness: 200 }}
+              animate={{ rotate: collapsed ? 180 : 0 }}
+              transition={{ type: "spring", stiffness: 200 }}
             >
-                <ChevronLeft size={20} />
+              <ChevronLeft size={20} />
             </motion.div>
           </button>
         </div>
 
         {/* --- NAVIGATION --- */}
-        {/* Added overflow-y-auto and overflow-x-hidden here is CRUCIAL */}
         <nav className="flex-1 flex flex-col gap-2 overflow-y-auto overflow-x-hidden scrollbar-hide">
           {routes.map((route) => {
             if (route.auth === true && !user) return null;
@@ -176,9 +199,20 @@ const UserHeader = () => {
 
             let displayIcon = route.icon;
             if (route.value === "Cart") {
-               displayIcon = <CartIconWithBadge count={user?.cart?.length} icon={route.icon} />;
-            } else if (route.value === "Account" && user && (!user?.address?.address || !user?.address?.state || !user?.address?.pincode)) {
-               displayIcon = <AccountNotifyIcon icon={route.icon} />;
+              displayIcon = (
+                <CartIconWithBadge
+                  count={user?.cart?.length}
+                  icon={route.icon}
+                />
+              );
+            } else if (
+              route.value === "Account" &&
+              user &&
+              (!user?.address?.address ||
+                !user?.address?.state ||
+                !user?.address?.pincode)
+            ) {
+              displayIcon = <AccountNotifyIcon icon={route.icon} />;
             }
 
             return (
@@ -200,7 +234,7 @@ const UserHeader = () => {
         {/* --- LOGOUT SECTION --- */}
         {user && (
           <div className="mt-auto border-t border-gray-100 pt-4">
-             <motion.button
+            <motion.button
               layout
               disabled={loader}
               onClick={() => {
@@ -216,20 +250,24 @@ const UserHeader = () => {
                 ${loader ? "bg-red-50 text-red-500 cursor-not-allowed" : "hover:bg-red-50 text-gray-500 hover:text-red-600"}
               `}
             >
-               {loader && (
-                   <motion.div 
-                    layoutId="loader-bg"
-                    className="absolute inset-0 bg-red-100"
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 1.5 }}
-                   />
-               )}
+              {loader && (
+                <motion.div
+                  layoutId="loader-bg"
+                  className="absolute inset-0 bg-red-100"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 1.5 }}
+                />
+              )}
 
               <span className="relative z-10">
-                 {loader ? <span className="loading loading-spinner loading-xs"/> : <LogOut size={20} />}
+                {loader ? (
+                  <span className="loading loading-spinner loading-xs" />
+                ) : (
+                  <LogOut size={20} />
+                )}
               </span>
-              
+
               <AnimatePresence>
                 {!collapsed && (
                   <motion.span

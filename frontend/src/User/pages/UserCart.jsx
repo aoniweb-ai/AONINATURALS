@@ -10,7 +10,7 @@ import {
   Percent,
   CheckCircle2,
   Truck,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useEffect, useState } from "react";
@@ -127,8 +127,7 @@ const UserCart = () => {
         navigate("/orders");
       }
     } catch (error) {
-      if (error)
-      toast.error(error || "Checkout failed");
+      if (error) toast.error(error || "Checkout failed");
     } finally {
       setLoader(false);
     }
@@ -140,17 +139,16 @@ const UserCart = () => {
 
   if (loader) return <CenterLoader />;
 
-  // --- Empty State with Animation ---
   if (!user?.cart || user?.cart.length === 0) {
     return (
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="h-full flex flex-col items-center justify-center bg-white px-4 text-center"
       >
         <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 relative">
           <ShoppingBag size={40} className="text-gray-300" />
-          <motion.div 
+          <motion.div
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ repeat: Infinity, duration: 2 }}
             className="absolute top-0 right-0 w-3 h-3 bg-red-400 rounded-full"
@@ -160,7 +158,8 @@ const UserCart = () => {
           Your cart is feeling lonely
         </h2>
         <p className="text-gray-500 mb-8 max-w-sm">
-            Looks like you haven't added anything yet. Explore our best sellers and find something you love.
+          Looks like you haven't added anything yet. Explore our best sellers
+          and find something you love.
         </p>
         <button
           onClick={() => navigate("/products")}
@@ -172,29 +171,28 @@ const UserCart = () => {
     );
   }
 
-  // Animation Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0 },
   };
 
   return (
     <section className="bg-gray-50 min-h-screen font-sans pb-32 lg:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
-        <motion.h1 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-3xl lg:text-4xl font-black text-gray-900 mb-8 tracking-tight flex items-baseline gap-3"
+        <motion.h1
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-3xl lg:text-4xl font-black text-gray-900 mb-8 tracking-tight flex items-baseline gap-3"
         >
           Shopping Cart
           <span className="text-lg font-medium text-gray-400">
@@ -203,18 +201,18 @@ const UserCart = () => {
         </motion.h1>
 
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-          
           {/* --- LEFT: PRODUCTS --- */}
           <div className="lg:col-span-2">
-            <motion.div 
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-                className="space-y-4"
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="space-y-4"
             >
               <AnimatePresence mode="popLayout">
                 {user?.cart?.map((item, index) => {
-                  const isOutOfStock = item.product.stock <= 0 || item.product.sold;
+                  const isOutOfStock =
+                    item.product.stock <= 0 || item.product.sold;
                   const hasQuantityChanged = value[index] !== item.value;
 
                   return (
@@ -222,7 +220,12 @@ const UserCart = () => {
                       layout
                       key={item._id}
                       variants={itemVariants}
-                      exit={{ scale: 0.9, opacity: 0, height: 0, marginBottom: 0 }}
+                      exit={{
+                        scale: 0.9,
+                        opacity: 0,
+                        height: 0,
+                        marginBottom: 0,
+                      }}
                       className={`group bg-white rounded-3xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden ${isOutOfStock ? "opacity-75 bg-gray-50" : ""}`}
                     >
                       <div className="flex gap-4 sm:gap-6 items-start relative z-10">
@@ -276,7 +279,9 @@ const UserCart = () => {
                                     ₹{item.product.price}
                                   </span>
                                   <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                                    {item.product.discount + item.product.extra_discount}% OFF
+                                    {item.product.discount +
+                                      item.product.extra_discount}
+                                    % OFF
                                   </span>
                                 </>
                               )}
@@ -292,18 +297,21 @@ const UserCart = () => {
                                   disabled={value[index] <= 1}
                                   onClick={() => {
                                     const arr = [...value];
-                                    arr[index] = Math.max(1, (value[index] || 1) - 1);
+                                    arr[index] = Math.max(
+                                      1,
+                                      (value[index] || 1) - 1,
+                                    );
                                     setValue(arr);
                                   }}
                                   className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-gray-700 hover:text-black disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                   <Minus size={14} />
                                 </motion.button>
-                                
+
                                 <span className="w-10 text-center font-bold text-sm text-gray-900">
                                   {value[index]}
                                 </span>
-                                
+
                                 <motion.button
                                   whileTap={{ scale: 0.9 }}
                                   onClick={() => {
@@ -321,7 +329,12 @@ const UserCart = () => {
                                 <motion.button
                                   initial={{ opacity: 0, scale: 0.8 }}
                                   animate={{ opacity: 1, scale: 1 }}
-                                  onClick={() => updateTheCart(value[index] - item.value, item.product._id)}
+                                  onClick={() =>
+                                    updateTheCart(
+                                      value[index] - item.value,
+                                      item.product._id,
+                                    )
+                                  }
                                   disabled={cartUpdate_loader}
                                   className="text-xs font-bold bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all shadow-md shadow-black/20"
                                 >
@@ -341,11 +354,11 @@ const UserCart = () => {
 
           {/* --- RIGHT: DETAILED SUMMARY --- */}
           <div className="lg:col-span-1">
-            <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-100 border border-white sticky top-24"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-100 border border-white sticky top-24"
             >
               <h2 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
                 Order Summary
@@ -369,14 +382,18 @@ const UserCart = () => {
                 )}
 
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 flex items-center gap-1"><Truck size={14}/> Delivery</span>
+                  <span className="text-gray-600 flex items-center gap-1">
+                    <Truck size={14} /> Delivery
+                  </span>
                   {paymentMethod === "online" ? (
                     <span className="text-emerald-600 font-bold text-xs uppercase bg-emerald-50 px-2 py-0.5 rounded">
                       Free
                     </span>
                   ) : (
                     <span className="font-medium text-gray-900">
-                      {codCharges === 0 ? "Free" : `+ ₹${Math.round(codCharges)}`}
+                      {codCharges === 0
+                        ? "Free"
+                        : `+ ₹${Math.round(codCharges)}`}
                     </span>
                   )}
                 </div>
@@ -388,32 +405,48 @@ const UserCart = () => {
                   Payment Method
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  <div 
+                  <div
                     onClick={() => setPaymentMethod("online")}
                     className={`cursor-pointer border rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all relative overflow-hidden ${paymentMethod === "online" ? "border-black bg-gray-900 text-white shadow-lg scale-[1.02]" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
                   >
-                     {paymentMethod === "online" && <div className="absolute top-2 right-2"><CheckCircle2 size={14} className="text-emerald-400"/></div>}
+                    {paymentMethod === "online" && (
+                      <div className="absolute top-2 right-2">
+                        <CheckCircle2 size={14} className="text-emerald-400" />
+                      </div>
+                    )}
                     <CreditCard size={24} />
                     <span className="text-xs font-bold">Pay Online</span>
-                    {paymentMethod === "online" && <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 rounded">Free Delivery</span>}
+                    {paymentMethod === "online" && (
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 rounded">
+                        Free Delivery
+                      </span>
+                    )}
                   </div>
-                  
-                  <div 
+
+                  <div
                     onClick={() => setPaymentMethod("cod")}
                     className={`cursor-pointer border rounded-xl p-3 flex flex-col items-center justify-center gap-2 transition-all relative overflow-hidden ${paymentMethod === "cod" ? "border-black bg-gray-900 text-white shadow-lg scale-[1.02]" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
                   >
-                     {paymentMethod === "cod" && <div className="absolute top-2 right-2"><CheckCircle2 size={14} className="text-emerald-400"/></div>}
+                    {paymentMethod === "cod" && (
+                      <div className="absolute top-2 right-2">
+                        <CheckCircle2 size={14} className="text-emerald-400" />
+                      </div>
+                    )}
                     <Banknote size={24} />
                     <span className="text-xs font-bold">Cash on Delivery</span>
-                    {codCharges > 0 && <span className="text-[10px] bg-white/20 px-1.5 rounded">+₹{codCharges} Fee</span>}
+                    {codCharges > 0 && (
+                      <span className="text-[10px] bg-white/20 px-1.5 rounded">
+                        +₹{codCharges} Fee
+                      </span>
+                    )}
                   </div>
                 </div>
-                
+
                 {paymentMethod === "cod" && codCharges > 0 && (
-                   <div className="mt-3 flex items-start gap-2 text-[11px] text-orange-600 bg-orange-50 p-2 rounded-lg">
-                       <AlertCircle size={14} className="shrink-0 mt-0.5"/>
-                       <p>Pay online to save ₹{codCharges} on COD charges.</p>
-                   </div>
+                  <div className="mt-3 flex items-start gap-2 text-[11px] text-orange-600 bg-orange-50 p-2 rounded-lg">
+                    <AlertCircle size={14} className="shrink-0 mt-0.5" />
+                    <p>Pay online to save ₹{codCharges} on COD charges.</p>
+                  </div>
                 )}
               </div>
 
@@ -421,7 +454,7 @@ const UserCart = () => {
               <div className="flex justify-between items-end mb-6">
                 <span className="font-bold text-gray-900 text-lg">Total</span>
                 <div className="text-right">
-                  <motion.span 
+                  <motion.span
                     key={finalPayableAmount}
                     initial={{ scale: 1.2, color: "#10b981" }}
                     animate={{ scale: 1, color: "#111827" }}
@@ -444,18 +477,21 @@ const UserCart = () => {
               </motion.button>
 
               <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-400 uppercase font-bold tracking-widest">
-                <ShieldCheck size={14} className="text-emerald-500" /> 100% Secure Payment
+                <ShieldCheck size={14} className="text-emerald-500" /> 100%
+                Secure Payment
               </div>
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* --- MOBILE FOOTER (Glassmorphism) --- */}
+      {/* --- MOBILE FOOTER --- */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4 pb-6 z-50">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Total Payable</p>
+            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">
+              Total Payable
+            </p>
             <p className="text-2xl font-black text-gray-900 leading-none">
               ₹{Math.ceil(finalPayableAmount)}
             </p>

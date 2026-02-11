@@ -125,11 +125,10 @@ const ProductDetails = () => {
           
           {/* --- LEFT: IMAGE GALLERY (STICKY) --- */}
           <div className="lg:sticky lg:top-24 space-y-6">
-             {/* Main Image with Transition */}
             <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-white border border-gray-100 shadow-2xl shadow-gray-200/50">
               <AnimatePresence mode="wait">
                 <motion.img
-                  key={selectedImg} // Key change hone par animation trigger hogi
+                  key={selectedImg}
                   initial={{ opacity: 0, scale: 1.1 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
@@ -302,7 +301,6 @@ const ProductDetails = () => {
               )}
             </motion.div>
 
-            {/* Trust Badges - Staggered */}
             <motion.div 
               variants={containerVariants}
               className="grid grid-cols-3 gap-6 py-4"
@@ -330,7 +328,6 @@ const ProductDetails = () => {
       <div className="mt-24 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-20">
           
-          {/* Tab Headers */}
           <div className="flex flex-wrap justify-center gap-4 md:gap-10 mb-16 border-b border-gray-100 pb-2 relative">
             {tabs.map((tab) => (
               <button
@@ -341,7 +338,6 @@ const ProductDetails = () => {
                 }`}
               >
                 {tab.label}
-                {/* The Magic Sliding Line */}
                 {activeTab === tab.key && (
                   <motion.span 
                     layoutId="tab-underline"
@@ -353,7 +349,6 @@ const ProductDetails = () => {
             ))}
           </div>
 
-          {/* Tab Content with Fade Transition */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

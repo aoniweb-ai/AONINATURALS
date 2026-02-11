@@ -116,7 +116,6 @@ const UserHome = () => {
             </h2>
           </div>
           {products?.slice(0, 3).map((item, index) => {
-            // Showing top 3 only to keep home clean
             const isEven = index % 2 === 0;
             return (
               <div

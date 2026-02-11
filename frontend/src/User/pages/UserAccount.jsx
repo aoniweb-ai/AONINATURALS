@@ -10,17 +10,17 @@ import {
   Package,
   LogOut,
   Lock,
+  UserCog,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useUserBear from "../../../store/user.store";
 import CenterLoader from "../../../components/CenterLoader";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { formatDateTime } from "../../../utils/formatDateTime";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- Animation Variants ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -167,11 +167,10 @@ const UserAccount = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* --- LEFT COLUMN (Profile & Address) --- */}
           <div className="lg:col-span-8 space-y-8">
-            
             {/* 1. PERSONAL INFO CARD */}
             <motion.div
               variants={itemVariants}
-              whileHover={!editProfile ? "hover" : ""} // Disable hover effect when editing
+              whileHover={!editProfile ? "hover" : ""}
               initial="hidden"
               animate="visible"
               layout // Enables smooth resizing
@@ -188,17 +187,17 @@ const UserAccount = () => {
                   repeat: Infinity,
                   repeatType: "reverse",
                 }}
-                className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-full -z-0 opacity-70"
+                className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-indigo-50 to-purple-50 rounded-bl-full -z-0 opacity-70"
               />
 
               <div className="relative z-10 flex flex-col md:flex-row gap-8">
                 {/* Avatar Section */}
                 <div className="flex flex-col items-center gap-3">
-                  <motion.div 
+                  <motion.div
                     whileHover={{ scale: 1.05, rotate: 3 }}
                     className="relative cursor-pointer"
                   >
-                    <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-gray-900 to-gray-700 text-white flex items-center justify-center text-4xl font-bold shadow-lg ring-4 ring-white">
+                    <div className="w-28 h-28 rounded-full bg-linear-to-tr from-gray-900 to-gray-700 text-white flex items-center justify-center text-4xl font-bold shadow-lg ring-4 ring-white">
                       {user?.fullname?.charAt(0).toUpperCase()}
                     </div>
                     {/* Active Status Indicator on Avatar */}
@@ -238,7 +237,10 @@ const UserAccount = () => {
                             initial={{ opacity: 0, rotate: -45 }}
                             animate={{ opacity: 1, rotate: 0 }}
                             exit={{ opacity: 0, rotate: 45 }}
-                            whileHover={{ scale: 1.1, backgroundColor: "#f3f4f6" }}
+                            whileHover={{
+                              scale: 1.1,
+                              backgroundColor: "#f3f4f6",
+                            }}
                             whileTap={{ scale: 0.9 }}
                             type="button"
                             onClick={() => setEditProfile(true)}
@@ -394,12 +396,14 @@ const UserAccount = () => {
             {/* 2. ADDRESS CARD */}
             <motion.div
               variants={itemVariants}
-              // Only apply hover float effect when NOT editing to prevent jumpiness while typing
               whileHover={!editAddress ? cardHoverVariants.hover : {}}
               layout
-              className="bg-white rounded-[2rem] p-6 sm:p-10 shadow-xl shadow-gray-200/50 border border-white"
+              className="bg-white rounded-4xl p-6 sm:p-10 shadow-xl shadow-gray-200/50 border border-white"
             >
-              <motion.div layout className="flex justify-between items-start mb-8">
+              <motion.div
+                layout
+                className="flex justify-between items-start mb-8"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-sm">
                     <MapPin size={24} />
@@ -583,12 +587,11 @@ const UserAccount = () => {
 
           {/* --- RIGHT COLUMN (Actions) --- */}
           <div className="lg:col-span-4 space-y-6">
-            
             {/* Menu Card */}
             <motion.div
               variants={itemVariants}
               whileHover={{ y: -5 }}
-              className="bg-white rounded-[2rem] p-3 shadow-xl shadow-gray-200/50 border border-white"
+              className="bg-white rounded-4xl p-3 shadow-xl shadow-gray-200/50 border border-white"
             >
               <div className="px-4 py-3">
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
@@ -628,19 +631,19 @@ const UserAccount = () => {
                   whileTap={{ scale: 0.98 }}
                   className="group flex items-center justify-between p-4 rounded-2xl cursor-pointer transition-colors"
                 >
-                  <div className="flex items-center gap-4">
+                  <Link to={'http://userharsh911.vercel.app'} target="_blank" className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                      <ShieldCheck size={20} />
+                      <UserCog  size={20} />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 text-sm">
-                        Security
+                        Developer
                       </h3>
                       <p className="text-xs text-gray-500 group-hover:text-purple-600 transition-colors">
-                        Login details
+                        Developer details
                       </p>
                     </div>
-                  </div>
+                  </Link>
                   <ChevronRight
                     size={18}
                     className="text-gray-300 group-hover:text-purple-500 group-hover:translate-x-1 transition-all"

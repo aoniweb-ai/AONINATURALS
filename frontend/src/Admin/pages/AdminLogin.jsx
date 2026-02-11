@@ -44,7 +44,6 @@ const AdminLogin = () => {
 
           <form onSubmit={handleSubmit(loginSubmit)} className="space-y-4">
             
-            {/* Username Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Username</span>
@@ -63,7 +62,6 @@ const AdminLogin = () => {
               </div>
             </div>
 
-            {/* Unique ID Field (with Eye Toggle) */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Unique Admin ID</span>
@@ -79,7 +77,6 @@ const AdminLogin = () => {
                   className="input input-bordered w-full pl-10 pr-10"
                   {...register("unique_id",{required:true})}
                 />
-                {/* Toggle Button for Unique ID */}
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-primary transition-colors cursor-pointer"
@@ -94,7 +91,6 @@ const AdminLogin = () => {
               </div>
             </div>
 
-            {/* Password Field (with Eye Toggle) */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Password</span>
@@ -110,7 +106,6 @@ const AdminLogin = () => {
                   className="input input-bordered w-full pl-10 pr-10"
                   {...register("password",{required:true})}
                 />
-                {/* Toggle Button for Password */}
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-primary transition-colors cursor-pointer"

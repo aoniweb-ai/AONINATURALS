@@ -62,7 +62,6 @@ const UserSignup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] p-4 font-sans relative overflow-hidden">
       
-      {/* Background decoration (Subtle Gradients) */}
       <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-gray-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-gray-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
@@ -148,7 +147,6 @@ const UserSignup = () => {
                 </button>
               </div>
               
-              {/* Strength Bar */}
               {password && (
                 <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden mt-2">
                   <div 
@@ -162,7 +160,6 @@ const UserSignup = () => {
               )}
             </div>
 
-            {/* Password Rules Grid */}
             <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <p className="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest">Password Requirements</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
@@ -212,7 +209,6 @@ const UserSignup = () => {
   );
 };
 
-// Simplified Rule Component
 const Rule = ({ text, ok }) => (
   <div className={`flex items-center gap-2 text-xs font-medium transition-colors duration-300 ${ok ? "text-emerald-600" : "text-gray-400"}`}>
     <div className={`w-4 h-4 rounded-full flex items-center justify-center border ${ok ? "bg-emerald-100 border-emerald-200" : "bg-gray-200 border-gray-300"}`}>

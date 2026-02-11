@@ -59,10 +59,9 @@ const itemVariants = {
 };
 
 const AddUpdateProduct = () => {
-  // --- STATE MANAGEMENT ---
   const [step, setStep] = useState(1);
   const [contentStep, setContentStep] = useState(1);
-  const [direction, setDirection] = useState(0); // For slide direction
+  const [direction, setDirection] = useState(0);
   const [loader, setLoader] = useState(false);
 
   const [existingImages, setExistingImages] = useState([]);
@@ -93,7 +92,6 @@ const AddUpdateProduct = () => {
     },
   });
 
-  // --- INITIALIZATION ---
   useEffect(() => {
     if (editProduct) {
       reset({
@@ -268,8 +266,7 @@ const AddUpdateProduct = () => {
               </button>
             </div>
 
-            <div className="flex flex-col md:flex-row h-[75vh] md:h-[600px]">
-              {/* --- SIDEBAR STEPPER --- */}
+            <div className="flex flex-col md:flex-row h-[75vh] md:h-150">
               <div className="bg-white md:w-72 p-6 border-r border-slate-100 flex md:flex-col gap-2 overflow-x-auto md:overflow-visible no-scrollbar shrink-0 z-20">
                 {stepConfig.map((s) => {
                   const isActive = step === s.n;

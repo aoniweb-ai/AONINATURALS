@@ -77,8 +77,7 @@ const Hero = () => {
   const currentSlide = slides[imageIndex];
 
   return (
-    // Reduced height slightly on mobile to fit everything better
-    <section className="relative h-[600px] lg:h-[650px] w-full overflow-hidden bg-white">
+    <section className="relative h-150 lg:h-162.5 w-full overflow-hidden bg-white">
       {/* Dynamic Background Blob */}
       <motion.div
         key={currentSlide.id + "-bg"}
@@ -88,7 +87,7 @@ const Hero = () => {
         className={`absolute inset-0 ${currentSlide.bg} transition-colors duration-1000`}
       >
         <div className="absolute top-[-50%] left-[-20%] w-[80%] h-[80%] bg-white/40 rounded-full blur-[120px] mix-blend-overlay" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-gradient-to-t from-white/80 to-transparent rounded-full blur-[80px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-linear-to-t from-white/80 to-transparent rounded-full blur-[80px]" />
       </motion.div>
 
       <div
@@ -119,17 +118,13 @@ const Hero = () => {
                 paginate(-1);
               }
             }}
-            // FLEX-COL for mobile (stacking), FLEX-ROW for desktop
             className="absolute w-full h-full left-0 top-0 flex flex-col lg:flex-row items-center justify-center lg:justify-between px-4 lg:px-12 py-12 lg:py-0"
           >
-            
-            {/* --- IMAGE SECTION (Order 1 on Mobile, Order 2 on Desktop) --- */}
             <div className="w-full lg:w-1/2 h-[40%] lg:h-full flex items-center justify-center relative pointer-events-none order-1 lg:order-2 mb-4 lg:mb-0">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0, rotate: 10 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                // Controlled width for mobile (w-48/w-64) so it's not too big
                 className="relative z-10 w-48 sm:w-64 lg:w-[80%] max-w-125"
               >
                 <img
@@ -139,16 +134,14 @@ const Hero = () => {
                 />
               </motion.div>
 
-              {/* Decorative Circle */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.1, duration: 0.8 }}
-                className="absolute w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-white rounded-full opacity-40 blur-3xl"
+                className="absolute w-75 lg:w-125 h-75 lg:h-125 bg-white rounded-full opacity-40 blur-3xl"
               />
             </div>
 
-            {/* --- CONTENT SECTION (Order 2 on Mobile, Order 1 on Desktop) --- */}
             <div className="w-full lg:w-1/2 z-10 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 lg:space-y-6 order-2 lg:order-1">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
@@ -189,12 +182,10 @@ const Hero = () => {
                 Shop Now <ArrowRight size={18} />
               </motion.button>
             </div>
-
           </motion.div>
         </AnimatePresence>
 
         {/* --- CONTROLS --- */}
-        {/* Hiding Arrows on small mobile to avoid clutter, visible on SM+ */}
         <button
           onClick={() => paginate(-1)}
           className="absolute left-2 lg:left-8 top-1/2 -translate-y-1/2 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/30 backdrop-blur-md border border-white/50 flex items-center justify-center hover:bg-white hover:scale-110 transition-all z-20 shadow-lg text-gray-700 hover:text-black hidden sm:flex"
@@ -209,7 +200,6 @@ const Hero = () => {
           <ChevronRight size={20} />
         </button>
 
-        {/* Pagination Dots */}
         <div className="absolute bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
           {slides.map((_, i) => (
             <button

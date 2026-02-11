@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- ANIMATION VARIANTS ---
 const pageVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { 
@@ -57,7 +56,6 @@ const AdminProduct = () => {
       className="p-4 md:p-8 flex flex-col gap-8 bg-[#f8f9fa] min-h-screen font-sans"
     >
       
-      {/* --- HEADER SECTION --- */}
       <motion.div 
         variants={pageVariants}
         className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100"
@@ -99,7 +97,6 @@ const AdminProduct = () => {
         </div>
       </motion.div>
 
-      {/* --- TABLE CARD --- */}
       <motion.div 
         variants={pageVariants}
         className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col"
@@ -133,7 +130,6 @@ const AdminProduct = () => {
                     className="group bg-white transition-all cursor-default shadow-sm hover:shadow-md border border-transparent hover:border-gray-100 rounded-2xl"
                     style={{ borderRadius: "1rem" }} // Fix for border-radius on tr
                     >
-                    {/* Product Info */}
                     <td className="py-4 pl-4 rounded-l-2xl border-none">
                         <div className="flex items-center gap-4">
                         <motion.div 
@@ -160,7 +156,6 @@ const AdminProduct = () => {
                         </div>
                     </td>
 
-                    {/* Price */}
                     <td className="text-center border-none">
                         <div className="flex flex-col items-center">
                         <span className="text-base font-black text-slate-900">₹{item?.final_price}</span>
@@ -170,7 +165,6 @@ const AdminProduct = () => {
                         </div>
                     </td>
 
-                    {/* Discount Badges */}
                     <td className="text-center border-none">
                         <div className="flex flex-col gap-1 items-center justify-center">
                         {item?.discount > 0 ? (
@@ -183,7 +177,6 @@ const AdminProduct = () => {
                         </div>
                     </td>
 
-                    {/* Stock */}
                     <td className="text-center border-none">
                         <div className="flex flex-col items-center gap-1.5 w-24 mx-auto">
                         <div className="flex items-center gap-1.5 font-bold text-slate-600 text-xs">
@@ -201,7 +194,6 @@ const AdminProduct = () => {
                         </div>
                     </td>
 
-                    {/* Status */}
                     <td className="text-center border-none">
                         {item?.stock > 0 && !item?.sold ? (
                         <div className="inline-flex items-center gap-1.5 text-emerald-600 font-bold text-[10px] uppercase bg-emerald-50/50 border border-emerald-100 px-2.5 py-1 rounded-full">
@@ -219,7 +211,6 @@ const AdminProduct = () => {
                         )}
                     </td>
 
-                    {/* Actions */}
                     <td className="pr-4 text-right rounded-r-2xl border-none">
                         <motion.button
                         whileHover={{ scale: 1.05 }}

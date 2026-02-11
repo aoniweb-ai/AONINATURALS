@@ -118,7 +118,6 @@ const AdminSignup = () => {
               </div>
             </div>
 
-            {/* Confirm Password Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Confirm Password</span>
@@ -157,7 +156,6 @@ const AdminSignup = () => {
             </div>
           </form>
 
-          {/* Login Link Footer */}
           <div className="text-center mt-4">
             <p className="text-sm">
               Already have an admin ID?{' '}
