@@ -227,7 +227,7 @@ const AddUpdateProduct = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={modalVariants}
-          className="modal-box w-full h-[80%] max-w-6xl p-0 bg-[#F8FAFC] overflow-hidden rounded-[2.5rem] shadow-2xl ring-1 ring-white/50"
+          className="modal-box w-full overflow-y-scroll h-[75%] max-w-6xl p-0 bg-[#F8FAFC] overflow-hidden rounded-[2.5rem] shadow-2xl ring-1 ring-white/50"
         >
           <form
             onSubmit={handleSubmit(formHandler)}
