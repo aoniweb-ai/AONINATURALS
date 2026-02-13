@@ -19,7 +19,7 @@ const UserLogin = () => {
       navigate("/");
       toast.success("Welcome back! 👋");
     } catch (error) {
-      toast.error(error?.message || "Login failed");
+      toast.error(error || "Login failed");
     } finally {
       setLoader(false);
     }
