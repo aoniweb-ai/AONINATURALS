@@ -5,14 +5,12 @@ import bcrypt from "bcryptjs"
 export const adminLoginController = async(req,res)=>{
     const {username,unique_id, password} = req.body;
     try {
-        if(unique_id != process.env.ADMIN_SECRET || !password) return res.status(401).json({message:"Invalid credentials"});
+        if(unique_id.trim() != process.env.ADMIN_SECRET || !password) return res.status(401).json({message:"Invalid credentials"});
         const admin = await Admin.findOne({username});
         if(!admin) return res.status(401).json({message:"Invalid credentials"}); 
 
-        console.log("gya");
-        const validdate = await bcrypt.compare(password,admin.password);
-        console.log("again gya");
-        if(!validdate) return res.status(401).json({message:"Invalid credentials"});
+        const validate = await bcrypt.compare(password,admin.password);
+        if(!validate) return res.status(401).json({message:"Invalid credentials"});
 
         createJSONToken(res,username,"admin");
         req.admin = admin;
@@ -24,9 +22,10 @@ export const adminLoginController = async(req,res)=>{
     }
 }
 export const adminSignupController = async(req,res)=>{
-    const {username, password} = req.body;
     try {
-        if(!username || !password) return res.status(401).json({message:"Unauthorized"});
+        const {username, password,unique_id} = req.body;
+        if(unique_id.trim() != process.env.ADMIN_SECRET || !username.trim() || !password.trim()) return res.status(401).json({message:"Invalid credentials"});
+
         const salt = await bcrypt.genSalt(10);
         const hashed_password = await bcrypt.hash(password,salt);
         if(!hashed_password) return res.status(500).json({message:"Internal server error"});
@@ -44,7 +43,7 @@ export const adminSignupController = async(req,res)=>{
 
 export const adminLogoutController = async(req,res)=>{
     try {
-        res.clearCookie('jwtAdmin');
+        res.clearCookie('jwtAdmin', { httpOnly: true, path: '/', sameSite: 'none', secure:process.env.PRODUCTION!='DEVELOPMENT' });
         req.admin = undefined;
         return res.status(200).json({message:"Logout successfully"})
     } catch (error) {
