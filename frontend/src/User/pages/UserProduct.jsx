@@ -127,7 +127,7 @@ const UserProduct = () => {
 
         {/* --- PRODUCTS GRID --- */}
         <AnimatePresence mode="wait">
-          {loader && (!products || products.length === 0) ? (
+          {loader && (!products || products?.length === 0) ? (
             <motion.div
               key="skeleton"
               initial={{ opacity: 0 }}
@@ -136,7 +136,7 @@ const UserProduct = () => {
             >
               <ProductSkeletonGrid />
             </motion.div>
-          ) : products.length === 0 ? (
+          ) : products?.length === 0 ? (
             <EmptyState key="empty" onRefresh={getProducts} />
           ) : (
             <motion.div
