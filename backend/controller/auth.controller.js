@@ -51,8 +51,9 @@ export const signupController = async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         const hashed_password = await bcrypt.hash(password, salt);
+        const username = generateOrderId()
 
-        const user = User({ fullname: fullname || `user_${generateOrderId()}`, email, password: hashed_password, phone });
+        const user = User({ fullname: fullname || `user_${username}`, email, password: hashed_password, phone,avatar:`https://api.dicebear.com/9.x/adventurer/svg?seed=${fullname || username}` });
         await user.save();
         return res.status(201).json({ success: true, message: "user created", user });
 
@@ -82,7 +83,7 @@ export const editProfileController = async (req, res) => {
         const { fullname, phone } = req.body;
         if (!fullname || !phone || String(phone).length < 10 || String(phone).length > 12) return res.status(400).json({ success: false, message: "Invalid credentials" });
 
-        const updatedUser = await User.findOneAndUpdate({ _id: user._id }, { fullname, phone }, { new: true }).populate({
+        const updatedUser = await User.findOneAndUpdate({ _id: user._id }, { fullname, phone, avatar:fullname }, { new: true }).populate({
             path: "cart.product",
             select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
         });

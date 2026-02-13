@@ -33,7 +33,8 @@ const userSchema = new mongoose.Schema({
             ref:Product
         },
         value:Number
-    }]
+    }],
+    avatar:String
 },{timestamps:true})
 
 export default mongoose.model("User",userSchema);
