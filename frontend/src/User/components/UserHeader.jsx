@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import logo from "../../assets/icon.png"
 import {
   LayoutDashboard,
   Package,
@@ -168,12 +169,9 @@ const UserHeader = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="flex items-center gap-2"
               >
-                <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
+                <div className="w-36 h-20 bg-white   rounded-lg flex items-center justify-center">
+                  <img src={logo} className="h-full w-full" alt="Aoni" srcset="" />
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-gray-900">
-                  Aoni
-                </h1>
               </motion.div>
             )}
           </AnimatePresence>

@@ -70,40 +70,6 @@ const UserHome = () => {
     <div className="w-full font-sans bg-white">
       <Hero />
 
-      {/* --- FEATURES SECTION --- */}
-      <section className="py-20 bg-gray-50/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-black text-gray-900 mb-4">
-              Why Choose Us?
-            </h2>
-            <p className="text-gray-500">
-              We blend nature's finest ingredients to create products that
-              actually work.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((item, i) => (
-              <div
-                key={i}
-                className="bg-white border border-gray-100 p-8 rounded-4xl hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 group text-center flex flex-col items-center"
-              >
-                <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  {item.icon}
-                </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* --- FEATURED PRODUCTS (ZIG-ZAG LAYOUT) --- */}
       <section className="py-24 bg-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 space-y-24">
@@ -175,7 +141,10 @@ const UserHome = () => {
                       </span>
                       {item.price > item.final_price && (
                         <span className="block text-sm text-gray-400 font-bold">
-                          MRP: <span className="line-through font-normal decoration-red-300">₹{item?.price}</span>
+                          MRP:{" "}
+                          <span className="line-through font-normal decoration-red-300">
+                            ₹{item?.price}
+                          </span>
                         </span>
                       )}
                     </div>
@@ -209,6 +178,40 @@ const UserHome = () => {
             >
               View All Products
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* --- FEATURES SECTION --- */}
+      <section className="py-20 bg-gray-50/50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl font-black text-gray-900 mb-4">
+              Why Choose Us?
+            </h2>
+            <p className="text-gray-500">
+              We blend nature's finest ingredients to create products that
+              actually work.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((item, i) => (
+              <div
+                key={i}
+                className="bg-white border border-gray-100 p-8 rounded-4xl hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 group text-center flex flex-col items-center"
+              >
+                <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-xl text-gray-900 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -281,7 +284,7 @@ const UserHome = () => {
       </section>
 
       {/* --- NEWSLETTER / CTA --- */}
-      <section className="py-20 bg-emerald-50">
+      {/* <section className="py-20 bg-emerald-50">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-black text-gray-900 mb-6">
             Ready to transform your hair?
@@ -301,10 +304,10 @@ const UserHome = () => {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* --- FOOTER --- */}
-      <footer className="bg-white border-t border-gray-100 pt-16 pb-8">
+      {/* <footer className="bg-white border-t border-gray-100 pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-2xl font-black text-gray-900 mb-4">
@@ -337,7 +340,7 @@ const UserHome = () => {
         <div className="text-center text-gray-400 text-sm border-t border-gray-100 pt-8">
           © 2026 Herbal Oil. All Rights Reserved. Made with ❤️
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };
