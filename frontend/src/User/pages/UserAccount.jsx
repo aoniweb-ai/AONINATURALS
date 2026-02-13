@@ -197,7 +197,7 @@ const UserAccount = () => {
                     whileHover={{ scale: 1.05, rotate: 3 }}
                     className="relative cursor-pointer"
                   >
-                    <img src={user?.avatar} alt="User Avatar" className="w-full h-full rounded-full object-cover border-4 border-white shadow-lg" />
+                    <img src={user?.avatar} alt="User Avatar" className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg" />
                     {/* Active Status Indicator on Avatar */}
                     <div className="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
                   </motion.div>
