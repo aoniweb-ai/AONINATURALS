@@ -103,7 +103,7 @@ const AdminOrders = () => {
 
         <motion.div
           variants={itemVariants}
-          className="bg-white p-3 rounded-4xl shadow-sm border border-slate-100 flex flex-col xl:flex-row gap-4 items-center justify-between mb-8 sticky top-4 z-30 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60"
+          className="bg-white p-3 rounded-4xl shadow-sm border border-slate-100 flex flex-col xl:flex-row gap-4 items-center justify-between mb-8 sticky top-4 z-30 backdrop-blur-xl supports-backdrop-filter:bg-white/60"
         >
           {/* MAGIC TABS */}
           <div className="flex p-1.5 bg-slate-100/80 rounded-3xl w-full xl:w-auto overflow-x-auto no-scrollbar">
