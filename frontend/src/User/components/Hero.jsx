@@ -6,7 +6,6 @@ import hero_2 from "../../assets/hero_2.png";
 import hero_3 from "../../assets/hero_3.png";
 import { useNavigate } from "react-router-dom";
 
-// Slides Data
 const slides = [
   {
     id: 1,
@@ -125,7 +124,7 @@ const Hero = () => {
                 initial={{ scale: 0.8, opacity: 0, rotate: 10 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="relative z-10 w-48 sm:w-64 lg:w-[80%] max-w-125"
+                className="relative z-10 w-[80%] md:w-64 lg:w-[80%] max-w-125"
               >
                 <img
                   src={currentSlide.img}
@@ -138,16 +137,16 @@ const Hero = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.1, duration: 0.8 }}
-                className="absolute w-75 lg:w-125 h-75 lg:h-125 bg-white rounded-full opacity-40 blur-3xl"
+                className="absolute w-75 lg:w-125  lg:h-125 bg-white rounded-full opacity-40 blur-3xl"
               />
             </div>
 
-            <div className="w-full lg:w-1/2 z-10 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 lg:space-y-6 order-2 lg:order-1">
+            <div className="w-full flex not-first: lg:w-1/2 z-10  flex-col items-center lg:items-start text-center lg:text-left space-y-4 lg:space-y-6 order-2 lg:order-1">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`inline-block px-3 py-1 lg:px-4 lg:py-1.5 rounded-full bg-white border border-gray-100 shadow-sm text-xs lg:text-sm font-bold uppercase tracking-wider ${currentSlide.accent}`}
+                className={`md:inline-block hidden px-3 py-1 lg:px-4 lg:py-1.5 rounded-full bg-white border border-gray-100 shadow-sm text-xs lg:text-sm font-bold uppercase tracking-wider ${currentSlide.accent}`}
               >
                 Best Seller Product
               </motion.span>
@@ -156,7 +155,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-900 leading-[1.1]"
+                className="text-3xl sm:text-4xl md:text-6xl mt-28 md:mt-0 font-black text-gray-900 leading-[1.1]"
               >
                 {currentSlide.title}
               </motion.h1>
@@ -165,7 +164,7 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-base lg:text-lg text-gray-600 max-w-md lg:max-w-lg px-2 lg:px-0"
+                className="text-base  md:text-lg md:block hidden text-gray-600 max-w-md lg:max-w-lg px-2 lg:px-0"
               >
                 {currentSlide.desc}
               </motion.p>
