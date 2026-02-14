@@ -17,7 +17,30 @@ const useUserBear = create((set)=>({
     userLogin : async(data)=>{
         try {
             const response = await userAxios.post("/auth/login",data);
-            set({user:response.data?.user}); 
+            set({user:response.data?.user});
+            return response.data?.otpSent;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    verifyOtp : async(data)=>{
+        try {
+            const response = await userAxios.post("/auth/verify-otp",data);
+            set({user:response.data?.user});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    resendOtp : async(data)=>{
+        try {
+            await userAxios.post("/auth/resend-otp",data);
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    updatePassword : async(data)=>{
+        try {
+            await userAxios.post("/auth/change-password",data);
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

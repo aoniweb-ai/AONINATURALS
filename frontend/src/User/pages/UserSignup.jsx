@@ -15,10 +15,11 @@ import { useForm, useWatch } from "react-hook-form";
 import useUserBear from "../../../store/user.store";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import SendotpModal from "../components/SendotpModal";
 
 const UserSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { userSignup, userLogin } = useUserBear((state) => state);
+  const { userSignup } = useUserBear((state) => state);
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
   
@@ -26,6 +27,7 @@ const UserSignup = () => {
     register,
     handleSubmit,
     control,
+    getValues,
     formState: { errors },
   } = useForm({ mode: "onChange" });
 
@@ -48,10 +50,8 @@ const UserSignup = () => {
   const signupHandler = async (data) => {
     try {
       setLoader(true);
+      document.getElementById('otp_modal').showModal();
       await userSignup(data);
-      await userLogin(data);
-      toast.success("Account created successfully! 🚀");
-      navigate("/");
     } catch (error) {
       toast.error(error);
     } finally {
@@ -61,7 +61,6 @@ const UserSignup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] p-4 font-sans relative overflow-hidden">
-      
       <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-gray-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-gray-200 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
@@ -205,6 +204,7 @@ const UserSignup = () => {
 
         </div>
       </div>
+      <SendotpModal email={getValues("email")} password={getValues("password")} msg={"Account created successfully! 🚀"} />
     </div>
   );
 };

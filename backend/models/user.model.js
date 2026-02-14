@@ -34,7 +34,18 @@ const userSchema = new mongoose.Schema({
         },
         value:Number
     }],
-    avatar:String
+    avatar:String,
+    otp:String,
+    otpExpiry:String,
+    otp_limit:{
+        type:Number,
+        default:1
+    },
+    verified:{
+        type:Boolean,
+        required:true,
+        default:false
+    }
 },{timestamps:true})
 
 export default mongoose.model("User",userSchema);

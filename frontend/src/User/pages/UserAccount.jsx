@@ -323,7 +323,7 @@ const UserAccount = () => {
                     </div>
 
                     {/* Email & Phone Grid */}
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="flex flex-wrap gap-6">
                       <div>
                         <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">
                           Email Address

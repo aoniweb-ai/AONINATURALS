@@ -170,7 +170,7 @@ const UserHeader = () => {
                 className="flex items-center gap-2"
               >
                 <div className="w-36 h-20 bg-white   rounded-lg flex items-center justify-center">
-                  <img src={logo} className="h-full w-full" alt="Aoni" srcset="" />
+                  <img src={logo} className="h-full w-full" alt="Aoni" />
                 </div>
               </motion.div>
             )}

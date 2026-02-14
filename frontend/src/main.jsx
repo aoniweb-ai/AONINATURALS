@@ -25,6 +25,7 @@ import AdminOrders from './Admin/pages/AdminOrders.jsx';
 import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
 import UserAccount from './User/pages/UserAccount.jsx';
 import OrderDetails from '../components/OrderDetails.jsx';
+import ForgetPassword from './User/components/ForgetPassword.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
         <Route path='' element={<UserHome/>} />
         <Route path='signup' element={<UserSignup/>}/>
         <Route path='login' element={<UserLogin/>} />
+        <Route path='forgot-password' element={<ForgetPassword/>} />
         <Route path='products' element={<UserProduct/>}/>
         <Route path='products/details/:id' element={<ProductDetails/>}/>
         <Route path='cart' element={<UserAuthenticate><UserCart/></UserAuthenticate>}/>

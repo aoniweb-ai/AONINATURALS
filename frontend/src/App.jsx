@@ -54,7 +54,7 @@ function App() {
           <Outlet />
         </motion.main>
       </div>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center"  reverseOrder={false}  />
     </div>
   ) : (
     <CenterLoader />
