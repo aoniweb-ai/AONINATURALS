@@ -159,7 +159,7 @@ const AdminSignup = () => {
           <div className="text-center mt-4">
             <p className="text-sm">
               Already have an admin ID?{' '}
-              <span onClick={()=>navigate('/admin/login')} className="link link-secondary font-semibold hover:underline">
+              <span onClick={()=>navigate(`/${import.meta.env.VITE_ADMIN_POST_URI}/login`)} className="link link-secondary font-semibold hover:underline">
                 Login here
               </span>
             </p>

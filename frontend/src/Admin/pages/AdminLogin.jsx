@@ -118,9 +118,6 @@ const AdminLogin = () => {
                   )}
                 </button>
               </div>
-              <label className="label">
-                <a href="#" className="label-text-alt link link-hover text-primary">Forgot password?</a>
-              </label>
             </div>
 
             {/* Submit Button */}

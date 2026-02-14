@@ -26,6 +26,7 @@ import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
 import UserAccount from './User/pages/UserAccount.jsx';
 import OrderDetails from '../components/OrderDetails.jsx';
 import ForgetPassword from './User/components/ForgetPassword.jsx';
+import NotFound from '../components/NotFound.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,6 +42,7 @@ const router = createBrowserRouter(
         <Route path='orders' element={<UserAuthenticate><UserOrders/></UserAuthenticate>}/>
         <Route path='account' element={<UserAuthenticate><UserAccount/></UserAuthenticate>}/>
         <Route path='orders/details/:order_id' element={<UserAuthenticate><OrderDetails/></UserAuthenticate>}/>
+        <Route path='*' element={<NotFound/>}/>
       </Route>
 
       <Route path={`/${import.meta.env.VITE_ADMIN_POST_URI}`} element={<AdminProtected><Admin/></AdminProtected>} >
@@ -51,6 +53,7 @@ const router = createBrowserRouter(
         <Route path='products/details/:id' element={<AdminAuthenticate><AdminProductDetails/></AdminAuthenticate>}/>
         <Route path='orders' element={<AdminAuthenticate><AdminOrders/></AdminAuthenticate>}/>
         <Route path='orders/details/:order_id' element={<AdminAuthenticate><OrderDetails/></AdminAuthenticate>}/>
+        <Route path='*' element={<NotFound/>}/>
       </Route>
     </>
   )
