@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
     product_name:{
         type:String,
         minLength:3,
-        maxLength:100,
+        maxLength:200,
         required:true
     },
     product_images:[{

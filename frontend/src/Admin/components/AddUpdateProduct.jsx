@@ -498,7 +498,7 @@ const AddUpdateProduct = () => {
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
                               transition={{ duration: 0.2 }}
-                              className="textarea textarea-bordered w-full h-[350px] bg-white rounded-3xl p-6 text-base leading-relaxed focus:ring-4 focus:ring-slate-100 border-slate-200 resize-none shadow-sm"
+                              className="textarea textarea-bordered w-full h-87.5 bg-white rounded-3xl p-6 text-base leading-relaxed focus:ring-4 focus:ring-slate-100 border-slate-200 resize-none shadow-sm"
                               placeholder={`Enter product ${["description", "ingredients", "usage instructions", "benefits", "recommendations"][contentStep - 1]}...`}
                               {...register(
                                 contentStep === 1
