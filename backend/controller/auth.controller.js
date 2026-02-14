@@ -98,7 +98,6 @@ export const verifyOtpController = async (req, res) => {
     try {
         const { otp, email } = req.body;
         const now = Date.now()
-        console.log("verify otp ",otp,email)
         if (!otp.trim()) return res.status(400).json({ success: false, message: "Invalid otp" });
 
         const user = await User.findOne({ email });
@@ -109,10 +108,9 @@ export const verifyOtpController = async (req, res) => {
         if (otp !== user.otp.trim()) return res.status(400).json({ success: false, message: "Invalid otp provided" });
 
         user.verified = true;
-        user.otp = null,
-        user.otpExpiry = null
-        user.otp_limit = 0
-        console.log("aya")
+        user.otp = null;
+        user.otpExpiry = null;
+        user.otp_limit+=1;
 
         await user.save();
         return res.status(201).json({ success: true, message: "OTP verified",user });
@@ -204,6 +202,10 @@ export const changePasswordController = async(req,res)=>{
 
         if(!hashed_password) return res.status(500).json({success:false,message:"Internal server error"});
         user.password = hashed_password;
+        user.otp = null;
+        user.otpExpiry = null;
+        user.otp_limit+=1;
+
         await user.save();
         return res.status(200).json({success:true,message:"Password changed"});
     } catch (error) {
