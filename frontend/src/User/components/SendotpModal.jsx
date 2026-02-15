@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, ShieldCheck, RefreshCw, Lock } from "lucide-react";
+import { X, ArrowRight, ShieldCheck, RefreshCw, Lock, Info } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -161,13 +161,16 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
               ))}
             </div>
             {error && (
-               <motion.p 
+               <div className="mt-3 mb-9 flex items-center justify-center gap-1">
+               <Info className="w-4 h-4 text-red-500 " />
+                <motion.p 
                  initial={{ opacity: 0, y: -10 }} 
                  animate={{ opacity: 1, y: 0 }} 
-                 className="text-red-500 text-xs text-center mt-3 font-medium"
+                 className="text-red-500 text-xs text-center font-medium"
                >
                  {error}
                </motion.p>
+               </div>
             )}
           </motion.div>
 
