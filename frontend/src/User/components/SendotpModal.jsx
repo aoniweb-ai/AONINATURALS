@@ -79,9 +79,10 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
           className="relative bg-neutral-950 border border-white/10 rounded-3xl p-8 shadow-2xl overflow-hidden"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-white/20 to-transparent" />
+            <div className="badge badge-soft absolute left-5 top-5 badge-neutral text-sm font-bold"><Info size={16}/>CHECK SPAM IF</div>
           
           <form method="dialog">
-            <button className="absolute right-5 top-5 text-neutral-500 hover:text-white transition-colors">
+            <button className="absolute cursor-pointer right-5 top-5 text-neutral-500 hover:text-white transition-colors">
               <X size={20} />
             </button>
           </form>
@@ -104,6 +105,7 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
             <h3 className="text-2xl font-semibold text-white tracking-tight">
               Verification Required
             </h3>
+            
             <p className="text-neutral-400 text-sm mt-2 text-center">
               Enter the 6-digit code sent to <br/>
               <span className="text-white font-medium bg-white/10 px-2 py-0.5 rounded">{email}</span>
@@ -161,8 +163,8 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
               ))}
             </div>
             {error && (
-               <div className="mt-3 mb-9 flex items-center justify-center gap-1">
-               <Info className="w-4 h-4 text-red-500 " />
+               <div className="mt-3 mb-9 flex animate-pulse items-center justify-center gap-1">
+               <Info size={16} className=" text-red-500 " />
                 <motion.p 
                  initial={{ opacity: 0, y: -10 }} 
                  animate={{ opacity: 1, y: 0 }} 

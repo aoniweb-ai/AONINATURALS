@@ -24,14 +24,13 @@ const UserLogin = () => {
   const loginHandler = async (data) => {
     try {
       setLoader(true);
-      await userLogin(data).then((otpSent) => {
-        if (otpSent) {
-          document.getElementById("otp_modal").showModal();
-        } else {
-          navigate("/");
-          toast.success("Welcome back! 👋");
-        }
-      });
+      const otpSent = await userLogin(data);
+      if (otpSent) {
+        document.getElementById("otp_modal").showModal();
+      } else {
+        navigate("/");
+        toast.success("Welcome back! 👋");
+      }
     } catch (error) {
       toast.error(error || "Login failed");
     } finally {
@@ -109,12 +108,12 @@ const UserLogin = () => {
                 </button>
               </div>
               <div className="flex justify-end">
-                <button
+                <div
                   onClick={() => navigate("/forgot-password")}
                   className="font-bold text-sm text-black hover:underline transition-all"
                 >
                   forget password?
-                </button>
+                </div>
               </div>
             </div>
 

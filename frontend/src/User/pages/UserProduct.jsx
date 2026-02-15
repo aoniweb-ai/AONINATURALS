@@ -296,7 +296,7 @@ const EmptyState = ({ onRefresh }) => (
     </div>
     <h3 className="text-2xl font-bold text-gray-900 mb-2">No Products Found</h3>
     <p className="text-gray-500 mb-6 max-w-sm">We couldn't find any products at the moment. Try refreshing the page.</p>
-    <button onClick={onRefresh} className="btn btn-primary rounded-xl">
+    <button onClick={onRefresh} className="btn bg-black text-white rounded-xl">
         Refresh Page
     </button>
   </motion.div>
