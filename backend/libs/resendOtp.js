@@ -39,7 +39,7 @@ export const resendOtp = async (email,topic) => {
             user.otp = otp;
             user.otpExpiry = Date.now() + 10 * 60 * 1000;
             await user.save()
-            await sendOtpEmail(email, otp,"Account verification")
+            await sendOtpEmail(email, otp,topic || "Account verification")
             return { success: true, message: "Otp sent successfully", otpSent: true };
         }
     } catch (error) {
