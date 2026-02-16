@@ -46,7 +46,7 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
   const handleResend = async () => {
     try {
       setIsLoadingResend(true)
-      await resendOtp({ email });
+      await resendOtp({ email,topic: changePassword ? "Password Change" : 'Account Verification'});
       setResendMessage(`Code sent to ${email}`);
       const t = setTimeout(() => setResendMessage(""), 5000);
       setResendTimer(t);

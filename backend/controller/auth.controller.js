@@ -31,7 +31,7 @@ export const loginController = async (req, res) => {
         if (!user) return res.status(401).json({ message: "Invalid email or password" });
 
         if (!user.verified) {
-            const data = await resendOtp(email);
+            const data = await resendOtp(email,'Account Verification');
             if(data.success) return res.status(200).json(data);
             return res.status(400).json(data);
         }
@@ -84,8 +84,8 @@ export const signupController = async (req, res) => {
 
 export const resendOtpController = async(req,res)=>{
     try {
-        const {email} = req.body;
-        const data = await resendOtp(email);
+        const {email,topic} = req.body;
+        const data = await resendOtp(email,topic);
         if(data.success) return res.status(200).json(data);
         return res.status(400).json(data);
     } catch (error) {
