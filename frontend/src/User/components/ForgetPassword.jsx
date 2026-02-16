@@ -1,5 +1,3 @@
-import React from "react";
-import { motion } from "framer-motion";
 import {
   Mail,
   Lock,
@@ -29,27 +27,7 @@ const ForgetPassword = () => {
   } = useForm({ mode: "onChange" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0, filter: "blur(10px)" },
-    visible: {
-      y: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 100, damping: 20 },
-    },
-  };
+  const [loading, setLoading] = useState(false)
 
   const password = useWatch({
     control,
@@ -85,10 +63,8 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-white relative overflow-hidden text-black selection:bg-black selection:text-white">
-      {/* --- 1. Background Atmosphere (Monochrome) --- */}
+    <div className="min-h-screen shadow-2xl shadow-black w-full flex items-center justify-center bg-white relative overflow-hidden text-black selection:bg-black selection:text-white">
       <div className="absolute inset-0 w-full h-full">
-        {/* Subtle Grid Pattern */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -98,39 +74,21 @@ const ForgetPassword = () => {
           }}
         />
 
-        {/* Rotating Spotlight (black Fog) */}
-        <motion.div
-          animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-br from-black/5 to-transparent rounded-full blur-[100px] pointer-events-none"
-        />
-        <motion.div
-          animate={{ x: [0, 100, 0], opacity: [0.1, 0.3, 0.1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-black/5 rounded-full blur-[120px] pointer-events-none"
-        />
       </div>
 
-      {/* --- 2. Main Card --- */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 w-full max-w-md p-8 bg-white/40 backdrop-blur-xl border border-black/10 rounded-3xl shadow-[0_0_40px_-10px_rgba(255,255,255,0.05)]"
+      <div
+        className="relative z-10 w-full max-w-md p-8 bg-white/40 backdrop-blur-xl rounded-3xl shadow-[0_0_40px_-10px_rgba(0,0,0,0.08)]"
       >
-        {/* Back Button */}
-        <motion.div variants={itemVariants} className="absolute top-6 left-6">
+        <div  className="absolute top-6 left-6">
           <Link
             to="/login"
             className="text-neutral-500 hover:text-black transition-colors"
           >
             <ArrowLeft size={22} />
           </Link>
-        </motion.div>
+        </div>
 
-        {/* Icon Header */}
-        <motion.div
-          variants={itemVariants}
+        <div
           className="flex flex-col items-center mb-10 mt-6"
         >
           <div className="relative">
@@ -145,7 +103,7 @@ const ForgetPassword = () => {
           <p className="text-neutral-400 text-sm mt-2 text-center max-w-xs">
             Enter your email to receive a secure link to reset your password.
           </p>
-        </motion.div>
+        </div>
 
         {/* Form Fields */}
         <form onSubmit={handleSubmit(forgetHandler)} className="space-y-5">
@@ -284,15 +242,15 @@ const ForgetPassword = () => {
         </form>
 
         {/* Footer */}
-        <motion.div variants={itemVariants} className="mt-8 text-center">
+        <div className="mt-8 text-center">
           <Link
             to="/login"
             className="text-xs text-neutral-500 hover:text-black transition-colors uppercase tracking-widest font-medium"
           >
             Back to Login
           </Link>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       <SendotpModal email={getValues('email')} password={password} changePassword={true} msg={'Password changed'} />
     </div>

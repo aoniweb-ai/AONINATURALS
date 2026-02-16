@@ -71,7 +71,7 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
 
   return (
     <dialog id="otp_modal" className="modal bg-black/60 backdrop-blur-sm">
-      <div className="modal-box p-0 bg-transparent shadow-none max-w-md w-full overflow-visible">
+      <div className="modal-box p-0 bg-transparent shadow-none min-w-50 max-w-md w-full overflow-visible">
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -87,7 +87,7 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
             </button>
           </form>
 
-          <div className="flex flex-col items-center mb-8 mt-2">
+          <div className="flex flex-col items-center mb-8 mt-10">
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-white/10 blur-xl rounded-full" />
               <div className="relative w-16 h-16 bg-neutral-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-inner">
@@ -102,13 +102,13 @@ const SendotpModal = ({ email, password, msg, changePassword = false }) => {
               </motion.div>
             </div>
 
-            <h3 className="text-2xl font-semibold text-white tracking-tight">
+            <h3 className="text-2xl font-semibold text-center text-white tracking-tight">
               Verification Required
             </h3>
             
-            <p className="text-neutral-400 text-sm mt-2 text-center">
+            <p className="text-neutral-400 flex flex-col gap-2 text-sm mt-2 text-center">
               Enter the 6-digit code sent to <br/>
-              <span className="text-white font-medium bg-white/10 px-2 py-0.5 rounded">{email}</span>
+              <span className="text-white font-medium  bg-white/10 px-2 py-0.5 rounded">{email}</span>
             </p>
           </div>
 

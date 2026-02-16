@@ -4,7 +4,7 @@ import UserHeader from "./User/components/UserHeader";
 import { Toaster } from "react-hot-toast";
 import useUserBear from "../store/user.store";
 import CenterLoader from "../components/CenterLoader";
-import { Menu, MessageCircle } from "lucide-react"; // MessageCircle icon imported
+import { Menu, MessageCircle } from "lucide-react";
 import ScrollToTop from "../components/ScrollToTop";
 import { motion } from "framer-motion";
 
@@ -13,7 +13,7 @@ function App() {
   const { userGet, userGetProduct } = useUserBear((state) => state);
 
 
-  const WHATSAPP_NUMBER =  import.meta.env.VITE_WHATSAPP_NUMBER || "919876543210"; // Default number if env variable is not set
+  const WHATSAPP_NUMBER =  import.meta.env.VITE_WHATSAPP_NUMBER;
   const PREFILLED_MSG = "Hi, I need help regarding your products.";
 
   useEffect(() => {
