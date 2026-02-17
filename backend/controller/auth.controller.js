@@ -110,7 +110,6 @@ export const verifyOtpController = async (req, res) => {
         user.verified = true;
         user.otp = null;
         user.otpExpiry = Date.now();
-        user.otp_limit+=1;
 
         await user.save();
         return res.status(201).json({ success: true, message: "OTP verified",user });
@@ -204,7 +203,6 @@ export const changePasswordController = async(req,res)=>{
         user.password = hashed_password;
         user.otp = null;
         user.otpExpiry = Date.now();
-        user.otp_limit+=1;
 
         await user.save();
         return res.status(200).json({success:true,message:"Password changed"});
