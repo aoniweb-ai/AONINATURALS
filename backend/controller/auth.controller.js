@@ -109,7 +109,7 @@ export const verifyOtpController = async (req, res) => {
 
         user.verified = true;
         user.otp = null;
-        user.otpExpiry = null;
+        user.otpExpiry = Date.now();
         user.otp_limit+=1;
 
         await user.save();
@@ -203,7 +203,7 @@ export const changePasswordController = async(req,res)=>{
         if(!hashed_password) return res.status(500).json({success:false,message:"Internal server error"});
         user.password = hashed_password;
         user.otp = null;
-        user.otpExpiry = null;
+        user.otpExpiry = Date.now();
         user.otp_limit+=1;
 
         await user.save();

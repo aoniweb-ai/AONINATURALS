@@ -21,7 +21,7 @@ export const resendOtp = async (email,topic) => {
         if (!user) return { success: false, message: "Invalid email" }
 
         if (user.otp_limit >= 3) {
-            if (user.otpExpiry + 24 * 60 * 60 * 1000 < now) {
+            if (parseInt(user.otpExpiry) + 24 * 60 * 60 * 1000 < now) {
                 const otp = generateOTP();
                 user.otp_limit = 1;
                 user.otp = otp;
