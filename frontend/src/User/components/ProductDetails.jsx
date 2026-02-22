@@ -30,7 +30,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { userGetaProduct, userAddToCart, product, setProduct, user } = useUserBear(
+  const { userGetaProduct, userAddToCart, product, setProduct, user, cod_charges } = useUserBear(
     (state) => state,
   );
 
@@ -247,7 +247,7 @@ const ProductDetails = () => {
                 {product.cod_charges > 0 && (
                   <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
                     <CheckCircle2 size={18} className="text-emerald-500 fill-emerald-50" />
-                    Cash on Delivery available (₹{product.cod_charges})
+                    Cash on Delivery available (₹{cod_charges})
                   </div>
                 )}
               </div>

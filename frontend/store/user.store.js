@@ -3,6 +3,7 @@ import { userAxios } from "../AxiosApi/axiosInstance";
 
 const useUserBear = create((set)=>({
     user:null,
+    cod_charges:null,
     orders:null,
     product:null,
     products:null,
@@ -18,6 +19,7 @@ const useUserBear = create((set)=>({
         try {
             const response = await userAxios.post("/auth/login",data);
             set({user:response.data?.user});
+            set({cod_charges:response.data?.cod_charges});
             return response.data?.otpSent;
         } catch (error) {
             throw error.response?.data?.message || error.message;
@@ -49,6 +51,7 @@ const useUserBear = create((set)=>({
         try {
             const response = await userAxios.get("/auth/getuser",);
             set({user:response.data?.user});
+            set({cod_charges:response.data?.cod_charges});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
@@ -73,6 +76,9 @@ const useUserBear = create((set)=>({
         try {
             await userAxios.post("/auth/logout");
             set({user:null});
+            set({cod_charges:null});
+            set({orders:null});
+            set({product:null});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

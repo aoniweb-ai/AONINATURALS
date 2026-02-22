@@ -20,7 +20,14 @@ const useAdminBear = create((set, get) => ({
     adminLogin:async(data)=>{
         try {
             const response = await adminAxios.post("/auth/login",data);
-            
+            set({admin:response.data?.admin});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminCodCharges:async(data)=>{
+        try {
+            const response = await adminAxios.put("/auth/update-cod-charges",data);
             set({admin:response.data?.admin});
         } catch (error) {
             throw error.response?.data?.message || error.message;

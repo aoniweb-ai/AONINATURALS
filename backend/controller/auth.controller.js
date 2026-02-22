@@ -3,6 +3,7 @@ import { createJSONToken } from "../libs/jwtoken.js";
 import { generateOTP } from "../libs/OTP.js";
 import { sendOtpEmail } from "../libs/resend.js";
 import { resendOtp } from "../libs/resendOtp.js";
+import Admin from "../models/admin.model.js";
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 
@@ -26,7 +27,7 @@ export const loginController = async (req, res) => {
         const user = await User.findOne({ email }).select("+password")
         .populate({
             path: "cart.product",
-            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+            select: "product_name price final_price stock sold discount extra_discount product_images",
         });
         if (!user) return res.status(401).json({ message: "Invalid email or password" });
 
@@ -42,8 +43,9 @@ export const loginController = async (req, res) => {
         createJSONToken(res, email);
         req.user = user;
         user.password = undefined;
+        const admin = await Admin.findOne().select(["-username","-password","-role","-_id"]);
 
-        return res.status(200).json({ success: true, message: "Login successfully", user })
+        return res.status(200).json({ success: true, message: "Login successfully", user,cod_charges:admin.cod_charges })
 
     } catch (error) {
         console.log("Error while logging user ",error)
@@ -125,9 +127,10 @@ export const getUserController = async (req, res) => {
         const user = req.user;
         const popUser = await User.findById(user._id).populate({
             path: "cart.product",
-            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+            select: "product_name price final_price stock sold discount extra_discount product_images",
         });
-        res.status(200).json({ success: true, message: "successfully getted user", user: popUser })
+        const admin = await Admin.findOne().select(["-username","-password","-role","-_id"]);
+        res.status(200).json({ success: true, message: "successfully getted user", user: popUser,cod_charges:admin.cod_charges })
     } catch (error) {
         console.log("error while getting user ", error);
         return res.status(500).json({ success: false, message: "Internal server error" })
@@ -142,7 +145,7 @@ export const editProfileController = async (req, res) => {
 
         const updatedUser = await User.findOneAndUpdate({ _id: user._id }, { fullname, phone, avatar: `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${fullname}` }, { new: true }).populate({
             path: "cart.product",
-            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+            select: "product_name price final_price stock sold discount extra_discount product_images",
         });
 
         if (!updatedUser) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -169,7 +172,7 @@ export const editAddressController = async (req, res) => {
             }
         }, { new: true }).populate({
             path: "cart.product",
-            select: "product_name price final_price stock sold discount cod_charges extra_discount product_images",
+            select: "product_name price final_price stock sold discount extra_discount product_images",
         });
 
         if (!updatedUser) return res.status(401).json({ success: false, message: "Unauthorized" });

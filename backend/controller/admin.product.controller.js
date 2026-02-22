@@ -10,7 +10,6 @@ export const adminAddProductController = async(req,res)=>{
         price, 
         discount, 
         extra_discount, 
-        cod_charges, 
         description, 
         ingredients, 
         how_to_use, 
@@ -47,7 +46,6 @@ export const adminAddProductController = async(req,res)=>{
             editProduct.final_price = final_price
             editProduct.discount = discount
             editProduct.extra_discount = extra_discount
-            editProduct.cod_charges = cod_charges
             editProduct.description = description
             editProduct.ingredients = ingredients
             editProduct.how_to_use = how_to_use
@@ -69,7 +67,6 @@ export const adminAddProductController = async(req,res)=>{
             final_price, 
             discount, 
             extra_discount, 
-            cod_charges, 
             description, 
             ingredients, 
             how_to_use, 
@@ -102,9 +99,7 @@ export const adminGetAllProductsController = async(req,res)=>{
 export const adminGetAProductController = async(req,res)=>{
     const {id} = req.params;
     try {
-        console.log("id aai ",id)
         const product = await Product.findOne({_id:id});
-
         if(!product) return res.status(500).json({message:"Internal server error"});
         return res.status(200).json({message:"success",product});
     } catch (error) {

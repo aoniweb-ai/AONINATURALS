@@ -28,12 +28,12 @@ const UserCart = () => {
     userCreateOrder,
     userVerifyPayment,
     userRemoveCartItem,
+    cod_charges,
   } = useUserBear((state) => state);
 
   const [mrp, setMrp] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
   const [totalDiscountPercent, setTotalDiscountPercent] = useState(0);
-  const [codCharges, setCodCharges] = useState(0);
   const [value, setValue] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("online");
 
@@ -45,9 +45,7 @@ const UserCart = () => {
     setMrp(0);
     setSellingPrice(0);
     setTotalDiscountPercent(0);
-    setCodCharges(0);
     setValue([]);
-
     user?.cart?.map((item) => {
       if (item.product.stock > 0 && !item.product.sold) {
         setMrp((prev) => prev + item.product.price * item.value);
@@ -55,7 +53,6 @@ const UserCart = () => {
         setTotalDiscountPercent(
           (prev) => prev + item.product.discount + item.product.extra_discount,
         );
-        setCodCharges((prev) => prev + item.product.cod_charges);
         setValue((prev) => [...prev, item.value]);
       } else {
         setValue((prev) => [...prev, item.value]);
@@ -64,7 +61,7 @@ const UserCart = () => {
   }, [user]);
 
   const finalPayableAmount =
-    paymentMethod === "cod" ? sellingPrice + codCharges : sellingPrice;
+    paymentMethod === "cod" ? sellingPrice + cod_charges : sellingPrice;
 
   const updateTheCart = async (num, product_id) => {
     try {
@@ -219,6 +216,7 @@ const UserCart = () => {
                     <motion.div
                       layout
                       key={item._id}
+                      onClick={()=>navigate(`/products/details/${item.product._id}`)}
                       variants={itemVariants}
                       exit={{
                         scale: 0.9,
@@ -226,11 +224,11 @@ const UserCart = () => {
                         height: 0,
                         marginBottom: 0,
                       }}
-                      className={`group bg-white rounded-3xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden ${isOutOfStock ? "opacity-75 bg-gray-50" : ""}`}
+                      className={`group bg-white cursor-pointer rounded-3xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden ${isOutOfStock ? "opacity-75 bg-gray-50" : ""}`}
                     >
-                      <div className="flex gap-4 sm:gap-6 items-start relative z-10">
+                      <div className="flex flex-col min-[350px]:flex-row gap-4 sm:gap-6 items-start relative z-10">
                         {/* Image */}
-                        <div className="relative shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#f4f4f5] rounded-2xl p-2 overflow-hidden border border-gray-100">
+                        <div className="relative mx-auto shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#f4f4f5] rounded-2xl p-2 overflow-hidden border border-gray-100">
                           <img
                             src={getCloudinaryImage(
                               item.product.product_images?.[0]?.secure_url,
@@ -239,6 +237,7 @@ const UserCart = () => {
                             alt={item.product.product_name}
                             className={`w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110 ${isOutOfStock ? "grayscale" : ""}`}
                           />
+                          
                           {isOutOfStock && (
                             <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
                               <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
@@ -246,23 +245,24 @@ const UserCart = () => {
                               </span>
                             </div>
                           )}
+                          
                         </div>
 
                         {/* Details */}
-                        <div className="flex-1 flex flex-col justify-between min-h-24 sm:min-h-32">
+                        <div className="flex-1 flex flex-col justify-between min-h-24 sm:min-h-32 w-full">
                           <div>
-                            <div className="flex justify-between items-start gap-2">
+                            <div className="flex justify-between items-center gap-2">
                               <div>
                                 <h3 className="font-bold text-gray-900 text-base sm:text-xl line-clamp-1 leading-tight">
                                   {item.product.product_name}
                                 </h3>
-                                <p className="text-gray-500 text-xs sm:text-sm mt-1 line-clamp-2">
-                                  {item.product.description}
-                                </p>
                               </div>
                               <button
-                                onClick={() => removeCartItem(item._id)}
-                                className="text-gray-300 hover:text-red-500 p-1 hover:bg-red-50 rounded-full transition-colors"
+                                onClick={(e) =>{
+                                  e.stopPropagation();
+                                  removeCartItem(item._id)
+                                }}
+                                className="text-gray-300  hover:text-red-500 p-3 hover:bg-red-100 rounded-full transition-colors"
                               >
                                 <Trash2 size={20} />
                               </button>
@@ -290,12 +290,13 @@ const UserCart = () => {
 
                           {/* Quantity Controls */}
                           {!isOutOfStock && (
-                            <div className="flex items-center justify-between mt-3 pt-2">
+                            <div className="flex items-center gap-2 justify-center min-[350px]:justify-between mt-3 pt-2">
                               <div className="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-200 shadow-inner">
                                 <motion.button
                                   whileTap={{ scale: 0.9 }}
                                   disabled={value[index] <= 1}
-                                  onClick={() => {
+                                  onClick={(e) => {
+                                    e.stopPropagation();
                                     const arr = [...value];
                                     arr[index] = Math.max(
                                       1,
@@ -314,7 +315,8 @@ const UserCart = () => {
 
                                 <motion.button
                                   whileTap={{ scale: 0.9 }}
-                                  onClick={() => {
+                                  onClick={(e) => {
+                                    e.stopPropagation();
                                     const arr = [...value];
                                     arr[index] = (value[index] || 1) + 1;
                                     setValue(arr);
@@ -329,12 +331,13 @@ const UserCart = () => {
                                 <motion.button
                                   initial={{ opacity: 0, scale: 0.8 }}
                                   animate={{ opacity: 1, scale: 1 }}
-                                  onClick={() =>
+                                  onClick={(e) =>{
+                                    e.stopPropagation();
                                     updateTheCart(
                                       value[index] - item.value,
                                       item.product._id,
                                     )
-                                  }
+                                  }}
                                   disabled={cartUpdate_loader}
                                   className="text-xs font-bold bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all shadow-md shadow-black/20"
                                 >
@@ -391,9 +394,9 @@ const UserCart = () => {
                     </span>
                   ) : (
                     <span className="font-medium text-gray-900">
-                      {codCharges === 0
+                      {cod_charges === 0
                         ? "Free"
-                        : `+ ₹${Math.round(codCharges)}`}
+                        : `+ ₹${Math.round(cod_charges)}`}
                     </span>
                   )}
                 </div>
@@ -434,18 +437,18 @@ const UserCart = () => {
                     )}
                     <Banknote size={24} />
                     <span className="text-xs font-bold">Cash on Delivery</span>
-                    {codCharges > 0 && (
+                    {cod_charges > 0 && (
                       <span className="text-[10px] bg-white/20 px-1.5 rounded">
-                        +₹{codCharges} Fee
+                        +₹{cod_charges} Fee
                       </span>
                     )}
                   </div>
                 </div>
 
-                {paymentMethod === "cod" && codCharges > 0 && (
+                {paymentMethod === "cod" && cod_charges > 0 && (
                   <div className="mt-3 flex items-start gap-2 text-[11px] text-orange-600 bg-orange-50 p-2 rounded-lg">
                     <AlertCircle size={14} className="shrink-0 mt-0.5" />
-                    <p>Pay online to save ₹{codCharges} on COD charges.</p>
+                    <p>Pay online to save ₹{cod_charges} on COD charges.</p>
                   </div>
                 )}
               </div>

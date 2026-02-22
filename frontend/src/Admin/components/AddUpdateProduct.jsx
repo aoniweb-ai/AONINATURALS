@@ -81,7 +81,6 @@ const AddUpdateProduct = () => {
       price: "",
       discount: "",
       extra_discount: "",
-      cod_charges: "",
       description: "",
       ingredients: "",
       how_to_use: "",
@@ -100,7 +99,6 @@ const AddUpdateProduct = () => {
         price: editProduct?.price || "",
         discount: editProduct?.discount || "",
         extra_discount: editProduct?.extra_discount || "",
-        cod_charges: editProduct?.cod_charges || "",
         description: editProduct?.description || "",
         ingredients: editProduct?.ingredients || "",
         how_to_use: editProduct?.how_to_use || "",
@@ -139,7 +137,7 @@ const AddUpdateProduct = () => {
   const handleNext = async () => {
     let isValid = false;
     if (step === 1) isValid = await trigger(["product_name", "stock", "price"]);
-    if (step === 2) isValid = await trigger(["cod_charges"]);
+    if (step === 2) isValid = await trigger(["extra_discount", "discount"]);
     if (step === 3)
       isValid = await trigger([
         "description",
@@ -418,21 +416,6 @@ const AddUpdateProduct = () => {
                             className="input input-bordered w-full bg-white rounded-2xl h-14"
                             placeholder="0"
                             {...register("extra_discount")}
-                          />
-                        </motion.div>
-                        <motion.div
-                          variants={itemVariants}
-                          className="form-control md:col-span-2"
-                        >
-                          <label className="label font-bold text-slate-700">
-                            COD Charges (₹){" "}
-                            <span className="text-rose-500">*</span>
-                          </label>
-                          <input
-                            type="number"
-                            className="input input-bordered w-full bg-white rounded-2xl h-14"
-                            placeholder="0"
-                            {...register("cod_charges", { required: true })}
                           />
                         </motion.div>
                         <motion.div

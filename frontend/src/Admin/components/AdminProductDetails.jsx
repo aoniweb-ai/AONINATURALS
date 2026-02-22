@@ -50,7 +50,7 @@ const imageTransition = {
 const AdminProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { adminGetAproduct, setEditProduct, product, setProductNull } = useAdminBear((state) => state);
+  const { adminGetAproduct, setEditProduct, product, setProductNull,admin } = useAdminBear((state) => state);
   
   const [activeTab, setActiveTab] = useState("Description");
   const [selectedImg, setSelectedImg] = useState("");
@@ -189,7 +189,7 @@ const AdminProductDetails = () => {
                     {[
                         { icon: Boxes, val: product.stock, label: "Stock" },
                         { icon: Users, val: product.buyers?.length || 0, label: "Buyers" },
-                        { icon: Truck, val: `₹${product.cod_charges}`, label: "COD Cost" }
+                        { icon: Truck, val: `₹${admin?.cod_charges}`, label: "COD Cost" }
                     ].map((stat, idx) => (
                         <motion.div 
                             key={idx}

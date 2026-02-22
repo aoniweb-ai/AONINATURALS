@@ -4,14 +4,16 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import { generateOrderId } from "../libs/generateId.js";
+import Admin from "../models/admin.model.js";
 export const createOrderController = async (req, res) => {
   try {
     const { _id } = req.user;
     const { payment_method } = req.body;
     const user = await User.findById(_id).populate({
       path: "cart.product",
-      select: "product_name price stock sold final_price discount cod_charges extra_discount product_images",
+      select: "product_name price stock sold final_price discount extra_discount product_images",
     });
+    const admin = await Admin.findOne().select(["-username","-password","-role","-_id"]);
     const cart = user.cart;
     if (cart.length == 0) return res.status(401).json({ message: "Invalid cart items" });
     if (!user?.address?.address || !user?.phone) return res.status(401).json({ message: "Profile Incompleted" });
@@ -31,7 +33,6 @@ export const createOrderController = async (req, res) => {
           product: item.product._id,
           quantity: item.value,
           price: item.product.final_price,
-          cod_charges:item.product.cod_charges
         }
         product_ids.push(obj)
       }
@@ -40,12 +41,7 @@ export const createOrderController = async (req, res) => {
     if (amount <= 0 || product_ids.length == 0) return res.status(401).json({ message: "Invalid cart items" });
 
     if (payment_method.toLowerCase() == "cod") {
-      let cod_charges = 0;
-      cart?.map((item) => {
-        if (item.product.stock > 0 && !item.product.sold) {
-          cod_charges += Math.round(parseInt(item.product.cod_charges));
-        }
-      });
+      let cod_charges = admin.cod_charges;
       const dbOrder = Order({
         order_id: generateOrderId(),
         user: user._id,
@@ -179,7 +175,6 @@ export const getUserOrders = async (req, res) => {
         select: "product_name product_images final_price",
       })
       .sort({ createdAt: -1 });
-    console.log("Ordrs ", orders);
     if (!orders) res.status(400).json({ success: false, message: "Orders error" });
 
     return res.status(200).json({ success: true, message: "successfully fetch orders", orders });

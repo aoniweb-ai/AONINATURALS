@@ -13,8 +13,8 @@ export const productController = async(req,res)=>{
     }
 }
 export const aProductController = async(req,res)=>{
-    const {id} = req.params;
     try {
+        const {id} = req.params;
         const product = await Product.findOne({_id:id});
         if(!product) return res.status(500).json({message:"Internal server error"});
         
@@ -44,14 +44,13 @@ export const updateCartController = async(req,res)=>{
             }else if(user.cart[(user.cart.length-1)-i]?.product==product_id){
                 user.cart[(user.cart.length-1)-i].value += quantity;
             }else continue;
-            console.log("item item ",user.cart[i]?.value,product.stock)
 
             if(user.cart[i]?.value>product.stock) return res.status(401).json({success:false,message:"Invalid operation"})
 
             const newUser = await user.save();
             const popUser = await User.findById(newUser._id).populate({
             path: "cart.product",
-            select: "product_name cod_charges stock sold price final_price discount extra_discount product_images",
+            select: "product_name stock sold price final_price discount extra_discount product_images",
         });
             return res.status(200).json({success:true,message:"item added Successfully",user:popUser})
         }
@@ -64,7 +63,7 @@ export const updateCartController = async(req,res)=>{
         const newUser = await user.save();
         const popUser = await User.findById(newUser._id).populate({
             path: "cart.product",
-            select: "product_name cod_charges stock sold price final_price discount extra_discount product_images",
+            select: "product_name stock sold price final_price discount extra_discount product_images",
         });
         return res.status(200).json({success:true,message:"item added Successfully",user:popUser})
 
@@ -90,7 +89,7 @@ export const removeCartItemController = async(req,res)=>{
         { new: true } 
         ).populate({
             path: "cart.product",
-            select: "product_name cod_charges stock sold price final_price discount extra_discount product_images",
+            select: "product_name stock sold price final_price discount extra_discount product_images",
         });
 
         if(!newUser) return res.status(400).json({success:false,message:"Invalid credentials"});

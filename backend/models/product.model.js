@@ -38,10 +38,6 @@ const productSchema = new mongoose.Schema({
         min:0,
         max:100
     },
-    cod_charges:{
-        type:Number,
-        min:0
-    },
     description:String,
     ingredients:String,
     how_to_use:String,

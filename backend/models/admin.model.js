@@ -15,7 +15,11 @@ const adminSchema = mongoose.Schema({
     role:{
         type:String,
         default:"admin"
+    },
+    cod_charges:{
+        type:Number,
+        default:55
     }
-})
+},{timestamps:true})
 
 export default mongoose.model("Admin",adminSchema);
