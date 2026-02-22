@@ -6,9 +6,8 @@ export const adminLoginController = async (req, res) => {
     const { username, unique_id, password } = req.body;
     try {
         if (unique_id.trim() != process.env.ADMIN_SECRET || !password) return res.status(401).json({ message: "Invalid credentials" });
-        const admin = await Admin.findOne({ username }).select('-password');
+        const admin = await Admin.findOne({ username })
         if (!admin) return res.status(401).json({ message: "Invalid credentials" });
-
         const validate = await bcrypt.compare(password, admin.password);
         if (!validate) return res.status(401).json({ message: "Invalid credentials" });
 
