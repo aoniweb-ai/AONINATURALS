@@ -22,7 +22,6 @@ import { motion, AnimatePresence } from "framer-motion";
 const getFinalPrice = (price, discount = 0, extra = 0) =>
   Math.round(price - (price * discount) / 100 - (price * extra) / 100);
 
-// --- ANIMATION VARIANTS ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -132,7 +131,7 @@ const AdminProductDetails = () => {
                 </div>
                 
                 <motion.div 
-                    className="flex gap-4 mt-6 overflow-x-auto py-2 justify-center px-3 no-scrollbar"
+                    className="flex gap-4 mt-6 overflow-hidden py-2 justify-center px-3 no-scrollbar"
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"

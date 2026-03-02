@@ -5,7 +5,6 @@ import {
   Hash,
   Layers,
   Search,
-  Filter,
 } from "lucide-react";
 import AddUpdateProduct from "../components/AddUpdateProduct";
 import useAdminBear from "../../../store/admin.store";

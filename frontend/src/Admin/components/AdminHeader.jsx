@@ -43,6 +43,11 @@ const AdminHeader = () => {
       icon: <FileText size={20} />,
     },
     {
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/users`,
+      value: "Users",
+      icon: <Users size={20} />,
+    },
+    {
       path: `/${import.meta.env.VITE_ADMIN_POST_URI}/coupons`,
       value: "Coupons",
       icon: <Ticket size={20} />,

@@ -217,6 +217,24 @@ const useAdminBear = create((set, get) => ({
             throw error.response?.data?.message || error.message;
         }
     },
+
+    // ---- USER ACTIONS ----
+    adminGetUsers: async({ page = 1, limit = 10, search = "" } = {})=>{
+        try {
+            const response = await adminAxios.get(`/user/getusers?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminGetUserDetails: async(id)=>{
+        try {
+            const response = await adminAxios.get(`/user/getuser/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
 }))
 
 export default useAdminBear;
