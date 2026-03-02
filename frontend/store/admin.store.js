@@ -9,6 +9,7 @@ const useAdminBear = create((set, get) => ({
     orders:null,
     blogs:null,
     editBlog:null,
+    onlineUsers:[],
     setCheckAdmin:(value) => set({checkAdmin:value}),
     setProductNull:() => set({product:null}),
     setEditProduct:(value)=> set({editProduct:value}),
@@ -123,7 +124,6 @@ const useAdminBear = create((set, get) => ({
         }
     },
 
-    // ---- BLOG ACTIONS ----
     adminBlog_addUpdate: async(data)=>{
         try {
             const response = await adminAxios.post("/blog/addupdateblog", data);

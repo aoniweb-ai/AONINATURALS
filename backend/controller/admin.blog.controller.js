@@ -1,5 +1,6 @@
 import Blog from "../models/blog.model.js";
 import { uploadToCloudinary, deleteCloudinaryImages } from "../libs/cloudinary.js";
+import { getIO } from "../libs/socket.js";
 
 export const adminAddUpdateBlogController = async (req, res) => {
   const admin = req.admin;
@@ -43,6 +44,7 @@ export const adminAddUpdateBlogController = async (req, res) => {
 
       const blog = await existingBlog.save();
       if (!blog) return res.status(500).json({ message: "Internal server error" });
+      if (blog.published) getIO().emit("blog:updated", blog);
       return res.status(200).json({ message: "Blog updated successfully", edit: true, blog });
     }
 
@@ -57,6 +59,7 @@ export const adminAddUpdateBlogController = async (req, res) => {
     });
 
     await blog.save();
+    if (blog.published) getIO().emit("blog:created", blog);
     return res.status(200).json({ message: "Blog created successfully", edit: false, blog });
   } catch (error) {
     console.log("error while creating/updating blog ", error);
@@ -101,6 +104,7 @@ export const adminDeleteBlogController = async (req, res) => {
     if (publicIds.length > 0) deleteCloudinaryImages(publicIds);
 
     await Blog.findByIdAndDelete(id);
+    getIO().emit("blog:deleted", id);
     return res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
     console.log("error while deleting blog ", error);

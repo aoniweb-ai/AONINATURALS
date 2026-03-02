@@ -7,6 +7,12 @@ import {
   MoreVertical,
   Search,
   Landmark,
+  Wifi,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Globe,
+  Clock,
 } from "lucide-react";
 import useAdminBear from "../../../store/admin.store";
 import AddUpdateProduct from "../components/AddUpdateProduct";
@@ -78,7 +84,7 @@ const statusColor = (status) => {
 };
 
 const AdminDashboard = () => {
-  const { admin, adminGetRevenue, adminSearchOrder, products } = useAdminBear(
+  const { admin, adminGetRevenue, adminSearchOrder, products, onlineUsers } = useAdminBear(
     (state) => state,
   );
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -304,6 +310,102 @@ const AdminDashboard = () => {
             </h3>
           </motion.div>
         </div>
+
+        {/* --- ONLINE USERS --- */}
+        <motion.div
+          variants={itemVariants}
+          className="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden"
+        >
+          <div className="p-6 border-b border-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
+                  <Wifi size={24} />
+                </div>
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Online Users</h3>
+                <p className="text-sm text-gray-400">
+                  {onlineUsers?.length || 0} user{onlineUsers?.length !== 1 ? "s" : ""} currently active
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {onlineUsers?.length > 0 ? (
+            <div className="divide-y divide-gray-50">
+              {onlineUsers.map((u, idx) => (
+                <motion.div
+                  key={u.socketId}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="flex items-center justify-between p-4 px-6 hover:bg-gray-50/80 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-violet-500 to-indigo-500 text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-violet-200">
+                        {(u.fullname || "G")[0].toUpperCase()}
+                      </div>
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 text-sm capitalize">
+                        {u.fullname || "Guest"}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {u.email || "Not logged in"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="hidden md:flex items-center gap-6">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      {u.device === "Mobile" ? (
+                        <Smartphone size={14} />
+                      ) : u.device === "Tablet" ? (
+                        <Tablet size={14} />
+                      ) : (
+                        <Monitor size={14} />
+                      )}
+                      <span className="font-medium">{u.device}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <Globe size={14} />
+                      <span className="font-medium max-w-32 truncate">
+                        {u.currentPage || "/"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <Clock size={14} />
+                      <span className="font-medium">
+                        {u.joinedAt
+                          ? new Date(u.joinedAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "-"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {u.phone && (
+                    <span className="hidden lg:block text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">
+                      {u.phone}
+                    </span>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center p-8 text-gray-400 text-sm">
+              No users online right now
+            </p>
+          )}
+        </motion.div>
 
         {/* --- RECENT ORDERS TABLE --- */}
         <motion.div

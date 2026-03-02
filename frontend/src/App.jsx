@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import UserHeader from "./User/components/UserHeader";
 import { Toaster } from "react-hot-toast";
 import useUserBear from "../store/user.store";
@@ -7,11 +7,12 @@ import CenterLoader from "../components/CenterLoader";
 import { Menu, MessageCircle } from "lucide-react";
 import ScrollToTop from "../components/ScrollToTop";
 import { motion } from "framer-motion";
+import { connectSocket, disconnectSocket, getDeviceInfo } from "../utils/socket";
 
 function App() {
   const [loader, setLoader] = useState(true);
-  const { userGet, userGetProduct } = useUserBear((state) => state);
-
+  const { userGet, userGetProduct, user } = useUserBear((state) => state);
+  const location = useLocation();
 
   const WHATSAPP_NUMBER =  import.meta.env.VITE_WHATSAPP_NUMBER;
   const PREFILLED_MSG = "Hi, I need help regarding your products.";
@@ -28,6 +29,81 @@ function App() {
     }
     run();
   }, [userGet, userGetProduct]);
+
+  useEffect(() => {
+    if (loader) return;
+
+    const socket = connectSocket();
+
+    socket.emit("register", {
+      fullname: user?.fullname || "Guest",
+      email: user?.email || null,
+      phone: user?.phone || null,
+      currentPage: location.pathname,
+      device: getDeviceInfo(),
+    });
+
+    socket.on("product:created", (product) => {
+      useUserBear.setState((state) => ({
+        products: state.products ? [...state.products, product] : [product],
+      }));
+    });
+
+    socket.on("product:updated", (product) => {
+      useUserBear.setState((state) => {
+        if (!state.products) return {};
+        const updated = state.products.map((p) =>
+          p._id === product._id ? product : p,
+        );
+        const newState = { products: updated };
+        if (state.product && state.product._id === product._id) {
+          newState.product = product;
+        }
+        return newState;
+      });
+    });
+
+    socket.on("blog:created", (blog) => {
+      useUserBear.setState((state) => ({
+        blogs: state.blogs ? [blog, ...state.blogs] : [blog],
+      }));
+    });
+
+    socket.on("blog:updated", (blog) => {
+      useUserBear.setState((state) => {
+        if (!state.blogs) return {};
+        const updated = state.blogs.map((b) =>
+          b._id === blog._id ? blog : b,
+        );
+        const newState = { blogs: updated };
+        if (state.blog && state.blog._id === blog._id) {
+          newState.blog = blog;
+        }
+        return newState;
+      });
+    });
+
+    socket.on("blog:deleted", (blogId) => {
+      useUserBear.setState((state) => ({
+        blogs: state.blogs ? state.blogs.filter((b) => b._id !== blogId) : [],
+      }));
+    });
+
+    return () => {
+      socket.off("product:created");
+      socket.off("product:updated");
+      socket.off("blog:created");
+      socket.off("blog:updated");
+      socket.off("blog:deleted");
+      disconnectSocket();
+    };
+  }, [loader, user]);
+
+  useEffect(() => {
+    if (loader) return;
+    const socket = connectSocket();
+    socket.emit("pageChange", location.pathname);
+  }, [location.pathname, loader]);
 
   return !loader ? (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200 selection:bg-green-500/30">

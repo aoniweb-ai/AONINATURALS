@@ -1,0 +1,38 @@
+import { io } from "socket.io-client";
+
+const SOCKET_URL = import.meta.env.VITE_API_URL?.replace("/api", "") || "";
+
+let socket = null;
+
+export function getSocket() {
+  if (!socket) {
+    socket = io(SOCKET_URL, {
+      withCredentials: true,
+      autoConnect: false,
+      transports: ["websocket", "polling"],
+    });
+  }
+  return socket;
+}
+
+export function connectSocket() {
+  const s = getSocket();
+  if (!s.connected) {
+    s.connect();
+  }
+  return s;
+}
+
+export function disconnectSocket() {
+  if (socket && socket.connected) {
+    socket.disconnect();
+  }
+}
+
+// Detect device type
+export function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  if (/Mobi|Android/i.test(ua)) return "Mobile";
+  if (/Tablet|iPad/i.test(ua)) return "Tablet";
+  return "Desktop";
+}

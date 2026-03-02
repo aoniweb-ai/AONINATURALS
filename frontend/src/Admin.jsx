@@ -5,11 +5,30 @@ import AdminHeader from "./Admin/components/AdminHeader";
 import { Menu } from "lucide-react";
 import ScrollToTop from "../components/ScrollToTop";
 import { useEffect } from "react";
+import { connectSocket, disconnectSocket } from "../utils/socket";
+
 const Admin = () => {
   const { admin, adminGetproducts } = useAdminBear((state) => state);
+
   useEffect(() => {
     adminGetproducts();
   }, [adminGetproducts]);
+
+  useEffect(() => {
+    if (!admin) return;
+
+    const socket = connectSocket();
+    socket.emit("adminJoin");
+
+    socket.on("onlineUsers", (users) => {
+      useAdminBear.setState({ onlineUsers: users });
+    });
+
+    return () => {
+      socket.off("onlineUsers");
+      disconnectSocket();
+    };
+  }, [admin]);
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200">
       <ScrollToTop/>

@@ -12,10 +12,12 @@ import orderRouter from "../routes/order.routes.js";
 import adminOrderRouter from "../routes/admin.order.route.js";
 import adminBlogRouter from "../routes/admin.blog.route.js";
 import blogRouter from "../routes/blog.route.js";
+import { initSocket } from "../libs/socket.js";
 
 dotenv.config();
 
 const app = express();
+const server = initSocket(app);
 
 
 app.use(cors({
@@ -58,6 +60,6 @@ const PORT = process.env.PORT;
 
 mongoose.connect(process.env.DB_URI)
     .then(() =>
-        app.listen(PORT, "0.0.0.0", () => {
+        server.listen(PORT, "0.0.0.0", () => {
             console.log(`running on port ${PORT}`);
         }))

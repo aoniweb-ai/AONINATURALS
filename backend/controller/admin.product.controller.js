@@ -1,5 +1,6 @@
 import Product from "../models/product.model.js";
 import {uploadToCloudinary, deleteCloudinaryImages} from "../libs/cloudinary.js"
+import { getIO } from "../libs/socket.js"
 export const adminAddProductController = async(req,res)=>{
     const admin = req.admin;
 
@@ -57,6 +58,7 @@ export const adminAddProductController = async(req,res)=>{
 
             const product = await editProduct.save();
             if(!product) return res.status(500).json({message:"Internal server error"});
+            getIO().emit("product:updated", product);
             return res.status(200).json({message:"successfully added",edit:true,product});
         }
         const product = new Product({
@@ -79,6 +81,7 @@ export const adminAddProductController = async(req,res)=>{
         
         if(!product) return res.status(500).json({message:"Internal server error"});
         await product.save();
+        getIO().emit("product:created", product);
         return res.status(200).json({message:"successfully added",edit:false,product});
     } catch (error) {
         console.log("error while creating a product ",error);
