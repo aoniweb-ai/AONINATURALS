@@ -59,6 +59,15 @@ function App() {
         if (state.product && state.product._id === product._id) {
           newState.product = product;
         }
+        // Also update the product inside user's cart
+        if (state.user?.cart?.length > 0) {
+          const updatedCart = state.user.cart.map((item) =>
+            item.product?._id === product._id
+              ? { ...item, product }
+              : item,
+          );
+          newState.user = { ...state.user, cart: updatedCart };
+        }
         return newState;
       });
     });
