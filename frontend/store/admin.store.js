@@ -10,10 +10,13 @@ const useAdminBear = create((set, get) => ({
     blogs:null,
     editBlog:null,
     onlineUsers:[],
+    coupons:null,
+    editCoupon:null,
     setCheckAdmin:(value) => set({checkAdmin:value}),
     setProductNull:() => set({product:null}),
     setEditProduct:(value)=> set({editProduct:value}),
     setEditBlog:(value) => set({editBlog:value}),
+    setEditCoupon:(value) => set({editCoupon:value}),
     adminSignup:async(data)=>{
         try {
             await adminAxios.post("/auth/signup",data);
@@ -163,6 +166,53 @@ const useAdminBear = create((set, get) => ({
             await adminAxios.delete(`/blog/deleteblog/${id}`);
             let blogsArray = get().blogs || [];
             set({blogs: blogsArray.filter(b => b._id !== id)});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+
+    // ---- COUPON ACTIONS ----
+    adminCoupon_addUpdate: async(data)=>{
+        try {
+            const response = await adminAxios.post("/coupon/addupdatecoupon", data);
+            if(response.data?.edit === false){
+                let arr = get().coupons || [];
+                arr.unshift(response.data?.coupon);
+                set({coupons:[...arr]});
+            } else {
+                let arr = get().coupons || [];
+                const idx = arr.findIndex(c => c._id === response.data?.coupon?._id);
+                if(idx !== -1) arr[idx] = response.data?.coupon;
+                set({coupons:[...arr]});
+            }
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminGetCoupons: async()=>{
+        try {
+            const response = await adminAxios.get("/coupon/getcoupons");
+            set({coupons: response.data?.coupons});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminDeleteCoupon: async(id)=>{
+        try {
+            await adminAxios.delete(`/coupon/deletecoupon/${id}`);
+            let arr = get().coupons || [];
+            set({coupons: arr.filter(c => c._id !== id)});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminToggleCoupon: async(id)=>{
+        try {
+            const response = await adminAxios.put(`/coupon/togglecoupon/${id}`);
+            let arr = get().coupons || [];
+            const idx = arr.findIndex(c => c._id === id);
+            if(idx !== -1) arr[idx] = response.data?.coupon;
+            set({coupons:[...arr]});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

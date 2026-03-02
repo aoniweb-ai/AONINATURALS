@@ -24,8 +24,18 @@ const Admin = () => {
       useAdminBear.setState({ onlineUsers: users });
     });
 
+    // Real-time coupon usage updates (when user places order with coupon)
+    socket.on("coupon:updated", (coupon) => {
+      useAdminBear.setState((state) => ({
+        coupons: state.coupons
+          ? state.coupons.map((c) => (c._id === coupon._id ? coupon : c))
+          : [],
+      }));
+    });
+
     return () => {
       socket.off("onlineUsers");
+      socket.off("coupon:updated");
       disconnectSocket();
     };
   }, [admin]);

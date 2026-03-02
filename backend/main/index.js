@@ -12,6 +12,8 @@ import orderRouter from "../routes/order.routes.js";
 import adminOrderRouter from "../routes/admin.order.route.js";
 import adminBlogRouter from "../routes/admin.blog.route.js";
 import blogRouter from "../routes/blog.route.js";
+import adminCouponRouter from "../routes/admin.coupon.route.js";
+import couponRouter from "../routes/coupon.route.js";
 import { initSocket } from "../libs/socket.js";
 
 dotenv.config();
@@ -48,11 +50,13 @@ app.use(`/api/${process.env.ADMIN_POST_URI}/auth`, adminAuthRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/product`, adminProductRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/orders`, adminOrderRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/blog`, adminBlogRouter);
+app.use(`/api/${process.env.ADMIN_POST_URI}/coupon`, adminCouponRouter);
 
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/coupon", couponRouter);
 
 
 

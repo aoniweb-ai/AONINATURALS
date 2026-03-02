@@ -8,6 +8,7 @@ import {
   LogOut,
   ChevronLeft,
   FileText,
+  Ticket,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAdminBear from "../../../store/admin.store";
@@ -40,6 +41,11 @@ const AdminHeader = () => {
       path: `/${import.meta.env.VITE_ADMIN_POST_URI}/blogs`,
       value: "Blogs",
       icon: <FileText size={20} />,
+    },
+    {
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/coupons`,
+      value: "Coupons",
+      icon: <Ticket size={20} />,
     },
   ];
 

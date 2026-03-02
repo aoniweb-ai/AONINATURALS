@@ -23,6 +23,7 @@ import UserCart from './User/pages/UserCart.jsx';
 import UserOrders from './User/pages/UserOrders.jsx';
 import AdminOrders from './Admin/pages/AdminOrders.jsx';
 import AdminBlogs from './Admin/pages/AdminBlogs.jsx';
+import AdminCoupons from './Admin/pages/AdminCoupons.jsx';
 import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
 import UserAccount from './User/pages/UserAccount.jsx';
 import OrderDetails from '../components/OrderDetails.jsx';
@@ -59,6 +60,7 @@ const router = createBrowserRouter(
         <Route path='orders' element={<AdminAuthenticate><AdminOrders/></AdminAuthenticate>}/>
         <Route path='orders/details/:order_id' element={<AdminAuthenticate><OrderDetails/></AdminAuthenticate>}/>
         <Route path='blogs' element={<AdminAuthenticate><AdminBlogs/></AdminAuthenticate>}/>
+        <Route path='coupons' element={<AdminAuthenticate><AdminCoupons/></AdminAuthenticate>}/>
         <Route path='*' element={<NotFound/>}/>
       </Route>
     </>

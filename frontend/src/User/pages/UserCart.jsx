@@ -1,4 +1,4 @@
-import {
+﻿import {
   Minus,
   Plus,
   Trash2,
@@ -11,6 +11,9 @@ import {
   CheckCircle2,
   Truck,
   AlertCircle,
+  Ticket,
+  X,
+  Info,
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useEffect, useState } from "react";
@@ -29,6 +32,7 @@ const UserCart = () => {
     userVerifyPayment,
     userRemoveCartItem,
     cod_charges,
+    applyCoupon,
   } = useUserBear((state) => state);
 
   const [mrp, setMrp] = useState(0);
@@ -39,6 +43,11 @@ const UserCart = () => {
 
   const [loader, setLoader] = useState(false);
   const [cartUpdate_loader, setCartUpdate_loader] = useState(false);
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discount, discount_type, discount_value }
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,8 +69,12 @@ const UserCart = () => {
     });
   }, [user]);
 
+  const couponDiscount = appliedCoupon?.discount || 0;
+
   const finalPayableAmount =
-    paymentMethod === "cod" ? sellingPrice + cod_charges : sellingPrice;
+    paymentMethod === "cod"
+      ? sellingPrice - couponDiscount + cod_charges
+      : sellingPrice - couponDiscount;
 
   const updateTheCart = async (num, product_id) => {
     try {
@@ -76,6 +89,37 @@ const UserCart = () => {
     }
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return toast.error("Enter a coupon code");
+    try {
+      setCouponLoading(true);
+      const res = await applyCoupon({
+        code: couponCode.trim(),
+        cart_total: sellingPrice,
+      });
+      setAppliedCoupon(res.coupon);
+      toast.success("Coupon applied! 🎉");
+    } catch (error) {
+      toast.error(error || "Invalid coupon");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+  };
+
+  // Reset coupon if cart changes
+  useEffect(() => {
+    if (appliedCoupon) {
+      setAppliedCoupon(null);
+      setCouponCode("");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.cart]);
+
   const handleCheckout = async () => {
     if (!user?.address?.address || !user?.address?.pincode) {
       toast("Please complete your profile details before checkout", {
@@ -86,7 +130,11 @@ const UserCart = () => {
     try {
       setLoader(true);
 
-      const response = await userCreateOrder({ payment_method: paymentMethod });
+      const response = await userCreateOrder({
+        payment_method: paymentMethod,
+        coupon_code: appliedCoupon?.code || null,
+        coupon_discount: couponDiscount || 0,
+      });
 
       if (paymentMethod === "online") {
         const res = await loadRazorpay();
@@ -384,6 +432,17 @@ const UserCart = () => {
                   </div>
                 )}
 
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-purple-600 items-center">
+                    <span className="flex items-center gap-1">
+                      <Ticket size={14} /> Coupon ({appliedCoupon?.code})
+                    </span>
+                    <span className="font-bold">
+                      - ₹{Math.round(couponDiscount)}
+                    </span>
+                  </div>
+                )}
+
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 flex items-center gap-1">
                     <Truck size={14} /> Delivery
@@ -400,6 +459,67 @@ const UserCart = () => {
                     </span>
                   )}
                 </div>
+              </div>
+
+              {/* COUPON CODE */}
+              <div className="mb-6">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
+                  Have a coupon?
+                </label>
+                {appliedCoupon ? (
+                  <>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-xl px-4 py-3"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Ticket size={16} className="text-purple-600" />
+                      <span className="font-black text-purple-700 tracking-wider text-sm">
+                        {appliedCoupon.code}
+                      </span>
+                      <span className="text-xs text-purple-500 font-medium">
+                        (-₹{appliedCoupon.discount})
+                      </span>
+                    </div>
+                    <button
+                      onClick={removeCoupon}
+                      className="p-1 hover:bg-purple-100 rounded-lg transition-colors"
+                    >
+                      <X size={16} className="text-purple-500" />
+                    </button>
+                  </motion.div>
+                  <span className=" text-xs font-bold text-purple-500 mt-1 block">
+                    <Info size={12} className="inline mr-1" /> {appliedCoupon?.description}
+                  </span>
+                  </>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) =>
+                        setCouponCode(
+                          e.target.value.toUpperCase().replace(/\s/g, ""),
+                        )
+                      }
+                      placeholder="Enter code"
+                      className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono tracking-widest focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                    />
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="px-4 py-2.5 bg-black text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/10"
+                    >
+                      {couponLoading ? (
+                        <span className="loading loading-spinner loading-xs"></span>
+                      ) : (
+                        "Apply"
+                      )}
+                    </motion.button>
+                  </div>
+                )}
               </div>
 
               {/* PAYMENT METHOD TOGGLE */}

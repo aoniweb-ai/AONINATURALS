@@ -9,7 +9,8 @@ import {
   ArrowLeft,
   CheckCircle2,
   X,
-  Printer
+  Printer,
+  Ticket
 } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
 import { formatDateTime } from "../utils/formatDateTime";
@@ -419,8 +420,17 @@ const OrderDetails = () => {
             <div className="w-full space-y-3">
               <div className="flex justify-between text-sm text-gray-500 font-medium">
                 <span>Order Subtotal</span>
-                <span>₹{order.total_price - (order.cod_charges || 0)}</span>
+                <span>₹{order.total_price - (order.cod_charges || 0) + (order.coupon_discount || 0)}</span>
               </div>
+              {order.coupon_discount > 0 && (
+                <div className="flex justify-between text-sm font-medium text-emerald-600">
+                  <span className="flex items-center gap-1.5">
+                    <Ticket size={14} />
+                    Coupon ({order.coupon_code})
+                  </span>
+                  <span>-₹{order.coupon_discount}</span>
+                </div>
+              )}
               {order.cod_charges > 0 && (
                 <div className="flex justify-between text-sm text-gray-500 font-medium">
                   <span>Handling / COD</span>

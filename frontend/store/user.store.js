@@ -177,6 +177,14 @@ const useUserBear = create((set)=>({
             throw error.response?.data?.message || error.message;
         }
     },
+    applyCoupon: async(data)=>{
+        try {
+            const response = await userAxios.post("/coupon/apply", data);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
 }))
 
 export default useUserBear;

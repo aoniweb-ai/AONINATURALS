@@ -46,6 +46,11 @@ const orderSchema = mongoose.Schema({
         required:true,
     },
     cod_charges:Number,
+    coupon_code:String,
+    coupon_discount:{
+        type:Number,
+        default:0
+    },
     status:{
         type:String,
         enum:["pending","delivered","shipped","cancelled"],

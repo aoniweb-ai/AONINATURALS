@@ -98,12 +98,37 @@ function App() {
       }));
     });
 
+    socket.on("coupon:created", (coupon) => {
+      useUserBear.setState((state) => ({
+        coupons: state.coupons ? [...state.coupons, coupon] : [coupon],
+      }));
+    });
+
+    socket.on("coupon:updated", (coupon) => {
+      useUserBear.setState((state) => ({
+        coupons: state.coupons
+          ? state.coupons.map((c) => (c._id === coupon._id ? coupon : c))
+          : [],
+      }));
+    });
+
+    socket.on("coupon:deleted", (couponId) => {
+      useUserBear.setState((state) => ({
+        coupons: state.coupons
+          ? state.coupons.filter((c) => c._id !== couponId)
+          : [],
+      }));
+    });
+
     return () => {
       socket.off("product:created");
       socket.off("product:updated");
       socket.off("blog:created");
       socket.off("blog:updated");
       socket.off("blog:deleted");
+      socket.off("coupon:created");
+      socket.off("coupon:updated");
+      socket.off("coupon:deleted");
       disconnectSocket();
     };
   }, [loader, user]);
