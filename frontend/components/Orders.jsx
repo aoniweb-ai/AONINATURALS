@@ -17,7 +17,6 @@ import { timeAgo } from "../utils/timeAgo";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- Animation Variants ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -47,7 +46,6 @@ const emptyStateVariants = {
   },
 };
 
-// Helper for Status Icon/Color
 const getStatusStyles = (status) => {
   switch (status) {
     case "delivered":
@@ -171,7 +169,7 @@ const Orders = ({ orders = [] }) => {
                   <motion.div
                     key={order.order_id}
                     variants={itemVariants}
-                    layout // Allows smooth reordering if list changes
+                    layout
                     whileHover={{ 
                       y: -4, 
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" 

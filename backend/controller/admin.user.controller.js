@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import Order from "../models/order.model.js";
 
-// GET /users?page=1&limit=10&search=john
 export const adminGetUsersController = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -14,7 +13,6 @@ export const adminGetUsersController = async (req, res) => {
         { fullname: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
       ];
-      // If search is a number, also match phone
       if (!isNaN(search)) {
         query.$or.push({ phone: Number(search) });
       }
@@ -28,7 +26,6 @@ export const adminGetUsersController = async (req, res) => {
       .limit(limit)
       .lean();
 
-    // Attach order stats for each user
     const userIds = users.map((u) => u._id);
     const orderStats = await Order.aggregate([
       { $match: { user: { $in: userIds } } },
@@ -72,7 +69,6 @@ export const adminGetUsersController = async (req, res) => {
   }
 };
 
-// GET /users/:id  — single user + their orders
 export const adminGetUserDetailsController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -91,7 +87,6 @@ export const adminGetUserDetailsController = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    // summary stats
     const stats = {
       totalOrders: orders.length,
       totalSpent: orders.reduce((sum, o) => sum + (o.total_price || 0), 0),

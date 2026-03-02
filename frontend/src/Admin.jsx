@@ -24,7 +24,6 @@ const Admin = () => {
       useAdminBear.setState({ onlineUsers: users });
     });
 
-    // Real-time coupon usage updates (when user places order with coupon)
     socket.on("coupon:updated", (coupon) => {
       useAdminBear.setState((state) => ({
         coupons: state.coupons

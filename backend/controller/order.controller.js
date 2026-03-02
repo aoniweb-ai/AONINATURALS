@@ -42,7 +42,6 @@ export const createOrderController = async (req, res) => {
 
     if (amount <= 0 || product_ids.length == 0) return res.status(401).json({ message: "Invalid cart items" });
 
-    // Apply coupon discount
     let validCouponDiscount = 0;
     if (coupon_code && coupon_discount > 0) {
       const coupon = await Coupon.findOne({ code: coupon_code.toUpperCase().trim(), active: true });
@@ -50,7 +49,6 @@ export const createOrderController = async (req, res) => {
           (coupon.usage_limit === null || coupon.used_count < coupon.usage_limit) &&
           !coupon.used_by.includes(_id.toString()) &&
           amount >= coupon.min_order_amount) {
-        // Re-calculate discount server-side for safety
         if (coupon.discount_type === "percent") {
           validCouponDiscount = Math.round((amount * coupon.discount_value) / 100);
           if (coupon.max_discount !== null && validCouponDiscount > coupon.max_discount) {
@@ -60,11 +58,9 @@ export const createOrderController = async (req, res) => {
           validCouponDiscount = coupon.discount_value;
           if (validCouponDiscount > amount) validCouponDiscount = amount;
         }
-        // Increment used count & track user
         coupon.used_count += 1;
         coupon.used_by.push(_id);
         await coupon.save();
-        // Notify admin in real-time
         getIO().to("admin-room").emit("coupon:updated", coupon);
       }
     }

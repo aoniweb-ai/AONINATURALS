@@ -105,7 +105,7 @@ export const verifyOtpController = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ success: false, message: "Invalid email" });
 
-        if (user.otpExpiry < now) return res.status(400).json({ success: false, message: "Invalid otp - Timeout" }) // otp exceed 10 minutes
+        if (user.otpExpiry < now) return res.status(400).json({ success: false, message: "Invalid otp - Timeout" })
 
         if (otp !== user.otp.trim()) return res.status(400).json({ success: false, message: "Invalid otp provided" });
 

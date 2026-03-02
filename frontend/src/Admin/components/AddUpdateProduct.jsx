@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- ANIMATION VARIANTS ---
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 20 },
   visible: {
@@ -119,7 +118,6 @@ const AddUpdateProduct = () => {
     }
   }, [editProduct, reset]);
 
-  // --- HANDLERS ---
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);

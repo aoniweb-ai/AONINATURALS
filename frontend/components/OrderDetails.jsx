@@ -23,7 +23,6 @@ import { useForm } from "react-hook-form";
 import useUserBear from "../store/user.store";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- Animation Variants ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -463,7 +462,7 @@ const OrderDetails = () => {
           >
             <motion.div
               variants={modalContentVariants}
-              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+              onClick={(e) => e.stopPropagation()}
               className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl relative"
             >
               <button 

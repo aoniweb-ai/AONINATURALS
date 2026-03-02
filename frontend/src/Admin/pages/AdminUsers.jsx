@@ -45,13 +45,12 @@ const AdminUsers = () => {
   const [initialLoad, setInitialLoad] = useState(true);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [filter, setFilter] = useState("all"); // "all" | "online"
+  const [filter, setFilter] = useState("all");
   const [total, setTotal] = useState(0);
 
   const observerRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // Get online emails set for quick lookup
   const onlineEmailSet = new Set(
     onlineUsers?.filter((u) => u.email).map((u) => u.email) || []
   );
@@ -84,13 +83,11 @@ const AdminUsers = () => {
     [adminGetUsers]
   );
 
-  // Initial + search load
   useEffect(() => {
     setPage(1);
     fetchUsers(1, search, true);
   }, [search, fetchUsers]);
 
-  // Debounce search
   const handleSearchChange = (val) => {
     setSearchInput(val);
     clearTimeout(debounceRef.current);
@@ -99,7 +96,6 @@ const AdminUsers = () => {
     }, 400);
   };
 
-  // Infinite scroll — intersection observer
   const lastUserRef = useCallback(
     (node) => {
       if (loading) return;
@@ -116,7 +112,6 @@ const AdminUsers = () => {
     [loading, hasMore, page, search, fetchUsers]
   );
 
-  // Filter: all vs online
   const displayedUsers =
     filter === "online"
       ? users.filter((u) => isUserOnline(u.email))

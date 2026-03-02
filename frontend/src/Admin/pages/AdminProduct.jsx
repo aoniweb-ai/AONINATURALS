@@ -175,7 +175,7 @@ const AdminProduct = () => {
                       backgroundColor: "rgba(248, 250, 252, 0.8)",
                     }}
                     className="group bg-white transition-all cursor-default shadow-sm hover:shadow-md border border-transparent hover:border-gray-100 rounded-2xl"
-                    style={{ borderRadius: "1rem" }} // Fix for border-radius on tr
+                    style={{ borderRadius: "1rem" }}
                   >
                     <td className="py-4 pl-4 rounded-l-2xl border-none">
                       <div className="flex items-center gap-4">

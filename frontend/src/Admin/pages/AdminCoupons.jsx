@@ -53,7 +53,6 @@ const AdminCoupons = () => {
   const [formLoader, setFormLoader] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Form state
   const [code, setCode] = useState("");
   const [discountType, setDiscountType] = useState("percent");
   const [discountValue, setDiscountValue] = useState("");
@@ -70,7 +69,6 @@ const AdminCoupons = () => {
       .finally(() => setLoader(false));
   }, [adminGetCoupons]);
 
-  // Populate form when editing
   useEffect(() => {
     if (editCoupon) {
       setCode(editCoupon.code || "");
