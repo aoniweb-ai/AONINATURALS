@@ -629,7 +629,7 @@ const UserAccount = () => {
                   whileTap={{ scale: 0.98 }}
                   className="group flex items-center justify-between p-4 rounded-2xl cursor-pointer transition-colors"
                 >
-                  <Link to={'http://userharsh911.vercel.app'} target="_blank" className="flex items-center gap-4">
+                  <Link to={'http://userharsh911.tech'} target="_blank" className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
                       <UserCog  size={20} />
                     </div>

@@ -12,6 +12,7 @@ import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Footer from "../components/Footer";
 
 const UserProduct = () => {
   const { products, userGetProduct, userAddToCart, user } = useUserBear(
@@ -160,6 +161,8 @@ const UserProduct = () => {
           )}
         </AnimatePresence>
       </div>
+        {/* --- FOOTER --- */}
+        <Footer/>
     </section>
   );
 };

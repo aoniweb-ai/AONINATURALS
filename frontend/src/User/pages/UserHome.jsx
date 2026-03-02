@@ -14,6 +14,7 @@ import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import Footer from "../components/Footer";
 
 const UserHome = () => {
   const { products, userAddToCart, user } = useUserBear((state) => state);
@@ -61,8 +62,8 @@ const UserHome = () => {
     },
     {
       icon: <Droplets className="text-cyan-500" />,
-      title: "Clinically Tested",
-      desc: "Dermatologist approved",
+      title: "Deep Nourishment",
+      desc: "Trusted by customers ✅",
     },
   ];
 
@@ -307,40 +308,7 @@ const UserHome = () => {
       </section> */}
 
       {/* --- FOOTER --- */}
-      {/* <footer className="bg-white border-t border-gray-100 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-black text-gray-900 mb-4">
-              HERBAL OIL.
-            </h3>
-            <p className="text-gray-500 max-w-xs leading-relaxed">
-              Crafting pure, organic solutions for your hair care needs. Born
-              from nature, backed by science.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-900 mb-4">Shop</h4>
-            <ul className="space-y-3 text-gray-500 text-sm">
-              <li className="hover:text-black cursor-pointer">All Products</li>
-              <li className="hover:text-black cursor-pointer">Best Sellers</li>
-              <li className="hover:text-black cursor-pointer">New Arrivals</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-900 mb-4">Support</h4>
-            <ul className="space-y-3 text-gray-500 text-sm">
-              <li className="hover:text-black cursor-pointer">Track Order</li>
-              <li className="hover:text-black cursor-pointer">Contact Us</li>
-              <li className="hover:text-black cursor-pointer">
-                Shipping Policy
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="text-center text-gray-400 text-sm border-t border-gray-100 pt-8">
-          © 2026 Herbal Oil. All Rights Reserved. Made with ❤️
-        </div>
-      </footer> */}
+      <Footer/>
     </div>
   );
 };
