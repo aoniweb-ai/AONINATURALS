@@ -7,6 +7,8 @@ const useUserBear = create((set)=>({
     orders:null,
     product:null,
     products:null,
+    blogs:null,
+    blog:null,
     setProduct: val=>set({product:val}),
     userSignup : async(data)=>{
         try {
@@ -157,7 +159,24 @@ const useUserBear = create((set)=>({
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
-    }
+    },
+    userGetBlogs: async()=>{
+        try {
+            const response = await userAxios.get("/blog/blogs");
+            set({blogs: response.data?.blogs});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    userGetABlog: async(identifier)=>{
+        try {
+            const response = await userAxios.get(`/blog/blog/${identifier}`);
+            set({blog: response.data?.blog});
+            return response.data?.blog;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
 }))
 
 export default useUserBear;

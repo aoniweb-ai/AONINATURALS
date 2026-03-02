@@ -10,6 +10,8 @@ import adminProductRouter from "../routes/admin.product.route.js";
 import rateLimit from "express-rate-limit"
 import orderRouter from "../routes/order.routes.js";
 import adminOrderRouter from "../routes/admin.order.route.js";
+import adminBlogRouter from "../routes/admin.blog.route.js";
+import blogRouter from "../routes/blog.route.js";
 
 dotenv.config();
 
@@ -43,10 +45,12 @@ app.use('/api', limiter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/auth`, adminAuthRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/product`, adminProductRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/orders`, adminOrderRouter);
+app.use(`/api/${process.env.ADMIN_POST_URI}/blog`, adminBlogRouter);
 
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/blog", blogRouter);
 
 
 

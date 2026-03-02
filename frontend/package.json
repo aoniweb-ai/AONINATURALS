@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "@tinymce/tinymce-react": "^6.3.0",
     "axios": "^1.13.2",
     "daisyui": "^5.5.14",
     "framer-motion": "^12.29.2",

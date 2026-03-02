@@ -9,17 +9,17 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export const uploadToCloudinary = (fileBuffer) => {
+export const uploadToCloudinary = (fileBuffer, folder = "products") => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "products" },
+      { folder },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
       }
     );
 
-    stream.end(fileBuffer); // 🔥 yahin actual file ja rahi hai
+    stream.end(fileBuffer);
   });
 };
 

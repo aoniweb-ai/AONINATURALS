@@ -12,6 +12,7 @@ import {
   User,
   UserPen,
   Menu,
+  FileText,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useUserBear from "../../../store/user.store";
@@ -121,6 +122,12 @@ const UserHeader = () => {
       value: "Products",
       icon: <Package size={20} />,
       auth: !user ? false : true,
+    },
+    {
+      path: "/blogs",
+      value: "Blogs",
+      icon: <FileText size={20} />,
+      auth: null,
     },
     {
       path: "/orders",

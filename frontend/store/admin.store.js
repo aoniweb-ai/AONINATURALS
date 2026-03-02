@@ -7,9 +7,12 @@ const useAdminBear = create((set, get) => ({
     product:null,
     products:null,
     orders:null,
+    blogs:null,
+    editBlog:null,
     setCheckAdmin:(value) => set({checkAdmin:value}),
     setProductNull:() => set({product:null}),
     setEditProduct:(value)=> set({editProduct:value}),
+    setEditBlog:(value) => set({editBlog:value}),
     adminSignup:async(data)=>{
         try {
             await adminAxios.post("/auth/signup",data);
@@ -115,6 +118,51 @@ const useAdminBear = create((set, get) => ({
         try {
             const response = await adminAxios.get('/orders/total-revenue');
             return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+
+    // ---- BLOG ACTIONS ----
+    adminBlog_addUpdate: async(data)=>{
+        try {
+            const response = await adminAxios.post("/blog/addupdateblog", data);
+            if(response.data?.edit === false){
+                let blogsArray = get().blogs || [];
+                blogsArray.unshift(response.data?.blog);
+                set({blogs:[...blogsArray]});
+            } else {
+                // Update the blog in the list
+                let blogsArray = get().blogs || [];
+                const idx = blogsArray.findIndex(b => b._id === response.data?.blog?._id);
+                if(idx !== -1) blogsArray[idx] = response.data?.blog;
+                set({blogs:[...blogsArray]});
+            }
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminGetBlogs: async()=>{
+        try {
+            const response = await adminAxios.get("/blog/getblogs");
+            set({blogs: response.data?.blogs});
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminGetABlog: async(id)=>{
+        try {
+            const response = await adminAxios.get(`/blog/getablog/${id}`);
+            return response.data?.blog;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminDeleteBlog: async(id)=>{
+        try {
+            await adminAxios.delete(`/blog/deleteblog/${id}`);
+            let blogsArray = get().blogs || [];
+            set({blogs: blogsArray.filter(b => b._id !== id)});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }

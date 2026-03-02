@@ -22,11 +22,14 @@ import ProductDetails from './User/components/ProductDetails.jsx';
 import UserCart from './User/pages/UserCart.jsx';
 import UserOrders from './User/pages/UserOrders.jsx';
 import AdminOrders from './Admin/pages/AdminOrders.jsx';
+import AdminBlogs from './Admin/pages/AdminBlogs.jsx';
 import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
 import UserAccount from './User/pages/UserAccount.jsx';
 import OrderDetails from '../components/OrderDetails.jsx';
 import ForgetPassword from './User/components/ForgetPassword.jsx';
 import NotFound from '../components/NotFound.jsx';
+import UserBlogs from './User/pages/UserBlogs.jsx';
+import BlogDetails from './User/components/BlogDetails.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,6 +41,8 @@ const router = createBrowserRouter(
         <Route path='forgot-password' element={<ForgetPassword/>} />
         <Route path='products' element={<UserProduct/>}/>
         <Route path='products/details/:id' element={<ProductDetails/>}/>
+        <Route path='blogs' element={<UserBlogs/>}/>
+        <Route path='blogs/:identifier' element={<BlogDetails/>}/>
         <Route path='cart' element={<UserAuthenticate><UserCart/></UserAuthenticate>}/>
         <Route path='orders' element={<UserAuthenticate><UserOrders/></UserAuthenticate>}/>
         <Route path='account' element={<UserAuthenticate><UserAccount/></UserAuthenticate>}/>
@@ -53,6 +58,7 @@ const router = createBrowserRouter(
         <Route path='products/details/:id' element={<AdminAuthenticate><AdminProductDetails/></AdminAuthenticate>}/>
         <Route path='orders' element={<AdminAuthenticate><AdminOrders/></AdminAuthenticate>}/>
         <Route path='orders/details/:order_id' element={<AdminAuthenticate><OrderDetails/></AdminAuthenticate>}/>
+        <Route path='blogs' element={<AdminAuthenticate><AdminBlogs/></AdminAuthenticate>}/>
         <Route path='*' element={<NotFound/>}/>
       </Route>
     </>

@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
+  FileText,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAdminBear from "../../../store/admin.store";
@@ -35,21 +36,11 @@ const AdminHeader = () => {
       value: "Orders",
       icon: <ShoppingCart size={20} />,
     },
-    // {
-    //   path: "/admin/customers",
-    //   value: "Customers",
-    //   icon: <Users size={20} />,
-    // },
-    // {
-    //   path: "/admin/analytics",
-    //   value: "Analytics",
-    //   icon: <BarChart3 size={20} />,
-    // },
-    // {
-    //   path: "/admin/settings",
-    //   value: "Settings",
-    //   icon: <Settings size={20} />,
-    // },
+    {
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/blogs`,
+      value: "Blogs",
+      icon: <FileText size={20} />,
+    },
   ];
 
   const closeDrawer = () => {
