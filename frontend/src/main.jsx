@@ -4,6 +4,8 @@ import './index.css'
 import App from './App.jsx'
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 import Admin from './Admin.jsx';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import AdminProtected from './Admin/components/AdminProtected.jsx';
 
@@ -74,5 +76,7 @@ const router = createBrowserRouter(
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <Analytics />
+    <SpeedInsights />
   </StrictMode>,
 )
