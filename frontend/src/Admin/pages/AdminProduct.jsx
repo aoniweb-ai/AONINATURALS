@@ -5,6 +5,7 @@ import {
   Hash,
   Layers,
   Search,
+  IndianRupee,
 } from "lucide-react";
 import AddUpdateProduct from "../components/AddUpdateProduct";
 import useAdminBear from "../../../store/admin.store";
@@ -66,7 +67,7 @@ const AdminProduct = () => {
     >
       <motion.div
         variants={pageVariants}
-        className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100"
+        className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white p-6 rounded-4xl shadow-sm border border-gray-100"
       >
         <div className="flex-1">
           <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
@@ -75,7 +76,7 @@ const AdminProduct = () => {
             </div>
             Products Inventory
           </h2>
-          <p className="text-slate-500 font-medium ml-[3.75rem] -mt-1 text-sm">
+          <p className="text-slate-500 font-medium ml-15 -mt-1 text-sm">
             Manage your store's catalog, prices, and stock levels.
           </p>
         </div>
@@ -106,34 +107,41 @@ const AdminProduct = () => {
             Add Product
           </motion.label>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto">
-          <div className="relative group w-full sm:w-64">
-            <input
-              type="number"
-              placeholder="Enter cod price...(rs)"
-              value={cod_charge}
-              onInput={(e)=>setCodCharge(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black transition-all outline-black/50"
-            />
-          </div>
+      </motion.div>
 
-          <motion.label
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={()=>adminCodCharges({price:cod_charge})}
-            className="btn bg-black text-white border-none px-6 py-3 h-auto rounded-xl gap-2 font-bold shadow-xl shadow-black/10 normal-case hover:bg-gray-800 cursor-pointer flex items-center justify-center"
-          >
-            <Plus size={20} strokeWidth={3} />
-            Save
-          </motion.label>
+      <motion.div
+        variants={pageVariants}
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-100"
+      >
+        <span className="text-sm font-bold text-slate-600">COD Charges</span>
+        <div className="relative group w-full sm:w-64">
+          <IndianRupee
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors"
+            size={16}
+          />
+          <input
+            type="number"
+            placeholder="Enter COD price..."
+            value={cod_charge}
+            onInput={(e) => setCodCharge(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-black transition-all outline-none"
+          />
         </div>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => adminCodCharges({ price: cod_charge })}
+          className="btn bg-black text-white border-none px-6 py-3 h-auto rounded-xl gap-2 font-bold shadow-xl shadow-black/10 normal-case hover:bg-gray-800 cursor-pointer flex items-center justify-center"
+        >
+          Save
+        </motion.button>
       </motion.div>
 
       <motion.div
         variants={pageVariants}
         className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col"
       >
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-hidden">
           <table className="table w-full border-separate border-spacing-y-2 px-4">
             {/* HEAD */}
             <thead>
@@ -160,7 +168,7 @@ const AdminProduct = () => {
             </thead>
 
             {/* BODY */}
-            <motion.tbody
+            {products ? <motion.tbody
               variants={tableContainerVariants}
               initial="hidden"
               animate="visible"
@@ -290,7 +298,44 @@ const AdminProduct = () => {
                   </motion.tr>
                 ))}
               </AnimatePresence>
-            </motion.tbody>
+            </motion.tbody> : (
+              <tbody>
+                {[1,2,3,4,5].map((i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="py-4 pl-4 rounded-l-2xl border-none">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-gray-200" />
+                        <div className="space-y-2">
+                          <div className="h-4 w-32 bg-gray-200 rounded-lg" />
+                          <div className="h-3 w-16 bg-gray-100 rounded-md" />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-center border-none">
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="h-4 w-14 bg-gray-200 rounded-lg mx-auto" />
+                        <div className="h-3 w-10 bg-gray-100 rounded-md mx-auto" />
+                      </div>
+                    </td>
+                    <td className="text-center border-none">
+                      <div className="h-5 w-12 bg-gray-200 rounded-full mx-auto" />
+                    </td>
+                    <td className="text-center border-none">
+                      <div className="flex flex-col items-center gap-1.5 w-24 mx-auto">
+                        <div className="h-3 w-16 bg-gray-200 rounded-md" />
+                        <div className="w-full h-1.5 bg-gray-100 rounded-full" />
+                      </div>
+                    </td>
+                    <td className="text-center border-none">
+                      <div className="h-5 w-14 bg-gray-200 rounded-full mx-auto" />
+                    </td>
+                    <td className="pr-4 text-right rounded-r-2xl border-none">
+                      <div className="h-8 w-8 bg-gray-200 rounded-xl ml-auto" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </table>
 
           {filteredProducts?.length === 0 && (

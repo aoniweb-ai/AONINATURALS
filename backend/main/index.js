@@ -15,6 +15,8 @@ import blogRouter from "../routes/blog.route.js";
 import adminCouponRouter from "../routes/admin.coupon.route.js";
 import couponRouter from "../routes/coupon.route.js";
 import adminUserRouter from "../routes/admin.user.route.js";
+import adminReviewRouter from "../routes/admin.review.route.js";
+import reviewRouter from "../routes/review.route.js";
 import { initSocket } from "../libs/socket.js";
 
 dotenv.config();
@@ -45,7 +47,6 @@ const limiter = rateLimit({
 })
 
 app.set("trust proxy", 1);
-app.use('/api', limiter);
 
 app.use(`/api/${process.env.ADMIN_POST_URI}/auth`, adminAuthRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/product`, adminProductRouter);
@@ -53,12 +54,15 @@ app.use(`/api/${process.env.ADMIN_POST_URI}/orders`, adminOrderRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/blog`, adminBlogRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/coupon`, adminCouponRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/user`, adminUserRouter);
+app.use(`/api/${process.env.ADMIN_POST_URI}/review`, adminReviewRouter);
 
+app.use('/api', limiter);
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
+app.use("/api/review", reviewRouter);
 
 
 

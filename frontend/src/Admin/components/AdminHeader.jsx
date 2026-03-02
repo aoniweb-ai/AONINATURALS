@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   FileText,
   Ticket,
+  Star,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAdminBear from "../../../store/admin.store";
@@ -51,6 +52,11 @@ const AdminHeader = () => {
       path: `/${import.meta.env.VITE_ADMIN_POST_URI}/coupons`,
       value: "Coupons",
       icon: <Ticket size={20} />,
+    },
+    {
+      path: `/${import.meta.env.VITE_ADMIN_POST_URI}/reviews`,
+      value: "Reviews",
+      icon: <Star size={20} />,
     },
   ];
 

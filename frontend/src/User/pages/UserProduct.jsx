@@ -1,9 +1,7 @@
 import {
-  RefreshCcw,
   ShoppingCart,
   Filter,
   ArrowRight,
-  Sparkles,
   Tag
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
@@ -104,18 +102,6 @@ const UserProduct = () => {
              transition={{ duration: 0.5, delay: 0.2 }}
              className="flex items-center gap-3 w-full md:w-auto"
           >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={getProducts}
-              className="bg-white border border-gray-200 p-3 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm text-gray-600"
-              title="Refresh List"
-            >
-              <RefreshCcw
-                size={20}
-                className={loader ? "animate-spin text-primary" : ""}
-              />
-            </motion.button>
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

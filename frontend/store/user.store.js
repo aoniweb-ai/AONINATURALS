@@ -185,6 +185,64 @@ const useUserBear = create((set)=>({
             throw error.response?.data?.message || error.message;
         }
     },
+
+    // ── Reviews ──
+    addOrUpdateReview: async(data)=>{
+        try {
+            const response = await userAxios.post("/review/add", data);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    getProductReviews: async(product_id, page = 1, limit = 5)=>{
+        try {
+            const response = await userAxios.get(`/review/${product_id}?page=${page}&limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    getMyReview: async(product_id)=>{
+        try {
+            const response = await userAxios.get(`/review/my/${product_id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    toggleLikeReview: async(review_id)=>{
+        try {
+            const response = await userAxios.put(`/review/like/${review_id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    toggleDislikeReview: async(review_id)=>{
+        try {
+            const response = await userAxios.put(`/review/dislike/${review_id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    getTopReviews: async()=>{
+        try {
+            const response = await userAxios.get("/review/top");
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    deleteReview: async(review_id)=>{
+        try {
+            const response = await userAxios.delete(`/review/delete/${review_id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
 }))
 
 export default useUserBear;

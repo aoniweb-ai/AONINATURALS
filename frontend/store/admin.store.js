@@ -235,6 +235,24 @@ const useAdminBear = create((set, get) => ({
             throw error.response?.data?.message || error.message;
         }
     },
+
+    // ---- REVIEW ACTIONS ----
+    adminGetReviews: async({ page = 1, limit = 15 } = {})=>{
+        try {
+            const response = await adminAxios.get(`/review/getreviews?page=${page}&limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminDeleteReview: async(review_id)=>{
+        try {
+            const response = await adminAxios.delete(`/review/deletereview/${review_id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
 }))
 
 export default useAdminBear;

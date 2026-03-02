@@ -1,6 +1,7 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
+import { getIO } from "../libs/socket.js";
 
 export const adminUpdateStatusController = async (req, res) => {
     try {
@@ -45,6 +46,12 @@ export const adminUpdateStatusController = async (req, res) => {
             order.status = status;
             order.payment_status = "paid";
             const updatedOrder = await order.save();
+
+            getIO().emit("order:statusUpdated", {
+                order: updatedOrder,
+                userId: order.user.toString(),
+            });
+
             return res.status(200).json({ success: true, message: "Successfully updated", order: updatedOrder });
         }
 
@@ -61,9 +68,19 @@ export const adminUpdateStatusController = async (req, res) => {
         order.status = status;
         order.payment_status = "paid";
         order.delivery_date = delivery_date;
-        const updatedOrder = await order.save();
+        await order.save();
+
+        // Re-populate to get full data for socket + response
+        const updatedOrder = await Order.findOne({ order_id })
+            .populate({ path: "user", select: "fullname phone address email" })
+            .populate({ path: "product.product", select: "product_name product_images final_price" });
 
         if (!updatedOrder) return res.status(400).json({ success: false, message: "Invalid credentials" });
+
+        getIO().emit("order:statusUpdated", {
+            order: updatedOrder,
+            userId: updatedOrder.user?._id?.toString() || updatedOrder.user?.toString(),
+        });
 
         return res.status(200).json({ success: true, message: "Successfully updated", order: updatedOrder });
 

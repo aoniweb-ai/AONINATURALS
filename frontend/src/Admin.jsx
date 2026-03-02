@@ -8,11 +8,7 @@ import { useEffect } from "react";
 import { connectSocket, disconnectSocket } from "../utils/socket";
 
 const Admin = () => {
-  const { admin, adminGetproducts } = useAdminBear((state) => state);
-
-  useEffect(() => {
-    adminGetproducts();
-  }, [adminGetproducts]);
+  const { admin } = useAdminBear((state) => state);
 
   useEffect(() => {
     if (!admin) return;
@@ -53,7 +49,7 @@ const Admin = () => {
             <Menu />
           </label>
         </div>
-        <Outlet />
+        {<Outlet />}
       </div>
       <Toaster position="top-center" reverseOrder={false} />
     </div>

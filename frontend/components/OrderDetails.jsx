@@ -10,7 +10,8 @@ import {
   CheckCircle2,
   X,
   Printer,
-  Ticket
+  Ticket,
+  Star
 } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
 import { formatDateTime } from "../utils/formatDateTime";
@@ -22,6 +23,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import useUserBear from "../store/user.store";
 import { motion, AnimatePresence } from "framer-motion";
+import { getSocket } from "../utils/socket";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -115,6 +117,21 @@ const OrderDetails = () => {
         .catch((err) => toast.error(err));
     }
   }, [order_id, adminGetAnOrder]);
+
+  // Socket: real-time order status update for this specific order
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleStatusUpdate = ({ order: updatedOrder }) => {
+      if (updatedOrder.order_id === order_id) {
+        setOrder((prev) => prev ? { ...prev, status: updatedOrder.status, delivery_date: updatedOrder.delivery_date, payment_status: updatedOrder.payment_status } : prev);
+      }
+    };
+
+    socket.on("order:statusUpdated", handleStatusUpdate);
+    return () => socket.off("order:statusUpdated", handleStatusUpdate);
+  }, [order_id]);
 
   const onSubmitStatus = async (data) => {
     try {
@@ -402,13 +419,26 @@ const OrderDetails = () => {
                   </p>
                 </div>
 
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end gap-2">
                   <p className="text-lg font-black text-gray-900">
                     ₹{item.price * item.quantity}
                   </p>
                   <p className="text-[10px] font-bold text-gray-400 uppercase">
                     ₹{item.price} each
                   </p>
+                  {user && order.status === "delivered" && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/products/details/${item.product._id}`);
+                      }}
+                      className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-full transition-colors mt-1"
+                    >
+                      <Star size={12} /> Write Review
+                    </motion.button>
+                  )}
                 </div>
               </motion.div>
             ))}

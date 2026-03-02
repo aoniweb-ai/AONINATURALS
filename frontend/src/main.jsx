@@ -28,6 +28,7 @@ import AdminBlogs from './Admin/pages/AdminBlogs.jsx';
 import AdminCoupons from './Admin/pages/AdminCoupons.jsx';
 import AdminUsers from './Admin/pages/AdminUsers.jsx';
 import AdminUserDetails from './Admin/pages/AdminUserDetails.jsx';
+import AdminReviews from './Admin/pages/AdminReviews.jsx';
 import AdminProductDetails from './Admin/components/AdminProductDetails.jsx';
 import UserAccount from './User/pages/UserAccount.jsx';
 import OrderDetails from '../components/OrderDetails.jsx';
@@ -67,6 +68,7 @@ const router = createBrowserRouter(
         <Route path='coupons' element={<AdminAuthenticate><AdminCoupons/></AdminAuthenticate>}/>
         <Route path='users' element={<AdminAuthenticate><AdminUsers/></AdminAuthenticate>}/>
         <Route path='users/:id' element={<AdminAuthenticate><AdminUserDetails/></AdminAuthenticate>}/>
+        <Route path='reviews' element={<AdminAuthenticate><AdminReviews/></AdminAuthenticate>}/>
         <Route path='*' element={<NotFound/>}/>
       </Route>
     </>
@@ -74,9 +76,11 @@ const router = createBrowserRouter(
 )
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
+  <>
     <RouterProvider router={router} />
     <Analytics />
     <SpeedInsights />
-  </StrictMode>,
+  </>
+  // </StrictMode>,
 )

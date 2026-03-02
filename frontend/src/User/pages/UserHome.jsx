@@ -13,13 +13,46 @@ import useUserBear from "../../../store/user.store";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 
+const defaultTestimonials = [
+  {
+    review_text: "My hair fall stopped completely within 2 weeks. The scent is also very soothing!",
+    user: { fullname: "Anjali S." },
+    rating: 5,
+  },
+  {
+    review_text: "Best organic oil I've ever used. Non-sticky and gives a great shine.",
+    user: { fullname: "Rahul M." },
+    rating: 5,
+  },
+  {
+    review_text: "Highly recommended! The delivery was super fast and packaging was premium.",
+    user: { fullname: "Sneha K." },
+    rating: 5,
+  },
+];
+
 const UserHome = () => {
-  const { products, userAddToCart, user } = useUserBear((state) => state);
+  const { products, userAddToCart, user, getTopReviews } = useUserBear((state) => state);
   const [loader, setLoader] = useState(false);
+  const [topReviews, setTopReviews] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTopReviews = async () => {
+      try {
+        const data = await getTopReviews();
+        if (data?.reviews?.length > 0) {
+          setTopReviews(data.reviews);
+        }
+      } catch {
+        // fallback to defaults
+      }
+    };
+    fetchTopReviews();
+  }, [getTopReviews]);
 
   const handleAddToCart = async (e, id) => {
     e.stopPropagation();
@@ -235,22 +268,9 @@ const UserHome = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                text: "My hair fall stopped completely within 2 weeks. The scent is also very soothing!",
-                name: "Anjali S.",
-              },
-              {
-                text: "Best organic oil I've ever used. Non-sticky and gives a great shine.",
-                name: "Rahul M.",
-              },
-              {
-                text: "Highly recommended! The delivery was super fast and packaging was premium.",
-                name: "Sneha K.",
-              },
-            ].map((review, i) => (
+            {(topReviews.length > 0 ? topReviews : defaultTestimonials).map((review, i) => (
               <div
-                key={i}
+                key={review._id || i}
                 className="bg-white/10 backdrop-blur-md border border-white/10 p-8 rounded-2xl relative hover:-translate-y-2 transition-transform duration-300"
               >
                 <Quote
@@ -259,23 +279,34 @@ const UserHome = () => {
                 />
                 <div className="flex gap-1 text-emerald-400 mb-4">
                   {[...Array(5)].map((_, idx) => (
-                    <Star key={idx} size={16} fill="currentColor" />
+                    <Star
+                      key={idx}
+                      size={16}
+                      fill="currentColor"
+                      className={idx < review.rating ? "text-emerald-400" : "text-white/20"}
+                    />
                   ))}
                 </div>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  "{review.text}"
+                  "{review.review_text}"
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-linear-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center font-bold text-white">
-                    {review.name.charAt(0)}
+                    {review.user?.fullname?.charAt(0) || "?"}
                   </div>
                   <div>
                     <p className="font-bold text-white text-sm">
-                      {review.name}
+                      {review.user?.fullname || "Customer"}
                     </p>
-                    <div className="flex items-center gap-1 text-xs text-emerald-400">
-                      <CheckCircle2 size={12} /> Verified Buyer
-                    </div>
+                    {review.product?.product_name ? (
+                      <p className="text-xs text-emerald-400/80 truncate max-w-40">
+                        on {review.product.product_name}
+                      </p>
+                    ) : (
+                      <div className="flex items-center gap-1 text-xs text-emerald-400">
+                        <CheckCircle2 size={12} /> Verified Buyer
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

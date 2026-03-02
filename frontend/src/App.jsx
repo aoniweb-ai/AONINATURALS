@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import UserHeader from "./User/components/UserHeader";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import useUserBear from "../store/user.store";
 import CenterLoader from "../components/CenterLoader";
 import { Menu, MessageCircle } from "lucide-react";
@@ -119,6 +119,23 @@ function App() {
       }));
     });
 
+    socket.on("order:statusUpdated", ({ order, userId }) => {
+      const currentUser = useUserBear.getState().user;
+      if (!currentUser || currentUser._id !== userId) return;
+
+      useUserBear.setState((state) => ({
+        orders: state.orders
+          ? state.orders.map((o) => (o.order_id === order.order_id ? { ...o, status: order.status, delivery_date: order.delivery_date, payment_status: order.payment_status } : o))
+          : state.orders,
+      }));
+
+      const statusLabels = { delivered: "Delivered ✅", shipped: "Shipped 🚚", cancelled: "Cancelled ❌", pending: "Pending ⏳" };
+      toast(statusLabels[order.status] || `Status: ${order.status}`, {
+        icon: "📦",
+        duration: 5000,
+      });
+    });
+
     return () => {
       socket.off("product:created");
       socket.off("product:updated");
@@ -128,6 +145,7 @@ function App() {
       socket.off("coupon:created");
       socket.off("coupon:updated");
       socket.off("coupon:deleted");
+      socket.off("order:statusUpdated");
       disconnectSocket();
     };
   }, [loader, user]);

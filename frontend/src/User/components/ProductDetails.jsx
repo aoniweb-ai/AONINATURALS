@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   ShoppingCart,
-  RefreshCcw,
   ArrowLeft,
   ShieldCheck,
   Truck,
@@ -11,7 +10,13 @@ import {
   CheckCircle2,
   Clock,
   Star,
-  Zap
+  Zap,
+  ThumbsUp,
+  ThumbsDown,
+  Pencil,
+  Send,
+  MessageSquare,
+  Trash2,
 } from "lucide-react";
 import useUserBear from "../../../store/user.store";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,25 +24,221 @@ import ProductDetailsSkeleton from "./Skeleton/ProductDetailsSkeleton";
 import toast from "react-hot-toast";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
 import { motion, AnimatePresence } from "framer-motion";
+import { timeAgo } from "../../../utils/timeAgo";
+import { getSocket } from "../../../utils/socket";
 
 const ProductDetails = () => {
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [selectedImg, setSelectedImg] = useState(0);
   const [loader, setLoader] = useState(false);
-  const [refreshLoader, setRefreshLoader] = useState(false);
+
+  // Review state
+  const [reviews, setReviews] = useState([]);
+  const [myReview, setMyReview] = useState(null);
+  const [avgRating, setAvgRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [hasMoreReviews, setHasMoreReviews] = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, review_text: "" });
+  const [hoverRating, setHoverRating] = useState(0);
+  const [canReview, setCanReview] = useState(false);
+  const reviewsEndRef = useRef(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { userGetaProduct, userAddToCart, product, setProduct, user, cod_charges } = useUserBear(
-    (state) => state,
-  );
+  const {
+    userGetaProduct, userAddToCart, product, setProduct, user, cod_charges,
+    addOrUpdateReview, getProductReviews, getMyReview, toggleLikeReview, toggleDislikeReview, deleteReview,
+  } = useUserBear((state) => state);
 
   useEffect(() => {
     setProduct(null);
     userGetaProduct(id).catch((err) => toast.error(err));
   }, [id, userGetaProduct, setProduct]);
+
+  // Fetch reviews for the product
+  const fetchReviews = useCallback(async (page = 1, append = false) => {
+    try {
+      setReviewLoading(true);
+      const data = await getProductReviews(id, page, 5);
+      setReviews((prev) => append ? [...prev, ...data.reviews] : data.reviews);
+      setAvgRating(data.avgRating);
+      setTotalReviews(data.totalReviews);
+      setHasMoreReviews(data.pagination.hasMore);
+      setReviewPage(page);
+    } catch {
+      // silent
+    } finally {
+      setReviewLoading(false);
+    }
+  }, [id, getProductReviews]);
+
+  // Fetch user's own review + canReview flag
+  const fetchMyReview = useCallback(async () => {
+    if (!user) return;
+    try {
+      const data = await getMyReview(id);
+      setMyReview(data.review);
+      setCanReview(data.canReview);
+      if (data.review) {
+        setReviewForm({ rating: data.review.rating, review_text: data.review.review_text });
+      }
+    } catch {
+      // silent
+    }
+  }, [id, user, getMyReview]);
+
+  useEffect(() => {
+    if (id) {
+      fetchReviews(1);
+      fetchMyReview();
+    }
+  }, [id, fetchReviews, fetchMyReview]);
+
+  // Socket listeners for real-time review updates
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleReviewCreated = (data) => {
+      if (data.product_id !== id) return;
+      // Prepend new review to the list (avoid duplicate if it's the current user's)
+      setReviews((prev) => {
+        if (prev.some((r) => r._id === data.review._id)) return prev;
+        return [data.review, ...prev];
+      });
+      setTotalReviews((prev) => prev + 1);
+      // Recalculate avg from existing + new
+      setAvgRating((prev) => {
+        const newTotal = totalReviews + 1;
+        return Math.round(((prev * totalReviews + data.review.rating) / newTotal) * 10) / 10;
+      });
+    };
+
+    const handleReviewUpdated = (data) => {
+      if (data.product_id !== id) return;
+      setReviews((prev) =>
+        prev.map((r) => (r._id === data.review._id ? { ...r, ...data.review } : r))
+      );
+    };
+
+    const handleReviewReacted = (data) => {
+      if (data.product_id !== id) return;
+      setReviews((prev) =>
+        prev.map((r) =>
+          r._id === data.review_id
+            ? { ...r, likes: Array(data.likes).fill(0), dislikes: Array(data.dislikes).fill(0) }
+            : r
+        )
+      );
+    };
+
+    const handleReviewDeleted = (data) => {
+      if (data.product_id !== id) return;
+      setReviews((prev) => prev.filter((r) => r._id !== data.review_id));
+      setTotalReviews((prev) => Math.max(0, prev - 1));
+    };
+
+    socket.on("review:created", handleReviewCreated);
+    socket.on("review:updated", handleReviewUpdated);
+    socket.on("review:reacted", handleReviewReacted);
+    socket.on("review:deleted", handleReviewDeleted);
+
+    // When admin updates order status to delivered, enable review form
+    const handleOrderStatusUpdated = ({ order, userId }) => {
+      const currentUser = useUserBear.getState().user;
+      if (!currentUser || currentUser._id !== userId) return;
+      if (order.status === "delivered") {
+        const hasProduct = order.product?.some((item) => {
+          const pid = item.product?._id || item.product;
+          return pid?.toString() === id || pid === id;
+        });
+        if (hasProduct) setCanReview(true);
+      }
+    };
+    socket.on("order:statusUpdated", handleOrderStatusUpdated);
+
+    return () => {
+      socket.off("review:created", handleReviewCreated);
+      socket.off("review:updated", handleReviewUpdated);
+      socket.off("review:reacted", handleReviewReacted);
+      socket.off("review:deleted", handleReviewDeleted);
+      socket.off("order:statusUpdated", handleOrderStatusUpdated);
+    };
+  }, [id, totalReviews]);
+
+  const handleReviewSubmit = async () => {
+    if (!reviewForm.review_text.trim()) {
+      return toast.error("Please write a review");
+    }
+    try {
+      setReviewSubmitting(true);
+      const data = await addOrUpdateReview({
+        product_id: id,
+        rating: reviewForm.rating,
+        review_text: reviewForm.review_text,
+      });
+      toast.success(data.message);
+      setEditMode(false);
+      setMyReview(data.review);
+      fetchReviews(1);
+    } catch (err) {
+      toast.error(err || "Something went wrong");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
+  const handleLike = async (reviewId, index) => {
+    if (!user) return toast("Login to like reviews", { icon: "ℹ️" });
+    try {
+      const data = await toggleLikeReview(reviewId);
+      setReviews((prev) =>
+        prev.map((r, i) =>
+          i === index ? { ...r, likes: Array(data.likes).fill(0), dislikes: Array(data.dislikes).fill(0), _userLiked: data.userLiked, _userDisliked: data.userDisliked } : r
+        )
+      );
+    } catch (err) {
+      toast.error(err || "Something went wrong");
+    }
+  };
+
+  const handleDislike = async (reviewId, index) => {
+    if (!user) return toast("Login to dislike reviews", { icon: "ℹ️" });
+    try {
+      const data = await toggleDislikeReview(reviewId);
+      setReviews((prev) =>
+        prev.map((r, i) =>
+          i === index ? { ...r, likes: Array(data.likes).fill(0), dislikes: Array(data.dislikes).fill(0), _userLiked: data.userLiked, _userDisliked: data.userDisliked } : r
+        )
+      );
+    } catch (err) {
+      toast.error(err || "Something went wrong");
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!myReview) return;
+    try {
+      await deleteReview(myReview._id);
+      toast.success("Review deleted");
+      setMyReview(null);
+      setEditMode(false);
+      setReviewForm({ rating: 5, review_text: "" });
+      fetchReviews(1, false);
+    } catch (err) {
+      toast.error(err || "Failed to delete review");
+    }
+  };
+
+  const loadMoreReviews = () => {
+    fetchReviews(reviewPage + 1, true);
+  };
 
   const addToCartProduct = async () => {
     if(!user){
@@ -58,16 +259,6 @@ const ProductDetails = () => {
     }
   };
 
-  const refreshProduct = async () => {
-    try {
-      setRefreshLoader(true);
-      await userGetaProduct(id);
-    } catch (err) {
-      toast.error(err);
-    } finally {
-      setRefreshLoader(false);
-    }
-  };
 
   if (!product) return <ProductDetailsSkeleton />;
 
@@ -106,16 +297,6 @@ const ProductDetails = () => {
           >
             <ArrowLeft size={20} />
             <span>Back</span>
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={refreshProduct}
-            className="flex items-center gap-2 text-sm font-bold text-primary px-4 py-2 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors"
-          >
-            <RefreshCcw size={16} className={refreshLoader ? "animate-spin" : ""} />
-            {refreshLoader ? "Syncing..." : "Refresh"}
           </motion.button>
         </div>
       </div>
@@ -210,12 +391,28 @@ const ProductDetails = () => {
               <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-[1.1] tracking-tight">
                 {product.product_name}
               </h1>
-              <div className="flex items-center gap-2">
+              {totalReviews > 0 ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={i <= Math.round(avgRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{avgRating}</span>
+                  <span className="text-sm font-medium text-gray-400">({totalReviews} {totalReviews === 1 ? "review" : "reviews"})</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
                   <div className="flex text-yellow-400">
                     {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="currentColor" />)}
                   </div>
-                  <span className="text-sm font-medium text-gray-400">BEST SELLER</span>
-              </div>
+                  <span className="text-sm font-medium text-gray-400">Be the first to review</span>
+                </div>
+              )}
             </motion.div>
 
             {/* Price & Offers */}
@@ -371,6 +568,323 @@ const ProductDetails = () => {
               </div>
             </motion.div>
           </AnimatePresence>
+        </div>
+      </div>
+
+      {/* --- REVIEWS SECTION --- */}
+      <div className="bg-[#fcfcfc] border-t border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 py-20">
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-xs font-black uppercase tracking-[0.3em] text-primary/60">
+              Customer Feedback
+            </span>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mt-3 tracking-tight">
+              Reviews
+            </h2>
+
+            {/* Average Rating */}
+            {totalReviews > 0 && (
+              <div className="flex items-center justify-center gap-4 mt-6">
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star
+                      key={i}
+                      size={22}
+                      className={i <= Math.round(avgRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}
+                    />
+                  ))}
+                </div>
+                <span className="text-2xl font-black text-gray-900">{avgRating}</span>
+                <span className="text-sm font-medium text-gray-400">
+                  ({totalReviews} {totalReviews === 1 ? "review" : "reviews"})
+                </span>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Write / Edit Review Form */}
+          {user && canReview && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-12"
+            >
+              {myReview && !editMode ? (
+                // Show own review with edit button
+                <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.06)]">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-black text-gray-900">Your Review</h3>
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setEditMode(true)}
+                        className="flex items-center gap-2 text-sm font-bold text-primary bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-full transition-colors"
+                      >
+                        <Pencil size={14} /> Edit
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          if (window.confirm("Are you sure you want to delete your review?")) {
+                            handleDeleteReview();
+                          }
+                        }}
+                        className="flex items-center gap-2 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full transition-colors"
+                      >
+                        <Trash2 size={14} /> Delete
+                      </motion.button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        size={18}
+                        className={i <= myReview.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{myReview.review_text}</p>
+                  <div className="flex items-center gap-3 mt-4 text-xs text-gray-400 font-medium">
+                    <span>{timeAgo(myReview.first_reviewed_at || myReview.createdAt)}</span>
+                    {myReview.edit_count > 0 && (
+                      <span className="bg-gray-100 px-2 py-0.5 rounded-full">
+                        Edited {myReview.edit_count} {myReview.edit_count === 1 ? "time" : "times"} • {timeAgo(myReview.updatedAt)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : (myReview && editMode) || !myReview ? (
+                // Review form (new / edit)
+                <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.06)]">
+                  <h3 className="text-lg font-black text-gray-900 mb-6">
+                    {myReview ? "Edit Your Review" : "Write a Review"}
+                  </h3>
+
+                  {/* Star Rating Selector */}
+                  <div className="flex items-center gap-1 mb-6">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <motion.button
+                        key={i}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                        onMouseEnter={() => setHoverRating(i)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        onClick={() => setReviewForm((prev) => ({ ...prev, rating: i }))}
+                        className="focus:outline-none"
+                      >
+                        <Star
+                          size={28}
+                          className={
+                            i <= (hoverRating || reviewForm.rating)
+                              ? "text-yellow-400 fill-yellow-400 transition-colors"
+                              : "text-gray-200 transition-colors"
+                          }
+                        />
+                      </motion.button>
+                    ))}
+                    <span className="ml-3 text-sm font-bold text-gray-500">
+                      {reviewForm.rating}/5
+                    </span>
+                  </div>
+
+                  {/* Review Text */}
+                  <textarea
+                    value={reviewForm.review_text}
+                    onChange={(e) =>
+                      setReviewForm((prev) => ({ ...prev, review_text: e.target.value }))
+                    }
+                    placeholder="Share your experience with this product..."
+                    maxLength={1000}
+                    rows={4}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 resize-none transition-all"
+                  />
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-gray-400">
+                      {reviewForm.review_text.length}/1000
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 mt-5">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleReviewSubmit}
+                      disabled={reviewSubmitting}
+                      className="bg-black text-white px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-gray-900 transition-colors flex items-center gap-2 shadow-lg"
+                    >
+                      {reviewSubmitting ? (
+                        <span className="loading loading-dots loading-sm"></span>
+                      ) : (
+                        <>
+                          <Send size={16} />
+                          {myReview ? "Update Review" : "Submit Review"}
+                        </>
+                      )}
+                    </motion.button>
+                    {editMode && (
+                      <button
+                        onClick={() => {
+                          setEditMode(false);
+                          setReviewForm({ rating: myReview.rating, review_text: myReview.review_text });
+                        }}
+                        className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors px-4 py-3"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : null}
+            </motion.div>
+          )}
+
+          {/* Not eligible notice */}
+          {user && !canReview && (
+            <div className="text-center mb-12 text-sm text-gray-400 font-medium flex items-center justify-center gap-2">
+              <ShieldCheck size={16} />
+              You can review this product after it is purchased by you
+            </div>
+          )}
+
+          {/* Reviews List */}
+          {reviews.length > 0 ? (
+            <div className="space-y-6">
+              {reviews.map((review, index) => (
+                <motion.div
+                  key={review._id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-white rounded-3xl border border-gray-100 p-7 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_30px_-10px_rgba(0,0,0,0.08)] transition-shadow"
+                >
+                  {/* Review Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center text-primary font-black text-sm uppercase">
+                        {review.user?.fullname?.charAt(0) || "?"}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-900 text-sm">{review.user?.fullname || "User"}</h4>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                              <Star
+                                key={i}
+                                size={12}
+                                className={i <= review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-[10px] text-gray-400 font-medium">
+                            {timeAgo(review.first_reviewed_at || review.createdAt)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Edit count badge */}
+                    {review.edit_count > 0 && (
+                      <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-full">
+                        Edited {review.edit_count}x
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Review Text */}
+                  <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap mb-4">
+                    {review.review_text}
+                  </p>
+
+                  {/* Like / Dislike */}
+                  <div className="flex items-center gap-4">
+                    <motion.button
+                      whileTap={{ scale: 0.85 }}
+                      onClick={() => handleLike(review._id, index)}
+                      className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+                        review._userLiked || (user && review.likes?.some?.((l) => l === user._id || l._id === user._id))
+                          ? "bg-emerald-50 text-emerald-600"
+                          : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      <ThumbsUp size={14} />
+                      {review.likes?.length || 0}
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.85 }}
+                      onClick={() => handleDislike(review._id, index)}
+                      className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+                        review._userDisliked || (user && review.dislikes?.some?.((d) => d === user._id || d._id === user._id))
+                          ? "bg-red-50 text-red-500"
+                          : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      <ThumbsDown size={14} />
+                      {review.dislikes?.length || 0}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Load More */}
+              {hasMoreReviews && (
+                <div className="text-center pt-6">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={loadMoreReviews}
+                    disabled={reviewLoading}
+                    className="bg-white border border-gray-200 text-gray-700 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
+                  >
+                    {reviewLoading ? (
+                      <span className="loading loading-dots loading-sm"></span>
+                    ) : (
+                      "Load More Reviews"
+                    )}
+                  </motion.button>
+                </div>
+              )}
+              <div ref={reviewsEndRef} />
+            </div>
+          ) : (
+            !reviewLoading && (
+              <div className="text-center py-16">
+                <MessageSquare size={48} className="mx-auto text-gray-200 mb-4" />
+                <h3 className="text-lg font-bold text-gray-400">No reviews yet</h3>
+                <p className="text-sm text-gray-300 mt-1">Be the first to share your experience!</p>
+              </div>
+            )
+          )}
+
+          {/* Loading skeleton for first load */}
+          {reviewLoading && reviews.length === 0 && (
+            <div className="space-y-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-3xl border border-gray-100 p-7 animate-pulse">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    <div className="space-y-2">
+                      <div className="w-24 h-3 bg-gray-200 rounded" />
+                      <div className="w-16 h-2 bg-gray-100 rounded" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="w-full h-3 bg-gray-100 rounded" />
+                    <div className="w-3/4 h-3 bg-gray-100 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </motion.section>
