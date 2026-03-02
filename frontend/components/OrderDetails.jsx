@@ -118,7 +118,6 @@ const OrderDetails = () => {
     }
   }, [order_id, adminGetAnOrder]);
 
-  // Socket: real-time order status update for this specific order
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;

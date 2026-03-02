@@ -221,7 +221,6 @@ const UserBlogs = () => {
   );
 };
 
-// Skeleton
 const BlogSkeletonGrid = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
     {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -248,7 +247,6 @@ const BlogSkeletonGrid = () => (
   </div>
 );
 
-// Empty State
 const EmptyState = () => (
   <Motion.div
     initial={{ opacity: 0, scale: 0.9 }}

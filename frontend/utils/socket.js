@@ -29,7 +29,6 @@ export function disconnectSocket() {
   }
 }
 
-// Detect device type
 export function getDeviceInfo() {
   const ua = navigator.userAgent;
   if (/Mobi|Android/i.test(ua)) return "Mobile";

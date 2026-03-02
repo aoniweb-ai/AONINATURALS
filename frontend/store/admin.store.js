@@ -7,6 +7,7 @@ const useAdminBear = create((set, get) => ({
     product:null,
     products:null,
     orders:null,
+    orderCounts:null,
     blogs:null,
     editBlog:null,
     onlineUsers:[],
@@ -94,10 +95,29 @@ const useAdminBear = create((set, get) => ({
             throw error.response?.data?.message || error.message;
         }
     },
-    adminGetOrders: async(status)=>{
+    adminGetOrders: async(status, page = 1, limit = 10)=>{
         try {
-            const response = await adminAxios.get(`/orders/getorders/${status}`);
-            set({orders:response.data?.orders});
+            const response = await adminAxios.get(`/orders/getorders/${status}?page=${page}&limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminGetOrderCounts: async()=>{
+        try {
+            const response = await adminAxios.get("/orders/order-counts");
+            set({ orderCounts: response.data?.counts });
+            return response.data?.counts;
+        } catch (error) {
+            throw error.response?.data?.message || error.message;
+        }
+    },
+    adminMarkOrdersSeen: async()=>{
+        try {
+            await adminAxios.put("/orders/mark-seen");
+            set((state) => ({
+                orderCounts: state.orderCounts ? { ...state.orderCounts, unseen: 0 } : state.orderCounts,
+            }));
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
@@ -135,7 +155,6 @@ const useAdminBear = create((set, get) => ({
                 blogsArray.unshift(response.data?.blog);
                 set({blogs:[...blogsArray]});
             } else {
-                // Update the blog in the list
                 let blogsArray = get().blogs || [];
                 const idx = blogsArray.findIndex(b => b._id === response.data?.blog?._id);
                 if(idx !== -1) blogsArray[idx] = response.data?.blog;

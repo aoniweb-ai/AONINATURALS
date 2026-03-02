@@ -3,7 +3,6 @@ import Product from "../models/product.model.js";
 import Order from "../models/order.model.js";
 import { getIO } from "../libs/socket.js";
 
-// POST /review/add — create or edit review
 export const addOrUpdateReviewController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -13,7 +12,6 @@ export const addOrUpdateReviewController = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user bought this product
     const product = await Product.findById(product_id);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
@@ -26,7 +24,6 @@ export const addOrUpdateReviewController = async (req, res) => {
         .json({ message: "You can only review products you have purchased" });
     }
 
-    // Check if the product has been delivered to this user
     const deliveredOrder = await Order.findOne({
       user: userId,
       status: "delivered",
@@ -38,14 +35,12 @@ export const addOrUpdateReviewController = async (req, res) => {
         .json({ message: "You can review only after the product is delivered" });
     }
 
-    // Check if user already reviewed
     const existingReview = await Review.findOne({
       user: userId,
       product: product_id,
     });
 
     if (existingReview) {
-      // Edit
       existingReview.rating = rating;
       existingReview.review_text = review_text.trim();
       existingReview.edit_count += 1;
@@ -65,7 +60,6 @@ export const addOrUpdateReviewController = async (req, res) => {
       });
     }
 
-    // Create new
     const review = new Review({
       user: userId,
       product: product_id,
@@ -100,7 +94,6 @@ export const addOrUpdateReviewController = async (req, res) => {
   }
 };
 
-// GET /review/:product_id?page=1&limit=5
 export const getProductReviewsController = async (req, res) => {
   try {
     const { product_id } = req.params;
@@ -116,7 +109,6 @@ export const getProductReviewsController = async (req, res) => {
       .limit(limit)
       .lean();
 
-    // Average rating
     const avgResult = await Review.aggregate([
       { $match: { product: await import("mongoose").then((m) => new m.default.Types.ObjectId(product_id)) } },
       { $group: { _id: null, avg: { $avg: "$rating" }, count: { $sum: 1 } } },
@@ -145,7 +137,6 @@ export const getProductReviewsController = async (req, res) => {
   }
 };
 
-// PUT /review/like/:review_id
 export const toggleLikeReviewController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -158,10 +149,8 @@ export const toggleLikeReviewController = async (req, res) => {
     const alreadyDisliked = review.dislikes.includes(userId);
 
     if (alreadyLiked) {
-      // Remove like
       review.likes.pull(userId);
     } else {
-      // Add like, remove dislike if exists
       review.likes.push(userId);
       if (alreadyDisliked) review.dislikes.pull(userId);
     }
@@ -189,7 +178,6 @@ export const toggleLikeReviewController = async (req, res) => {
   }
 };
 
-// PUT /review/dislike/:review_id
 export const toggleDislikeReviewController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -231,7 +219,6 @@ export const toggleDislikeReviewController = async (req, res) => {
   }
 };
 
-// GET /review/top — Top 3 most liked reviews (for homepage)
 export const getTopReviewsController = async (req, res) => {
   try {
     const reviews = await Review.aggregate([
@@ -269,7 +256,6 @@ export const getTopReviewsController = async (req, res) => {
   }
 };
 
-// GET /review/my/:product_id — Get logged-in user's review for a product
 export const getMyReviewController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -282,7 +268,6 @@ export const getMyReviewController = async (req, res) => {
       .populate({ path: "user", select: "fullname email" })
       .lean();
 
-    // Check if user has a delivered order with this product
     const deliveredOrder = await Order.findOne({
       user: userId,
       status: "delivered",
@@ -298,7 +283,6 @@ export const getMyReviewController = async (req, res) => {
   }
 };
 
-// DELETE /review/delete/:review_id — User deletes own review
 export const deleteReviewController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -325,7 +309,6 @@ export const deleteReviewController = async (req, res) => {
   }
 };
 
-// DELETE /review/admin-delete/:review_id — Admin deletes any review
 export const adminDeleteReviewController = async (req, res) => {
   try {
     const { review_id } = req.params;
@@ -347,7 +330,6 @@ export const adminDeleteReviewController = async (req, res) => {
   }
 };
 
-// GET /review/admin/all?page=1&limit=15 — Admin get all reviews
 export const adminGetAllReviewsController = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -362,7 +344,6 @@ export const adminGetAllReviewsController = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .lean();
-    // Overall stats
     const statsResult = await Review.aggregate([
       {
         $group: {

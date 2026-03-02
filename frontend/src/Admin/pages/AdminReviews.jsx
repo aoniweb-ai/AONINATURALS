@@ -75,7 +75,6 @@ const AdminReviews = () => {
     fetchReviews(1, true);
   }, [fetchReviews]);
 
-  // Socket listeners for real-time review updates
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;

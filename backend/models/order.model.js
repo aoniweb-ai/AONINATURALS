@@ -69,7 +69,11 @@ const orderSchema = mongoose.Schema({
         required:true,
         default:"online"
     },
-    receipt:String
+    receipt:String,
+    admin_seen:{
+        type:Boolean,
+        default:false
+    }
 
 },{timestamps:true})
 

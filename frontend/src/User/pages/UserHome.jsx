@@ -76,7 +76,6 @@ const UserHome = () => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
-  // Features Data with Icons
   const features = [
     {
       icon: <Leaf className="text-emerald-500" />,

@@ -99,6 +99,12 @@ export const createOrderController = async (req, res) => {
       await Product.bulkWrite(bulkOps);
       user.cart = [];
       const updatedUser = await user.save();
+
+      const populatedOrder = await Order.findOne({ order_id: dbOrder.order_id })
+        .populate({ path: "user", select: "fullname phone address email" })
+        .populate({ path: "product.product", select: "product_name product_images final_price" });
+      getIO().to("admin-room").emit("order:new", populatedOrder);
+
       return res.status(200).json({
         success: true,
         payment_method: dbOrder.payment_method,
@@ -181,6 +187,11 @@ export const verifyPaymentController = async (req, res) => {
 
     user.cart = []
     await user.save();
+
+    const populatedOrder = await Order.findOne({ order_id: razorpay_order_id })
+      .populate({ path: "user", select: "fullname phone address email" })
+      .populate({ path: "product.product", select: "product_name product_images final_price" });
+    getIO().to("admin-room").emit("order:new", populatedOrder);
 
     res.status(200).json({
       success: true,

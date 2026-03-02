@@ -77,7 +77,6 @@ const Footer = () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // fallback
       const ta = document.createElement("textarea");
       ta.value = EMAIL;
       document.body.appendChild(ta);

@@ -89,7 +89,7 @@ const getPaymentBadgeColor = (status) => {
   }
 };
 
-const Orders = ({ orders = [] }) => {
+const Orders = ({ orders = [], lastOrderRef }) => {
   const { admin, adminUpdateOrderStatus } = useAdminBear((state) => state);
   const { user } = useUserBear((state) => state);
 
@@ -162,11 +162,13 @@ const Orders = ({ orders = [] }) => {
             className="space-y-6"
           >
             <AnimatePresence>
-              {orders?.map((order) => {
+              {orders?.map((order, index) => {
                 const statusStyle = getStatusStyles(order.status);
+                const isLast = index === orders.length - 1;
 
                 return (
                   <motion.div
+                    ref={isLast && lastOrderRef ? lastOrderRef : undefined}
                     key={order.order_id}
                     variants={itemVariants}
                     layout

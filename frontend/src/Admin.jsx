@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import useAdminBear from "../store/admin.store";
 import AdminHeader from "./Admin/components/AdminHeader";
 import { Menu } from "lucide-react";
@@ -9,6 +10,11 @@ import { connectSocket, disconnectSocket } from "../utils/socket";
 
 const Admin = () => {
   const { admin } = useAdminBear((state) => state);
+
+  useEffect(() => {
+    if (!admin) return;
+    useAdminBear.getState().adminGetOrderCounts().catch(() => {});
+  }, [admin]);
 
   useEffect(() => {
     if (!admin) return;
@@ -28,9 +34,26 @@ const Admin = () => {
       }));
     });
 
+    socket.on("order:new", (order) => {
+      toast(`New order received!\n#${order.order_id?.split("_")[1] || order.order_id}`, {
+        icon: "📦",
+        duration: 5000,
+        style: { fontWeight: "bold" },
+      });
+      useAdminBear.setState((state) => {
+        const counts = state.orderCounts
+          ? { ...state.orderCounts }
+          : { pending: 0, shipped: 0, delivered: 0, cancelled: 0, unseen: 0 };
+        counts.pending = (counts.pending || 0) + 1;
+        counts.unseen = (counts.unseen || 0) + 1;
+        return { orderCounts: counts };
+      });
+    });
+
     return () => {
       socket.off("onlineUsers");
       socket.off("coupon:updated");
+      socket.off("order:new");
       disconnectSocket();
     };
   }, [admin]);

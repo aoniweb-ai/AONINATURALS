@@ -33,7 +33,6 @@ const ProductDetails = () => {
   const [selectedImg, setSelectedImg] = useState(0);
   const [loader, setLoader] = useState(false);
 
-  // Review state
   const [reviews, setReviews] = useState([]);
   const [myReview, setMyReview] = useState(null);
   const [avgRating, setAvgRating] = useState(0);
@@ -61,7 +60,6 @@ const ProductDetails = () => {
     userGetaProduct(id).catch((err) => toast.error(err));
   }, [id, userGetaProduct, setProduct]);
 
-  // Fetch reviews for the product
   const fetchReviews = useCallback(async (page = 1, append = false) => {
     try {
       setReviewLoading(true);
@@ -78,7 +76,6 @@ const ProductDetails = () => {
     }
   }, [id, getProductReviews]);
 
-  // Fetch user's own review + canReview flag
   const fetchMyReview = useCallback(async () => {
     if (!user) return;
     try {
@@ -100,20 +97,17 @@ const ProductDetails = () => {
     }
   }, [id, fetchReviews, fetchMyReview]);
 
-  // Socket listeners for real-time review updates
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
     const handleReviewCreated = (data) => {
       if (data.product_id !== id) return;
-      // Prepend new review to the list (avoid duplicate if it's the current user's)
       setReviews((prev) => {
         if (prev.some((r) => r._id === data.review._id)) return prev;
         return [data.review, ...prev];
       });
       setTotalReviews((prev) => prev + 1);
-      // Recalculate avg from existing + new
       setAvgRating((prev) => {
         const newTotal = totalReviews + 1;
         return Math.round(((prev * totalReviews + data.review.rating) / newTotal) * 10) / 10;
@@ -149,7 +143,6 @@ const ProductDetails = () => {
     socket.on("review:reacted", handleReviewReacted);
     socket.on("review:deleted", handleReviewDeleted);
 
-    // When admin updates order status to delivered, enable review form
     const handleOrderStatusUpdated = ({ order, userId }) => {
       const currentUser = useUserBear.getState().user;
       if (!currentUser || currentUser._id !== userId) return;
@@ -270,7 +263,6 @@ const ProductDetails = () => {
     { key: "recommended", label: "Recommended", content: product.recommended },
   ];
 
-  // Animation Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -617,7 +609,6 @@ const ProductDetails = () => {
               className="mb-12"
             >
               {myReview && !editMode ? (
-                // Show own review with edit button
                 <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.06)]">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-black text-gray-900">Your Review</h3>
@@ -664,7 +655,6 @@ const ProductDetails = () => {
                   </div>
                 </div>
               ) : (myReview && editMode) || !myReview ? (
-                // Review form (new / edit)
                 <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.06)]">
                   <h3 className="text-lg font-black text-gray-900 mb-6">
                     {myReview ? "Edit Your Review" : "Write a Review"}

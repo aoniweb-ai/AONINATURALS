@@ -70,7 +70,6 @@ export const adminUpdateStatusController = async (req, res) => {
         order.delivery_date = delivery_date;
         await order.save();
 
-        // Re-populate to get full data for socket + response
         const updatedOrder = await Order.findOne({ order_id })
             .populate({ path: "user", select: "fullname phone address email" })
             .populate({ path: "product.product", select: "product_name product_images final_price" });
@@ -95,16 +94,18 @@ export const adminGetOrdersContoller = async (req, res) => {
     try {
         const status = req.params?.status;
         const finalStatus = status || "pending";
-        const query = {
-            status: finalStatus
-        };
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const query = { status: finalStatus };
 
         if (finalStatus === "cancelled" || finalStatus === "delivered") {
             const oneMonthAgo = new Date();
             oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
             query.createdAt = { $gte: oneMonthAgo };
         }
+
+        const total = await Order.countDocuments(query);
 
         const orders = await Order.find(query)
             .populate({
@@ -114,10 +115,24 @@ export const adminGetOrdersContoller = async (req, res) => {
             .populate({
                 path: "product.product",
                 select: "product_name product_images final_price",
-            }).sort({ createdAt: -1 })
+            })
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
         if (!orders) return res.status(500).json({ success: false, message: "Orders fetching failed" });
 
-        return res.status(200).json({ success: true, message: "Successfully orders getted", orders });
+        return res.status(200).json({
+            success: true,
+            orders,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+                hasMore: page * limit < total,
+            },
+        });
 
     } catch (error) {
         console.log("error while getting orders ", error)
@@ -186,7 +201,10 @@ export const adminSearchOrdersController = async (req, res) => {
         const orders = await Order.find({
             order_id: { $regex: search, $options: "i" },
         })
-            .populate("user", "fullname email phone")
+            .populate("user", "fullname email phone").populate({
+                path: "product.product",
+                select: "product_name product_images final_price",
+            })
             .sort({ createdAt: -1 });
 
         return res.status(200).json({
@@ -199,5 +217,32 @@ export const adminSearchOrdersController = async (req, res) => {
             success: false,
             message: "Error fining Match",
         });
+    }
+};
+
+export const adminGetOrderCountsController = async (req, res) => {
+    try {
+        const counts = await Order.aggregate([
+            { $group: { _id: "$status", count: { $sum: 1 } } },
+        ]);
+        const unseenCount = await Order.countDocuments({ admin_seen: false });
+        const result = { pending: 0, shipped: 0, delivered: 0, cancelled: 0, unseen: unseenCount };
+        counts.forEach((c) => {
+            if (result.hasOwnProperty(c._id)) result[c._id] = c.count;
+        });
+        return res.status(200).json({ success: true, counts: result });
+    } catch (error) {
+        console.log("error while getting order counts ", error);
+        return res.status(500).json({ success: false, message: "Failed to get counts" });
+    }
+};
+
+export const adminMarkOrdersSeenController = async (req, res) => {
+    try {
+        await Order.updateMany({ admin_seen: false }, { admin_seen: true });
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        console.log("error while marking orders seen ", error);
+        return res.status(500).json({ success: false, message: "Failed" });
     }
 };

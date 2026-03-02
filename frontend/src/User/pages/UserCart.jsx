@@ -44,7 +44,6 @@ const UserCart = () => {
   const [loader, setLoader] = useState(false);
   const [cartUpdate_loader, setCartUpdate_loader] = useState(false);
 
-  // Coupon state
   const [couponCode, setCouponCode] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discount, discount_type, discount_value }
@@ -111,7 +110,6 @@ const UserCart = () => {
     setCouponCode("");
   };
 
-  // Reset coupon if cart changes
   useEffect(() => {
     if (appliedCoupon) {
       setAppliedCoupon(null);

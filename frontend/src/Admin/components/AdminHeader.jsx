@@ -16,7 +16,7 @@ import useAdminBear from "../../../store/admin.store";
 import { useState } from "react";
 
 const AdminHeader = () => {
-  const { adminLogout } = useAdminBear((state) => state);
+  const { adminLogout, orderCounts } = useAdminBear((state) => state);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,6 +112,11 @@ const AdminHeader = () => {
                   >
                     {val.icon}
                     {!collapsed && <span>{val.value}</span>}
+                    {val.value === "Orders" && orderCounts?.unseen > 0 && (
+                      <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center animate-pulse">
+                        {orderCounts.unseen}
+                      </span>
+                    )}
                   </button>
           ))}
         </nav>
