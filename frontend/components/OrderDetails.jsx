@@ -124,7 +124,7 @@ const OrderDetails = () => {
 
     const handleStatusUpdate = ({ order: updatedOrder }) => {
       if (updatedOrder.order_id === order_id) {
-        setOrder((prev) => prev ? { ...prev, status: updatedOrder.status, delivery_date: updatedOrder.delivery_date, payment_status: updatedOrder.payment_status, review_pending: updatedOrder.review_pending } : prev);
+        setOrder((prev) => prev ? { ...prev, status: updatedOrder.status, delivery_date: updatedOrder.delivery_date, payment_status: updatedOrder.payment_status, review_pending: updatedOrder?.review_pending } : prev);
       }
     };
 
@@ -133,7 +133,7 @@ const OrderDetails = () => {
         if (!prev) return prev;
         return {
           ...prev,
-          review_pending: prev.review_pending?.filter(id => id !== reviewedProductId) || []
+          review_pending: prev?.review_pending?.filter(id => id !== reviewedProductId) || []
         };
       });
     };
@@ -239,9 +239,9 @@ const OrderDetails = () => {
                 {order.status === "delivered" && <CheckCircle2 size={12} />}
                 {order.status}
               </span>
-              {user && order.status === "delivered" && order.review_pending?.length > 0 && (
+              {user && order.status === "delivered" && order?.review_pending?.length > 0 && (
                 <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-yellow-300 bg-yellow-50 text-yellow-700 flex items-center gap-1">
-                  <Star size={12} fill="currentColor" /> {order.review_pending.length} Review{order.review_pending.length > 1 ? 's' : ''} Pending
+                  <Star size={12} fill="currentColor" /> {order?.review_pending.length} Review{order.review_pending.length > 1 ? 's' : ''} Pending
                 </span>
               )}
             </div>
@@ -445,7 +445,7 @@ const OrderDetails = () => {
                     ₹{item.price} each
                   </p>
                   {user && order.status === "delivered" && (
-                    order.review_pending?.includes(item.product._id) ? (
+                    order?.review_pending?.includes(item.product._id) ? (
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

@@ -132,11 +132,10 @@ function App() {
 
       useUserBear.setState((state) => ({
         orders: state.orders
-          ? state.orders.map((o) => (o.order_id === order.order_id ? { ...o, status: order.status, delivery_date: order.delivery_date, payment_status: order.payment_status, review_pending: order.review_pending } : o))
+          ? state.orders.map((o) => (o.order_id === order.order_id ? { ...o, status: order.status, delivery_date: order.delivery_date, payment_status: order.payment_status, review_pending: order?.review_pending } : o))
           : state.orders,
       }));
 
-      // Refresh review pending count when order status changes
       if (order.status === "delivered") {
         useUserBear.getState().getReviewPendingCount();
       }
@@ -152,12 +151,11 @@ function App() {
       const currentUser = useUserBear.getState().user;
       if (!currentUser || currentUser._id !== userId) return;
       useUserBear.setState({ reviewPendingCount: count });
-      // Also update review_pending in orders state
       useUserBear.setState((state) => ({
         orders: state.orders
           ? state.orders.map((o) => ({
               ...o,
-              review_pending: o.review_pending?.filter(id => id !== reviewedProductId) || []
+              review_pending: o?.review_pending?.filter(id => id !== reviewedProductId) || []
             }))
           : state.orders,
       }));
