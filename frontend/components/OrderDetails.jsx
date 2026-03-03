@@ -124,12 +124,26 @@ const OrderDetails = () => {
 
     const handleStatusUpdate = ({ order: updatedOrder }) => {
       if (updatedOrder.order_id === order_id) {
-        setOrder((prev) => prev ? { ...prev, status: updatedOrder.status, delivery_date: updatedOrder.delivery_date, payment_status: updatedOrder.payment_status } : prev);
+        setOrder((prev) => prev ? { ...prev, status: updatedOrder.status, delivery_date: updatedOrder.delivery_date, payment_status: updatedOrder.payment_status, review_pending: updatedOrder.review_pending } : prev);
       }
     };
 
+    const handleReviewPendingUpdate = ({ reviewedProductId }) => {
+      setOrder((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          review_pending: prev.review_pending?.filter(id => id !== reviewedProductId) || []
+        };
+      });
+    };
+
     socket.on("order:statusUpdated", handleStatusUpdate);
-    return () => socket.off("order:statusUpdated", handleStatusUpdate);
+    socket.on("review:pendingCountUpdated", handleReviewPendingUpdate);
+    return () => {
+      socket.off("order:statusUpdated", handleStatusUpdate);
+      socket.off("review:pendingCountUpdated", handleReviewPendingUpdate);
+    };
   }, [order_id]);
 
   const onSubmitStatus = async (data) => {
@@ -225,6 +239,11 @@ const OrderDetails = () => {
                 {order.status === "delivered" && <CheckCircle2 size={12} />}
                 {order.status}
               </span>
+              {user && order.status === "delivered" && order.review_pending?.length > 0 && (
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-yellow-300 bg-yellow-50 text-yellow-700 flex items-center gap-1">
+                  <Star size={12} fill="currentColor" /> {order.review_pending.length} Review{order.review_pending.length > 1 ? 's' : ''} Pending
+                </span>
+              )}
             </div>
             <p className="text-gray-400 text-sm flex items-center gap-2 font-medium">
               <Calendar size={14} /> {admin && "Received on"}
@@ -426,17 +445,31 @@ const OrderDetails = () => {
                     ₹{item.price} each
                   </p>
                   {user && order.status === "delivered" && (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/products/details/${item.product._id}`);
-                      }}
-                      className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-full transition-colors mt-1"
-                    >
-                      <Star size={12} /> Write Review
-                    </motion.button>
+                    order.review_pending?.includes(item.product._id) ? (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/products/details/${item.product._id}`);
+                        }}
+                        className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-yellow-700 bg-yellow-50 hover:bg-yellow-100 border border-yellow-300 px-3 py-1.5 rounded-full transition-colors mt-1"
+                      >
+                        <Star size={12} fill="currentColor" /> Review Pending
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/products/details/${item.product._id}`);
+                        }}
+                        className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-full transition-colors mt-1"
+                      >
+                        <CheckCircle2 size={12} /> Reviewed
+                      </motion.button>
+                    )
                   )}
                 </div>
               </motion.div>

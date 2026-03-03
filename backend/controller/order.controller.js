@@ -230,6 +230,22 @@ export const getUserOrders = async (req, res) => {
 }
 
 
+export const getReviewPendingCount = async (req, res) => {
+    try {
+        const user = req.user;
+        const result = await Order.aggregate([
+            { $match: { user: user._id, status: "delivered", "review_pending.0": { $exists: true } } },
+            { $project: { count: { $size: "$review_pending" } } },
+            { $group: { _id: null, total: { $sum: "$count" } } }
+        ]);
+        const total = result.length > 0 ? result[0].total : 0;
+        return res.status(200).json({ success: true, count: total });
+    } catch (error) {
+        console.log("error while getting review pending count ", error);
+        return res.status(500).json({ success: false, message: "Failed to get count" });
+    }
+}
+
 export const getAnOrderContoller = async (req, res) => {
     try {
         const { order_id } = req.params;

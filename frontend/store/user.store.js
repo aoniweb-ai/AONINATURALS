@@ -9,6 +9,7 @@ const useUserBear = create((set)=>({
     products:null,
     blogs:null,
     blog:null,
+    reviewPendingCount:0,
     setProduct: val=>set({product:val}),
     userSignup : async(data)=>{
         try {
@@ -81,6 +82,7 @@ const useUserBear = create((set)=>({
             set({cod_charges:null});
             set({orders:null});
             set({product:null});
+            set({reviewPendingCount:0});
         } catch (error) {
             throw error.response?.data?.message || error.message;
         }
@@ -240,6 +242,16 @@ const useUserBear = create((set)=>({
             return response.data;
         } catch (error) {
             throw error.response?.data?.message || error.message;
+        }
+    },
+    getReviewPendingCount: async()=>{
+        try {
+            const response = await userAxios.get("/orders/review-pending-count");
+            set({reviewPendingCount: response.data?.count || 0});
+            return response.data?.count || 0;
+        } catch (error) {
+            // silently fail — user might not be logged in
+            return 0;
         }
     },
 }))

@@ -6,7 +6,6 @@ import {
   Check,
   X,
   ChevronRight,
-  ShieldCheck,
   Package,
   LogOut,
   Lock,
@@ -62,10 +61,8 @@ const UserAccount = () => {
   const navigate = useNavigate();
 
   const [signOutLoader, setSignOutLoader] = useState(false);
-  const [editProfile, setEditProfile] = useState(false);
-  const [editAddress, setEditAddress] = useState(false);
-  const [profileLoader, setProfileLoader] = useState(false);
-  const [addressLoader, setAddressLoader] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saveLoader, setSaveLoader] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -78,55 +75,54 @@ const UserAccount = () => {
         landmark: user?.address?.landmark || "",
       });
     }
-  }, [user, reset, editAddress]);
+  }, [user, reset, isEditing]);
 
-  const editHandler = async (data) => {
+  const saveHandler = async (data) => {
     try {
       const isNameSame = user.fullname === data.fullname.trim();
       const isPhoneSame = String(user.phone) === String(data.phone).trim();
+      const profileChanged = !isNameSame || !isPhoneSame;
 
-      if (isNameSame && isPhoneSame) {
-        setEditProfile(false);
+      const addressChanged = !(
+        user.address?.address == data.address?.trim() &&
+        user.address?.pincode == data.pincode &&
+        user.address?.state == data.state?.trim() &&
+        user.address?.landmark == data.landmark?.trim()
+      );
+
+      if (!profileChanged && !addressChanged) {
+        setIsEditing(false);
         return toast("No changes made", { icon: "ℹ️" });
       }
 
-      setProfileLoader(true);
-      await userProfileUpdate({ fullname: data.fullname, phone: data.phone });
-      toast.success("Profile updated successfully");
-      setEditProfile(false);
-    } catch (error) {
-      toast.error(error || "Update failed");
-    } finally {
-      setProfileLoader(false);
-    }
-  };
+      setSaveLoader(true);
 
-  const addressHandler = async (data) => {
-    try {
-      if (
-        user.address?.address == data.address.trim() &&
-        user.address?.pincode == data.pincode &&
-        user.address?.state == data.state.trim() &&
-        user.address?.landmark == data.landmark.trim()
-      ) {
-        setEditAddress(false);
-        return toast("Address is same as before", { icon: "ℹ️" });
+      const promises = [];
+      if (profileChanged) {
+        promises.push(
+          userProfileUpdate({ fullname: data.fullname, phone: data.phone })
+            .then(() => toast.success("Profile updated"))
+        );
       }
-      setAddressLoader(true);
-      await userAddressUpdate({
-        address: {
-          address: data.address,
-          pincode: data.pincode,
-          state: data.state,
-          landmark: data.landmark,
-        },
-      });
-      toast.success("Address updated successfully");
-      setEditAddress(false);
+      if (addressChanged) {
+        promises.push(
+          userAddressUpdate({
+            address: {
+              address: data.address,
+              pincode: data.pincode,
+              state: data.state,
+              landmark: data.landmark,
+            },
+          }).then(() => toast.success("Address updated"))
+        );
+      }
+
+      await Promise.all(promises);
+      setIsEditing(false);
     } catch (error) {
-      toast.error(error?.message || "Address update failed");
+      toast.error(error?.message || error || "Update failed");
     } finally {
-      setAddressLoader(false);
+      setSaveLoader(false);
     }
   };
 
@@ -153,14 +149,56 @@ const UserAccount = () => {
               Manage your personal details and preferences.
             </p>
           </div>
-          <div className="hidden md:block">
-            <motion.span
-              whileHover={{ scale: 1.05 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 text-xs font-semibold text-gray-600 shadow-sm cursor-default"
-            >
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              Active Member
-            </motion.span>
+          <div className="flex items-center gap-3">
+            <AnimatePresence mode="wait" initial={false}>
+              {!isEditing ? (
+                <motion.button
+                  key="edit-main"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsEditing(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gray-900 text-white text-xs font-bold shadow-lg shadow-gray-300 hover:bg-gray-800 transition-colors"
+                >
+                  <Edit2 size={14} /> Edit Profile
+                </motion.button>
+              ) : (
+                <motion.div
+                  key="save-cancel"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="flex items-center gap-2"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setIsEditing(false);
+                      reset();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-red-50 text-red-500 text-xs font-bold border border-red-100 hover:bg-red-100 transition-colors"
+                  >
+                    <X size={14} /> Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleSubmit(saveHandler)}
+                    disabled={saveLoader}
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gray-900 text-white text-xs font-bold shadow-lg shadow-gray-300 hover:bg-gray-800 transition-colors disabled:opacity-60"
+                  >
+                    {saveLoader ? (
+                      <span className="loading loading-spinner loading-xs"></span>
+                    ) : (
+                      <><Check size={14} /> Save Changes</>
+                    )}
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
@@ -170,10 +208,10 @@ const UserAccount = () => {
             {/* 1. PERSONAL INFO CARD */}
             <motion.div
               variants={itemVariants}
-              whileHover={!editProfile ? "hover" : ""}
+              whileHover={!isEditing ? "hover" : ""}
               initial="hidden"
               animate="visible"
-              layout // Enables smooth resizing
+              layout
               className="group bg-white rounded-[2rem] p-6 sm:p-10 shadow-xl shadow-gray-200/50 border border-white relative overflow-hidden"
             >
               {/* Decoration Background */}
@@ -213,77 +251,18 @@ const UserAccount = () => {
                       <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                         Personal Information
                         <AnimatePresence>
-                          {editProfile && (
+                          {isEditing && (
                             <motion.span
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.8 }}
                               className="text-xs font-normal text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100"
                             >
-                              Editing Mode
+                              Editing
                             </motion.span>
                           )}
                         </AnimatePresence>
                       </h2>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <AnimatePresence mode="wait" initial={false}>
-                        {!editProfile ? (
-                          <motion.button
-                            key="edit-btn"
-                            initial={{ opacity: 0, rotate: -45 }}
-                            animate={{ opacity: 1, rotate: 0 }}
-                            exit={{ opacity: 0, rotate: 45 }}
-                            whileHover={{
-                              scale: 1.1,
-                              backgroundColor: "#f3f4f6",
-                            }}
-                            whileTap={{ scale: 0.9 }}
-                            type="button"
-                            onClick={() => setEditProfile(true)}
-                            className="btn btn-circle btn-sm btn-ghost text-gray-500"
-                          >
-                            <Edit2 size={18} />
-                          </motion.button>
-                        ) : (
-                          <>
-                            <motion.button
-                              key="cancel-btn"
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              type="button"
-                              onClick={() => {
-                                setEditProfile(false);
-                                reset();
-                              }}
-                              className="btn btn-circle btn-sm bg-red-50 text-red-500 border-none hover:bg-red-100"
-                            >
-                              <X size={18} />
-                            </motion.button>
-                            <motion.button
-                              key="save-btn"
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={handleSubmit(editHandler)}
-                              disabled={profileLoader}
-                              className="btn btn-circle btn-sm bg-green-50 text-green-600 border-none hover:bg-green-100"
-                            >
-                              {profileLoader ? (
-                                <span className="loading loading-spinner loading-xs"></span>
-                              ) : (
-                                <Check size={18} />
-                              )}
-                            </motion.button>
-                          </>
-                        )}
-                      </AnimatePresence>
                     </div>
                   </div>
 
@@ -294,7 +273,7 @@ const UserAccount = () => {
                         Full Name
                       </label>
                       <AnimatePresence mode="wait">
-                        {editProfile ? (
+                        {isEditing ? (
                           <motion.div
                             key="name-input"
                             initial={{ opacity: 0, y: -5 }}
@@ -341,7 +320,7 @@ const UserAccount = () => {
                           Phone Number
                         </label>
                         <AnimatePresence mode="wait">
-                          {editProfile ? (
+                          {isEditing ? (
                             <motion.div
                               key="phone-input"
                               initial={{ opacity: 0, y: -5 }}
@@ -394,7 +373,7 @@ const UserAccount = () => {
             {/* 2. ADDRESS CARD */}
             <motion.div
               variants={itemVariants}
-              whileHover={!editAddress ? cardHoverVariants.hover : {}}
+              whileHover={!isEditing ? cardHoverVariants.hover : {}}
               layout
               className="bg-white rounded-4xl p-6 sm:p-10 shadow-xl shadow-gray-200/50 border border-white"
             >
@@ -407,29 +386,31 @@ const UserAccount = () => {
                     <MapPin size={24} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       Delivery Address
+                      <AnimatePresence>
+                        {isEditing && (
+                          <motion.span
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            className="text-xs font-normal text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100"
+                          >
+                            Editing
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                     </h2>
                     <p className="text-sm text-gray-400">
                       Where should we send your orders?
                     </p>
                   </div>
                 </div>
-                {!editAddress && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setEditAddress(true)}
-                    className="px-5 py-2 rounded-full bg-gray-900 text-white text-xs font-bold hover:bg-gray-800 shadow-md"
-                  >
-                    Edit Address
-                  </motion.button>
-                )}
               </motion.div>
 
-              <form onSubmit={handleSubmit(addressHandler)}>
+              <form onSubmit={handleSubmit(saveHandler)}>
                 <AnimatePresence mode="wait">
-                  {!editAddress ? (
+                  {!isEditing ? (
                     <motion.div
                       key="address-view"
                       initial={{ opacity: 0, height: 0 }}
@@ -549,33 +530,7 @@ const UserAccount = () => {
                         </div>
                       </div>
 
-                      <div className="flex justify-end gap-3 pt-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          type="button"
-                          onClick={() => {
-                            setEditAddress(false);
-                            reset({ address: user.address?.address });
-                          }}
-                          className="px-6 py-2.5 rounded-xl text-gray-500 font-semibold hover:bg-gray-100 transition-colors"
-                        >
-                          Cancel
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          type="submit"
-                          disabled={addressLoader}
-                          className="px-8 py-2.5 rounded-xl bg-black text-white font-semibold shadow-lg shadow-indigo-200 transition-all flex items-center gap-2"
-                        >
-                          {addressLoader ? (
-                            <span className="loading loading-spinner loading-xs"></span>
-                          ) : (
-                            "Save Address"
-                          )}
-                        </motion.button>
-                      </div>
+                      <div className="h-2"></div>
                     </motion.div>
                   )}
                 </AnimatePresence>

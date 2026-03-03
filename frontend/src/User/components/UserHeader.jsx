@@ -37,6 +37,25 @@ const CartIconWithBadge = ({ count, icon }) => (
   </div>
 );
 
+const ReviewPendingBadge = ({ count, icon }) => (
+  <div className="relative">
+    {icon}
+    <AnimatePresence>
+      {count > 0 && (
+        <motion.span
+          key="review-badge"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0 }}
+          className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500 text-[10px] font-bold text-white shadow-sm"
+        >
+          {count}
+        </motion.span>
+      )}
+    </AnimatePresence>
+  </div>
+);
+
 const AccountNotifyIcon = ({ icon }) => (
   <div className="relative">
     {icon}
@@ -93,7 +112,7 @@ const SidebarItem = ({
 };
 
 const UserHeader = () => {
-  const { user, userLogout } = useUserBear((state) => state);
+  const { user, userLogout, reviewPendingCount } = useUserBear((state) => state);
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
@@ -207,6 +226,13 @@ const UserHeader = () => {
               displayIcon = (
                 <CartIconWithBadge
                   count={user?.cart?.length}
+                  icon={route.icon}
+                />
+              );
+            } else if (route.value === "Orders" && user && reviewPendingCount > 0) {
+              displayIcon = (
+                <ReviewPendingBadge
+                  count={reviewPendingCount}
                   icon={route.icon}
                 />
               );

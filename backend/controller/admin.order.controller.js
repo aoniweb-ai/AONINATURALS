@@ -1,6 +1,7 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
+import Review from "../models/review.model.js";
 import { getIO } from "../libs/socket.js";
 
 export const adminUpdateStatusController = async (req, res) => {
@@ -68,6 +69,20 @@ export const adminUpdateStatusController = async (req, res) => {
         order.status = status;
         order.payment_status = "paid";
         order.delivery_date = delivery_date;
+
+        // When delivered, populate review_pending with products not yet reviewed
+        if (status === "delivered") {
+            const productIds = order.product.map(p => p.product._id || p.product);
+            const existingReviews = await Review.find({
+                user: order.user._id || order.user,
+                product: { $in: productIds }
+            }).select("product");
+            const reviewedIds = existingReviews.map(r => r.product.toString());
+            order.review_pending = productIds.filter(id => !reviewedIds.includes(id.toString()));
+        } else {
+            order.review_pending = [];
+        }
+
         await order.save();
 
         const updatedOrder = await Order.findOne({ order_id })

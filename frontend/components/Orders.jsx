@@ -8,6 +8,7 @@ import {
   XCircle,
   Clock,
   ShoppingBag,
+  Star,
 } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
 import useAdminBear from "../store/admin.store";
@@ -191,6 +192,12 @@ const Orders = ({ orders = [], lastOrderRef }) => {
                               className={`sm:hidden flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border ${statusStyle.color}`}
                             >
                               {statusStyle.icon} {order.status}
+                            </span>
+                          )}
+                          {/* Review Pending Badge */}
+                          {user && order.status === "delivered" && order.review_pending?.length > 0 && (
+                            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-yellow-300 bg-yellow-50 text-yellow-700">
+                              <Star size={12} fill="currentColor" /> {order.review_pending.length} Review{order.review_pending.length > 1 ? 's' : ''} Pending
                             </span>
                           )}
                         </div>

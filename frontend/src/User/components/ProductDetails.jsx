@@ -14,6 +14,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   Pencil,
+  Info,
   Send,
   MessageSquare,
   Trash2,
@@ -429,6 +430,10 @@ const ProductDetails = () => {
               </div>
 
               <div className="grid grid-cols-1 gap-3 border-t border-gray-50 pt-6">
+                <div className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                  <Info size={18} className="text-emerald-500 fill-emerald-50" />
+                  {product?.stock} {' '} Units Available
+                </div>
                 <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
                   <CheckCircle2 size={18} className="text-emerald-500 fill-emerald-50" />
                   Inclusive of all taxes 

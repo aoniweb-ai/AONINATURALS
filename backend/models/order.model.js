@@ -73,7 +73,11 @@ const orderSchema = mongoose.Schema({
     admin_seen:{
         type:Boolean,
         default:false
-    }
+    },
+    review_pending:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Product"
+    }]
 
 },{timestamps:true})
 

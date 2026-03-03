@@ -22,6 +22,12 @@ const Admin = () => {
     const socket = connectSocket();
     socket.emit("adminJoin");
 
+    // Re-join admin-room on reconnection (server loses room membership on disconnect)
+    const handleReconnect = () => {
+      socket.emit("adminJoin");
+    };
+    socket.on("connect", handleReconnect);
+
     socket.on("onlineUsers", (users) => {
       useAdminBear.setState({ onlineUsers: users });
     });
@@ -51,6 +57,7 @@ const Admin = () => {
     });
 
     return () => {
+      socket.off("connect", handleReconnect);
       socket.off("onlineUsers");
       socket.off("coupon:updated");
       socket.off("order:new");

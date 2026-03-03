@@ -30,6 +30,13 @@ function App() {
     run();
   }, [userGet, userGetProduct]);
 
+  // Fetch review pending count after user loads
+  useEffect(() => {
+    if (!loader && user) {
+      useUserBear.getState().getReviewPendingCount();
+    }
+  }, [loader, user]);
+
   useEffect(() => {
     if (loader) return;
 
@@ -125,15 +132,35 @@ function App() {
 
       useUserBear.setState((state) => ({
         orders: state.orders
-          ? state.orders.map((o) => (o.order_id === order.order_id ? { ...o, status: order.status, delivery_date: order.delivery_date, payment_status: order.payment_status } : o))
+          ? state.orders.map((o) => (o.order_id === order.order_id ? { ...o, status: order.status, delivery_date: order.delivery_date, payment_status: order.payment_status, review_pending: order.review_pending } : o))
           : state.orders,
       }));
+
+      // Refresh review pending count when order status changes
+      if (order.status === "delivered") {
+        useUserBear.getState().getReviewPendingCount();
+      }
 
       const statusLabels = { delivered: "Delivered ✅", shipped: "Shipped 🚚", cancelled: "Cancelled ❌", pending: "Pending ⏳" };
       toast(statusLabels[order.status] || `Status: ${order.status}`, {
         icon: "📦",
         duration: 5000,
       });
+    });
+
+    socket.on("review:pendingCountUpdated", ({ userId, count, reviewedProductId }) => {
+      const currentUser = useUserBear.getState().user;
+      if (!currentUser || currentUser._id !== userId) return;
+      useUserBear.setState({ reviewPendingCount: count });
+      // Also update review_pending in orders state
+      useUserBear.setState((state) => ({
+        orders: state.orders
+          ? state.orders.map((o) => ({
+              ...o,
+              review_pending: o.review_pending?.filter(id => id !== reviewedProductId) || []
+            }))
+          : state.orders,
+      }));
     });
 
     return () => {
@@ -146,6 +173,7 @@ function App() {
       socket.off("coupon:updated");
       socket.off("coupon:deleted");
       socket.off("order:statusUpdated");
+      socket.off("review:pendingCountUpdated");
       disconnectSocket();
     };
   }, [loader, user]);
