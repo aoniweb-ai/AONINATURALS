@@ -28,9 +28,7 @@ const BlogDetails = () => {
       try {
         setLoading(true);
         await userGetABlog(identifier);
-      } catch {
-        // handle silently
-      } finally {
+      } catch {} finally {
         setLoading(false);
       }
     };
@@ -247,7 +245,6 @@ const BlogDetails = () => {
           <button
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
-              // optional: add toast
             }}
             className="btn btn-sm bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl border-none text-xs font-semibold"
           >

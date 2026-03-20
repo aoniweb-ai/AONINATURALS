@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 import CenterLoader from "../../../components/CenterLoader";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { sendMetaConversion } from "../../utils/sendMetaConversion";
 
 const UserCart = () => {
   const {
@@ -46,7 +47,7 @@ const UserCart = () => {
 
   const [couponCode, setCouponCode] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
-  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discount, discount_type, discount_value }
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -118,6 +119,7 @@ const UserCart = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.cart]);
 
+
   const handleCheckout = async () => {
     if (!user?.address?.address || !user?.address?.pincode) {
       toast("Please complete your profile details before checkout", {
@@ -125,6 +127,19 @@ const UserCart = () => {
       });
       return navigate("/account");
     }
+    try {
+      await sendMetaConversion({
+        event_name: "InitiateCheckout",
+        user_data: {
+          em: user?.email,
+          ph: user?.phone,
+          fn: user?.fullname,
+        },
+        custom_data: {
+          cart: user?.cart?.map(item => ({ product_id: item.product._id, quantity: item.value })),
+        },
+      });
+    } catch {}
     try {
       setLoader(true);
 
@@ -243,7 +258,7 @@ const UserCart = () => {
           </span>
         </motion.h1>
 
-        <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* --- LEFT: PRODUCTS --- */}
           <div className="lg:col-span-2">
             <motion.div
@@ -492,7 +507,7 @@ const UserCart = () => {
                   </span>
                   </>
                 ) : (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-col justify-center">
                     <input
                       type="text"
                       value={couponCode}
@@ -508,7 +523,7 @@ const UserCart = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleApplyCoupon}
                       disabled={couponLoading || !couponCode.trim()}
-                      className="px-4 py-2.5 bg-black text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/10"
+                      className="px-4 py-2.5 w-full bg-black text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/10"
                     >
                       {couponLoading ? (
                         <span className="loading loading-spinner loading-xs"></span>

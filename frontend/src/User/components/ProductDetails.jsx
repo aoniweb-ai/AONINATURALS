@@ -24,6 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProductDetailsSkeleton from "./Skeleton/ProductDetailsSkeleton";
 import toast from "react-hot-toast";
 import { getCloudinaryImage } from "../../../utils/getCloudinaryImage";
+import { sendMetaConversion } from "../../utils/sendMetaConversion";
 import { motion, AnimatePresence } from "framer-motion";
 import { timeAgo } from "../../../utils/timeAgo";
 import { getSocket } from "../../../utils/socket";
@@ -61,6 +62,22 @@ const ProductDetails = () => {
     userGetaProduct(id).catch((err) => toast.error(err));
   }, [id, userGetaProduct, setProduct]);
 
+  useEffect(() => {
+    if (user && id) {
+      sendMetaConversion({
+        event_name: "ViewContent",
+        user_data: {
+          em: user?.email,
+          ph: user?.phone,
+          fn: user?.fullname,
+        },
+        custom_data: {
+          product_id: id,
+        },
+      }).catch(() => {});
+    }
+  }, [user, id]);
+
   const fetchReviews = useCallback(async (page = 1, append = false) => {
     try {
       setReviewLoading(true);
@@ -70,9 +87,7 @@ const ProductDetails = () => {
       setTotalReviews(data.totalReviews);
       setHasMoreReviews(data.pagination.hasMore);
       setReviewPage(page);
-    } catch {
-      // silent
-    } finally {
+    }finally {
       setReviewLoading(false);
     }
   }, [id, getProductReviews]);
@@ -86,9 +101,7 @@ const ProductDetails = () => {
       if (data.review) {
         setReviewForm({ rating: data.review.rating, review_text: data.review.review_text });
       }
-    } catch {
-      // silent
-    }
+    } catch {}
   }, [id, user, getMyReview]);
 
   useEffect(() => {
@@ -246,6 +259,19 @@ const ProductDetails = () => {
         quantity: qty,
       });
       toast.success("Added to your bag! 🛍️");
+      try {
+        await sendMetaConversion({
+          event_name: "AddToCart",
+          user_data: {
+            em: user?.email,
+            ph: user?.phone,
+            fn: user?.fullname,
+          },
+          custom_data: {
+            product_id: id,
+          },
+        });
+      } catch {}
     } catch (err) {
       toast.error(err || "Something went wrong");
     } finally {

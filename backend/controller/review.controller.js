@@ -69,13 +69,11 @@ export const addOrUpdateReviewController = async (req, res) => {
     });
     await review.save();
 
-    // Remove this product from review_pending in all user's delivered orders
     const updateResult = await Order.updateMany(
       { user: userId, status: "delivered", review_pending: product_id },
       { $pull: { review_pending: product_id } }
     );
 
-    // Emit updated review pending count to user via socket
     if (updateResult.modifiedCount > 0) {
       const countResult = await Order.aggregate([
         { $match: { user: userId, status: "delivered", "review_pending.0": { $exists: true } } },

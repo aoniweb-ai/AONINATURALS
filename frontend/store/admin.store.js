@@ -190,7 +190,6 @@ const useAdminBear = create((set, get) => ({
         }
     },
 
-    // ---- COUPON ACTIONS ----
     adminCoupon_addUpdate: async(data)=>{
         try {
             const response = await adminAxios.post("/coupon/addupdatecoupon", data);
@@ -237,7 +236,6 @@ const useAdminBear = create((set, get) => ({
         }
     },
 
-    // ---- USER ACTIONS ----
     adminGetUsers: async({ page = 1, limit = 10, search = "" } = {})=>{
         try {
             const response = await adminAxios.get(`/user/getusers?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`);
@@ -255,7 +253,6 @@ const useAdminBear = create((set, get) => ({
         }
     },
 
-    // ---- REVIEW ACTIONS ----
     adminGetReviews: async({ page = 1, limit = 15 } = {})=>{
         try {
             const response = await adminAxios.get(`/review/getreviews?page=${page}&limit=${limit}`);

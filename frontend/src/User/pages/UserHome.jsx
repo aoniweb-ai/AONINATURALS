@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
+import { sendMetaConversion } from "../../utils/sendMetaConversion";
 
 const defaultTestimonials = [
   {
@@ -47,9 +48,7 @@ const UserHome = () => {
         if (data?.reviews?.length > 0) {
           setTopReviews(data.reviews);
         }
-      } catch {
-        // fallback to defaults
-      }
+      } catch {}
     };
     fetchTopReviews();
   }, [getTopReviews]);
@@ -64,6 +63,19 @@ const UserHome = () => {
       setLoader(true);
       await userAddToCart({ id, quantity: 1 });
       toast.success("Added to cart");
+      try {
+        await sendMetaConversion({
+          event_name: "AddToCart",
+          user_data: {
+            em: user?.email,
+            ph: user?.phone,
+            fn: user?.fullname,
+          },
+          custom_data: {
+            product_id: id,
+          },
+        });
+      } catch {}
     } catch (error) {
       toast.error(error || "Something went wrong");
     } finally {

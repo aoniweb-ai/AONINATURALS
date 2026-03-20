@@ -30,7 +30,6 @@ function App() {
     run();
   }, [userGet, userGetProduct]);
 
-  // Fetch review pending count after user loads
   useEffect(() => {
     if (!loader && user) {
       useUserBear.getState().getReviewPendingCount();

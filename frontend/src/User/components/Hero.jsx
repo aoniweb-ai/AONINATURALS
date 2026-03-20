@@ -209,7 +209,7 @@ const Hero = () => {
               }}
               className="relative h-2 rounded-full overflow-hidden transition-all duration-300"
               style={{
-                width: imageIndex === i ? "24px" : "6px", // Smaller dots on mobile logic
+                width: imageIndex === i ? "24px" : "6px",
                 backgroundColor: imageIndex === i ? "transparent" : "#9ca3af",
               }}
             >

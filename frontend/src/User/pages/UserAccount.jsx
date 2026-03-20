@@ -12,7 +12,7 @@ import {
   UserCog,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useUserBear from "../../../store/user.store";
 import CenterLoader from "../../../components/CenterLoader";
@@ -120,7 +120,7 @@ const UserAccount = () => {
       await Promise.all(promises);
       setIsEditing(false);
     } catch (error) {
-      toast.error(error?.message || error || "Update failed");
+      toast.error(error || "Update failed");
     } finally {
       setSaveLoader(false);
     }
@@ -284,6 +284,7 @@ const UserAccount = () => {
                               {...register("fullname", {
                                 required: "Name is required",
                               })}
+                              autoFocus
                               className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
                             />
                           </motion.div>
@@ -479,7 +480,7 @@ const UserAccount = () => {
                           })}
                           className="textarea w-full h-32 rounded-2xl bg-white border-2 border-gray-100 focus:border-indigo-500 focus:ring-0 text-base p-4 shadow-sm resize-none transition-all"
                           placeholder="Flat / House No / Floor / Building Name"
-                          autoFocus
+                          
                         ></textarea>
                         {errors.address && (
                           <span className="absolute right-4 top-4 text-xs text-red-500 font-medium bg-white px-2">

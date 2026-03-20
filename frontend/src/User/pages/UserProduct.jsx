@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Footer from "../components/Footer";
+import { sendMetaConversion } from "../../utils/sendMetaConversion";
 
 const UserProduct = () => {
   const { products, userGetProduct, userAddToCart, user } = useUserBear(
@@ -48,6 +49,19 @@ const UserProduct = () => {
         quantity: 1,
       });
       toast.success("Added to cart! 🛍️");
+      try {
+        await sendMetaConversion({
+          event_name: "AddToCart",
+          user_data: {
+            em: user?.email,
+            ph: user?.phone,
+            fn: user?.fullname,
+          },
+          custom_data: {
+            product_id: product._id,
+          },
+        });
+      } catch {}
     } catch (err) {
       toast.error(err || "Could not add to cart");
     } finally {
@@ -254,7 +268,6 @@ const ProductCard = ({ product, navigate, handleAddToCart, cartLoader, cardVaria
   );
 };
 
-// --- Skeleton Loader ---
 const ProductSkeletonGrid = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (

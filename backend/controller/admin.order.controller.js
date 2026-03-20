@@ -70,7 +70,6 @@ export const adminUpdateStatusController = async (req, res) => {
         order.payment_status = "paid";
         order.delivery_date = delivery_date;
 
-        // When delivered, populate review_pending with products not yet reviewed
         if (status === "delivered") {
             const productIds = order.product.map(p => p.product._id || p.product);
             const existingReviews = await Review.find({

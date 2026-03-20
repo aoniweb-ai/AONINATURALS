@@ -14,6 +14,7 @@ import {
   Star
 } from "lucide-react";
 import { getCloudinaryImage } from "../utils/getCloudinaryImage";
+import { sendMetaConversion } from "../src/utils/sendMetaConversion";
 import { formatDateTime } from "../utils/formatDateTime";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
@@ -111,8 +112,26 @@ const OrderDetails = () => {
         .catch((err) => toast.error(err));
     } else if (user) {
       userGetOrder(order_id)
-        .then((res) => {
+        .then(async (res) => {
           setOrder(res);
+          if (res.status === "delivered" && !window.__metaConversionSent) {
+            try {
+              await sendMetaConversion({
+                event_name: "Purchase",
+                user_data: {
+                  em: res.user.email,
+                  ph: res.user.phone,
+                  fn: res.user.fullname,
+                },
+                custom_data: {
+                  value: res.total_price,
+                  currency: "INR",
+                  order_id: res.order_id,
+                },
+              });
+              window.__metaConversionSent = true;
+            } catch (e) {}
+          }
         })
         .catch((err) => toast.error(err));
     }

@@ -16,6 +16,7 @@ import adminCouponRouter from "../routes/admin.coupon.route.js";
 import couponRouter from "../routes/coupon.route.js";
 import adminUserRouter from "../routes/admin.user.route.js";
 import adminReviewRouter from "../routes/admin.review.route.js";
+import conversionRouter from "../routes/conversion.route.js";
 import reviewRouter from "../routes/review.route.js";
 import { initSocket } from "../libs/socket.js";
 
@@ -57,6 +58,7 @@ app.use(`/api/${process.env.ADMIN_POST_URI}/user`, adminUserRouter);
 app.use(`/api/${process.env.ADMIN_POST_URI}/review`, adminReviewRouter);
 
 app.use('/api', limiter);
+app.use("/api/conversion", conversionRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/orders", orderRouter);

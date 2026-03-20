@@ -250,7 +250,6 @@ const useUserBear = create((set)=>({
             set({reviewPendingCount: response.data?.count || 0});
             return response.data?.count || 0;
         } catch (error) {
-            // silently fail — user might not be logged in
             return 0;
         }
     },

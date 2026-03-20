@@ -22,7 +22,6 @@ const Admin = () => {
     const socket = connectSocket();
     socket.emit("adminJoin");
 
-    // Re-join admin-room on reconnection (server loses room membership on disconnect)
     const handleReconnect = () => {
       socket.emit("adminJoin");
     };
