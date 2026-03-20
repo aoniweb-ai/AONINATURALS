@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import { sendMetaConversion } from "../../utils/sendMetaConversion";
+import { sha256 } from "js-sha256";
 
 const defaultTestimonials = [
   {
@@ -67,9 +68,9 @@ const UserHome = () => {
         await sendMetaConversion({
           event_name: "AddToCart",
           user_data: {
-            em: user?.email,
-            ph: user?.phone,
-            fn: user?.fullname,
+            em: sha256(user?.email.trim().toLowerCase()),
+            ph: sha256(user?.phone),
+            fn: sha256(user?.fullname.trim().toLowerCase()),
           },
           custom_data: {
             product_id: id,

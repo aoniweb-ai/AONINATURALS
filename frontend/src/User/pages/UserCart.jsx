@@ -24,6 +24,7 @@ import CenterLoader from "../../../components/CenterLoader";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { sendMetaConversion } from "../../utils/sendMetaConversion";
+import { sha256 } from "js-sha256";
 
 const UserCart = () => {
   const {
@@ -131,9 +132,9 @@ const UserCart = () => {
       await sendMetaConversion({
         event_name: "InitiateCheckout",
         user_data: {
-          em: user?.email,
-          ph: user?.phone,
-          fn: user?.fullname,
+          em: sha256(user?.email.trim().toLowerCase()),
+          ph: sha256(user?.phone),
+          fn: sha256(user?.fullname.trim().toLowerCase()),
         },
         custom_data: {
           cart: user?.cart?.map(item => ({ product_id: item.product._id, quantity: item.value })),

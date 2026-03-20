@@ -19,6 +19,7 @@ import {
   MessageSquare,
   Trash2,
 } from "lucide-react";
+import sha256 from "js-sha256"
 import useUserBear from "../../../store/user.store";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductDetailsSkeleton from "./Skeleton/ProductDetailsSkeleton";
@@ -67,9 +68,9 @@ const ProductDetails = () => {
       sendMetaConversion({
         event_name: "ViewContent",
         user_data: {
-          em: user?.email,
-          ph: user?.phone,
-          fn: user?.fullname,
+          em: sha256(user?.email.trim().toLowerCase()),
+          ph: sha256(user?.phone),
+          fn: sha256(user?.fullname.trim().toLowerCase()),
         },
         custom_data: {
           product_id: id,
@@ -259,13 +260,14 @@ const ProductDetails = () => {
         quantity: qty,
       });
       toast.success("Added to your bag! 🛍️");
+      console.log(user?.phone, user.fullname)
       try {
         await sendMetaConversion({
           event_name: "AddToCart",
           user_data: {
-            em: user?.email,
-            ph: user?.phone,
-            fn: user?.fullname,
+            em: sha256(user?.email.trim().toLowerCase()),
+            ph: sha256(user?.phone),
+            fn: sha256(user?.fullname.trim().toLowerCase()),
           },
           custom_data: {
             product_id: id,

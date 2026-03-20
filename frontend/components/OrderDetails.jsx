@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import useUserBear from "../store/user.store";
 import { motion, AnimatePresence } from "framer-motion";
 import { getSocket } from "../utils/socket";
+import { sha256 } from "js-sha256";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -119,9 +120,9 @@ const OrderDetails = () => {
               await sendMetaConversion({
                 event_name: "Purchase",
                 user_data: {
-                  em: res.user.email,
-                  ph: res.user.phone,
-                  fn: res.user.fullname,
+                  em: sha256(user?.email.trim().toLowerCase()),
+                  ph: sha256(user?.phone),
+                  fn: sha256(user?.fullname.trim().toLowerCase()),
                 },
                 custom_data: {
                   value: res.total_price,
