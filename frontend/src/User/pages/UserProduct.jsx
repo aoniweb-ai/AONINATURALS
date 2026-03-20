@@ -55,7 +55,7 @@ const UserProduct = () => {
           event_name: "AddToCart",
           user_data: {
             em: sha256(user?.email.trim().toLowerCase()),
-            ph: sha256(user?.phone),
+            ph: sha256(user?.phone.toString()),
             fn: sha256(user?.fullname.trim().toLowerCase()),
           },
           custom_data: {
