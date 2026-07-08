@@ -71,7 +71,7 @@ app.use("/api/review", reviewRouter);
 const PORT = process.env.PORT;
 
 mongoose.connect(process.env.DB_URI)
-    .then(() =>
-        server.listen(PORT, "0.0.0.0", () => {
-            console.log(`running on port ${PORT}`);
-        }))
+.then(() =>
+    server.listen(PORT, "0.0.0.0", () => {
+    console.log(`running on port ${PORT}`);
+}))

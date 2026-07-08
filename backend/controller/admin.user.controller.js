@@ -86,10 +86,9 @@ export const adminGetUserDetailsController = async (req, res) => {
       })
       .sort({ createdAt: -1 })
       .lean();
-
     const stats = {
       totalOrders: orders.length,
-      totalSpent: orders.reduce((sum, o) => sum + (o.total_price || 0), 0),
+      totalSpent: orders.reduce((sum, o) => sum + (o.status=='delivered' && o.total_price || 0), 0),
       delivered: orders.filter((o) => o.status === "delivered").length,
       pending: orders.filter((o) => o.status === "pending").length,
       shipped: orders.filter((o) => o.status === "shipped").length,
