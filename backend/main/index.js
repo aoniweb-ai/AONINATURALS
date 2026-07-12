@@ -27,7 +27,7 @@ const server = initSocket(app);
 
 
 app.use(cors({
-    origin: process.env.FRONTEND_URI,
+    origin: [process.env.FRONTEND_URI_1,process.env.FRONTEND_URI_2],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }))
